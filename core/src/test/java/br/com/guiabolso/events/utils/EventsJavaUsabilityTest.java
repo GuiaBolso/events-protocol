@@ -1,9 +1,11 @@
 package br.com.guiabolso.events.utils;
 
 import br.com.guiabolso.events.builder.EventBuilder;
-import br.com.guiabolso.events.model.Event;
 import br.com.guiabolso.events.model.EventErrorType.Generic;
 import br.com.guiabolso.events.model.EventErrorType.NotFound;
+import br.com.guiabolso.events.model.ResponseEvent;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -12,7 +14,7 @@ public class EventsJavaUsabilityTest {
 
     @Test
     public void testUsability() {
-        Event event = createEvent("test:event:response");
+        ResponseEvent event = createEvent("test:event:response");
 
         assertTrue(Events.isSuccess(event));
         assertFalse(Events.isError(event));
@@ -20,7 +22,7 @@ public class EventsJavaUsabilityTest {
 
     @Test
     public void testUsabilityWithError() {
-        Event event = createEvent("test:event:error");
+        ResponseEvent event = createEvent("test:event:error");
 
         assertFalse(Events.isSuccess(event));
         assertTrue(Events.isError(event));
@@ -30,7 +32,7 @@ public class EventsJavaUsabilityTest {
 
     @Test
     public void testUsabilityWithNotFound() {
-        Event event = createEvent("test:event:notFound");
+        ResponseEvent event = createEvent("test:event:notFound");
 
         assertFalse(Events.isSuccess(event));
         assertTrue(Events.isError(event));
@@ -38,12 +40,12 @@ public class EventsJavaUsabilityTest {
         assertEquals(NotFound.class, Events.getErrorType(event).getClass());
     }
 
-    private Event createEvent(String name) {
+    private ResponseEvent createEvent(String name) {
         EventBuilder builder = new EventBuilder();
         builder.setName(name);
         builder.setVersion(1);
         builder.setPayload(42);
-        return builder.build();
+        return new ResponseEvent(name, 1, "id", "flowId", new JsonPrimitive(42), new JsonObject(), new JsonObject(), new JsonObject());
     }
 
 }

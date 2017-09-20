@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.context
 
 class RunnableWrapper(
-        private val eventContext: EventContext,
+        private val eventContext: EventContext?,
         private val runnable: Runnable) : Runnable {
 
     override fun run() {

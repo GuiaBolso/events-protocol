@@ -39,6 +39,8 @@ class EventBuilder {
 
             builder.name = "${event.name}:response"
             builder.version = event.version
+            builder.id = builder.id ?: event.id
+            builder.flowId = builder.flowId ?: event.flowId
 
             return builder
         }
@@ -58,6 +60,8 @@ class EventBuilder {
             builder.name = "${event.name}:${type.typeName}"
             builder.version = event.version
             builder.payload = message
+            builder.id = builder.id ?: event.id
+            builder.flowId = builder.flowId ?: event.flowId
 
             return builder.build()
         }
@@ -78,8 +82,8 @@ class EventBuilder {
     private val context = EventContextHolder.getContext()
     var name: String? = null
     var version: Int? = null
-    var id = context.id
-    var flowId = context.flowId
+    var id = context?.id
+    var flowId = context?.flowId
     var payload: Any? = null
     var identity: Any? = null
     var auth: Any? = null
@@ -88,8 +92,8 @@ class EventBuilder {
     fun build() = RequestEvent(
             name = this.name ?: throw MissingEventInformationException("Missing event name."),
             version = this.version ?: throw MissingEventInformationException("Missing event version."),
-            id = this.id,
-            flowId = this.flowId,
+            id = this.id ?: throw MissingEventInformationException("Missing event id."),
+            flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
             payload = convertPayload(),
             identity = convertToJsonObjectOrEmpty(this.identity),
             auth = convertToJsonObjectOrEmpty(this.auth),

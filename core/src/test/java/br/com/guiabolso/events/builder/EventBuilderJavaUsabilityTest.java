@@ -12,6 +12,8 @@ public class EventBuilderJavaUsabilityTest {
     public void testUsability() {
         EventBuilder builder = new EventBuilder();
         builder.setName("test:event");
+        builder.setId("id");
+        builder.setFlowId("flowId");
         builder.setVersion(1);
         builder.setPayload(42);
         Event event = builder.build();
@@ -36,6 +38,8 @@ public class EventBuilderJavaUsabilityTest {
     public void testNotFoundUsability() {
         EventBuilder builder = new EventBuilder();
         builder.setName("test:event");
+        builder.setId("id");
+        builder.setFlowId("flowId");
         builder.setVersion(1);
         builder.setPayload(42);
         Event event = builder.build();

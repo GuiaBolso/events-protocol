@@ -1,14 +1,12 @@
 package br.com.guiabolso.events.context
 
-import java.util.UUID.randomUUID
-
 object EventContextHolder {
 
     private val holder = ThreadLocal<EventContext>()
 
-    fun getContext() = holder.get() ?: EventContext(randomUUID().toString(), randomUUID().toString())
+    fun getContext(): EventContext? = holder.get()
 
-    fun setContext(context: EventContext) {
+    fun setContext(context: EventContext?) {
         holder.set(context)
     }
 
