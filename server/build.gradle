@@ -1,3 +1,6 @@
 dependencies {
     compile project(":core")
+
+    compile group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '3.42.0'
+    compile 'org.apache.commons:commons-lang3:3.4'
 }
