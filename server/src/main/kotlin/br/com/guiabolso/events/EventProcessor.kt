@@ -11,7 +11,7 @@ import br.com.guiabolso.events.metric.MDCMetricReporter
 import br.com.guiabolso.events.metric.MetricReporter
 import br.com.guiabolso.events.metric.NewrelicMetricReporter
 import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.EventErrorType.GenericError
+import br.com.guiabolso.events.model.EventErrorType.Generic
 import br.com.guiabolso.events.model.EventMessage
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -47,7 +47,7 @@ class EventProcessor(
                 logger.error("Error processing event.", e)
                 reporter.notifyError(e)
                 errorFor(
-                        event, GenericError(),
+                        event, Generic(),
                         EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to getStackTrace(e)))
                 )
             } finally {
