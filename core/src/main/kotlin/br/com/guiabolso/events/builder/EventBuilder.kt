@@ -1,11 +1,13 @@
 package br.com.guiabolso.events.builder
 
+import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.NotFound
 import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RequestEvent
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.util.*
@@ -37,8 +39,6 @@ class EventBuilder {
 
             builder.name = "${event.name}:response"
             builder.version = event.version
-            builder.id = event.id //TODO: Overwrite this or use the same 'magic'?
-            builder.flowId = event.flowId //TODO: Overwrite this or use the same 'magic'?
 
             return builder
         }
@@ -57,8 +57,6 @@ class EventBuilder {
             val builder = EventBuilder()
             builder.name = "${event.name}:${type.typeName}"
             builder.version = event.version
-            builder.id = event.id //TODO: Overwrite this or use the same 'magic'?
-            builder.flowId = event.flowId //TODO: Overwrite this or use the same 'magic'?
             builder.payload = message
 
             return builder.build()
@@ -77,16 +75,17 @@ class EventBuilder {
 
     }
 
+    private val context = EventContextHolder.getContext()
     var name: String? = null
     var version: Int? = null
-    var id = UUID.randomUUID().toString() //TODO: add some 'magic' to forward id
-    var flowId = UUID.randomUUID().toString() //TODO: add some 'magic' to forward flowId
+    var id = context.id
+    var flowId = context.flowId
     var payload: Any? = null
     var identity: Any? = null
     var auth: Any? = null
     var metadata: Any? = null
 
-    fun build() = Event(
+    fun build() = RequestEvent(
             name = this.name ?: throw MissingEventInformationException("Missing event name."),
             version = this.version ?: throw MissingEventInformationException("Missing event version."),
             id = this.id,

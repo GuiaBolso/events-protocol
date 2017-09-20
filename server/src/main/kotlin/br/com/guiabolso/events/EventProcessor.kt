@@ -13,6 +13,7 @@ import br.com.guiabolso.events.metric.NewrelicMetricReporter
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.EventErrorType.Generic
 import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RequestEvent
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace
@@ -59,7 +60,7 @@ class EventProcessor(
     private fun parseAndValidateEvent(rawEvent: String): Event =
             try {
                 val input = mapper.fromJson(rawEvent, InputEvent::class.java)
-                Event(
+                RequestEvent(
                         name = input.name.required("name"),
                         version = input.version.required("version"),
                         id = input.id.required("id"),
