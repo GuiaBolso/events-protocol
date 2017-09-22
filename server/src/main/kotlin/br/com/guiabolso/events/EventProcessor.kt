@@ -3,7 +3,8 @@ package br.com.guiabolso.events
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.notFoundFor
-import br.com.guiabolso.events.exception.EventExceptionHandler
+import br.com.guiabolso.events.exception.ExceptionHandlerRegistry.canHandle
+import br.com.guiabolso.events.exception.ExceptionHandlerRegistry.handleException
 import br.com.guiabolso.events.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.metric.CompositeMetricReporter
 import br.com.guiabolso.events.metric.MDCMetricReporter
@@ -27,12 +28,6 @@ class EventProcessor(
         private val mapper = Gson()
     }
 
-    private val handlers: MutableMap<Class<*>, EventExceptionHandler<*>> = mutableMapOf()
-
-    fun <T : Exception> addExceptionHandler(exception: Class<T>, exceptionHandler: EventExceptionHandler<T>) {
-        handlers.put(exception, exceptionHandler)
-    }
-
     fun processEvent(rawEvent: String): Event {
         val event = parseAndValidateEvent(rawEvent)
         val handler = discovery.eventHandlerFor(event.name, event.version)
@@ -44,12 +39,16 @@ class EventProcessor(
                 reporter.startProcessingEvent(event)
                 handler.handle(event)
             } catch (e: Exception) {
-                logger.error("Error processing event.", e)
-                reporter.notifyError(e)
-                errorFor(
-                        event, Generic(),
-                        EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to getStackTrace(e)))
-                )
+                if (canHandle(e)) {
+                    handleException(e, event, reporter)
+                } else {
+                    logger.error("Error processing event.", e)
+                    reporter.notifyError(e)
+                    errorFor(
+                            event, Generic(),
+                            EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to getStackTrace(e)))
+                    )
+                }
             } finally {
                 reporter.eventProcessFinished(event)
             }
