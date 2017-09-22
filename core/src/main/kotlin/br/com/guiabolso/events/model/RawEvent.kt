@@ -1,9 +1,9 @@
-package br.com.guiabolso.events.input
+package br.com.guiabolso.events.model
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
-data class InputEvent(
+data class RawEvent(
         val name: String?,
         val version: Int?,
         val id: String?,
