@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.client
 
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
+import br.com.guiabolso.events.client.http.FuelHttpClient
 import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
@@ -12,13 +13,13 @@ import br.com.guiabolso.events.validation.EventValidator.validateAsResponseEvent
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeoutException
 
-class EventClient(private val httpClient: HttpClientAdapter) {
+class EventClient(private val httpClient: HttpClientAdapter = FuelHttpClient()) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(EventClient::class.java)!!
     }
 
-    fun sendEvent(url: String, requestEvent: RequestEvent, timeout: Long? = null): Response {
+    fun sendEvent(url: String, requestEvent: RequestEvent, timeout: Int? = null): Response {
         try {
             logger.debug("Sending event ${requestEvent.name}:${requestEvent.version} to $url with timeout $timeout.")
             val rawResponse = httpClient.post(
@@ -47,7 +48,6 @@ class EventClient(private val httpClient: HttpClientAdapter) {
 
     private fun parseEvent(rawResponse: String): ResponseEvent {
         val rawEvent = MapperHolder.mapper.fromJson(rawResponse, RawEvent::class.java)
-
         return validateAsResponseEvent(rawEvent)
     }
 
