@@ -1,9 +1,7 @@
 package br.com.guiabolso.events
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
-import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.notFoundFor
-import br.com.guiabolso.events.exception.ExceptionHandlerRegistry.canHandle
 import br.com.guiabolso.events.exception.ExceptionHandlerRegistry.handleException
 import br.com.guiabolso.events.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.metric.CompositeMetricReporter
@@ -11,7 +9,6 @@ import br.com.guiabolso.events.metric.MDCMetricReporter
 import br.com.guiabolso.events.metric.MetricReporter
 import br.com.guiabolso.events.metric.NewrelicMetricReporter
 import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.EventErrorType.Generic
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
@@ -39,16 +36,7 @@ class EventProcessor(
                 reporter.startProcessingEvent(event)
                 handler.handle(event)
             } catch (e: Exception) {
-                if (canHandle(e)) {
-                    handleException(e, event, reporter)
-                } else {
-                    logger.error("Error processing event.", e)
-                    reporter.notifyError(e)
-                    errorFor(
-                            event, Generic(),
-                            EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to getStackTrace(e)))
-                    )
-                }
+                handleException(e, event, reporter)
             } finally {
                 reporter.eventProcessFinished(event)
             }

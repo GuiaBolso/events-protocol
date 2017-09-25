@@ -10,6 +10,6 @@ interface MetricReporter {
 
     fun addProperty(key: String, value: String)
 
-    fun notifyError(exception: Exception)
+    fun notifyError(exception: Throwable)
 
 }
