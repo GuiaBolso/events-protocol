@@ -20,7 +20,7 @@ class NewrelicMetricReporter : MetricReporter {
         NewRelic.addCustomParameter(key, value)
     }
 
-    override fun notifyError(exception: Exception) {
+    override fun notifyError(exception: Throwable) {
         NewRelic.noticeError(exception)
     }
 

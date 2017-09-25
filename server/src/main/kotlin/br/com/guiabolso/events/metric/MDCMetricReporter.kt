@@ -21,7 +21,7 @@ class MDCMetricReporter : MetricReporter {
         MDC.put(key, value)
     }
 
-    override fun notifyError(exception: Exception) {
+    override fun notifyError(exception: Throwable) {
     }
 
 }

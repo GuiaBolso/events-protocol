@@ -1,28 +1,22 @@
 package br.com.guiabolso.events.exception
 
-import br.com.guiabolso.events.EventProcessor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.metric.MetricReporter
-import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.EventErrorType
-import br.com.guiabolso.events.model.EventMessage
-import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.model.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.slf4j.LoggerFactory
 
-object ExceptionHandlerRegistry {
+class ExceptionHandlerRegistry {
 
-    private val logger = LoggerFactory.getLogger(EventProcessor::class.java)!!
-
+    private val logger = LoggerFactory.getLogger(ExceptionHandlerRegistry::class.java)!!
     private val handlers = hashMapOf<Class<*>, EventExceptionHandler<Throwable>>()
 
-    @JvmStatic
+    @Suppress("UNCHECKED_CAST")
     fun <T : Throwable> register(clazz: Class<T>, handler: EventExceptionHandler<T>) {
         handlers.put(clazz, handler as EventExceptionHandler<Throwable>)
     }
 
-    @JvmStatic
-    fun <T : Throwable> handleException(e: T, event: Event, metricReporter: MetricReporter): Event {
+    fun <T : Throwable> handleException(e: T, event: RequestEvent, metricReporter: MetricReporter): ResponseEvent {
         return when (canHandle(e)) {
             false -> {
                 logger.error("Error processing event.", e)

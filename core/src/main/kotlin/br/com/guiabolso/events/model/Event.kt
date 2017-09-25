@@ -4,15 +4,15 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 
-interface Event {
-    val name: String
-    val version: Int
-    val id: String
-    val flowId: String
-    val payload: JsonElement
-    val identity: JsonObject
-    val auth: JsonObject
-    val metadata: JsonObject
+sealed class Event {
+    abstract val name: String
+    abstract val version: Int
+    abstract val id: String
+    abstract val flowId: String
+    abstract val payload: JsonElement
+    abstract val identity: JsonObject
+    abstract val auth: JsonObject
+    abstract val metadata: JsonObject
 }
 
 data class RequestEvent(
@@ -24,7 +24,7 @@ data class RequestEvent(
         override val identity: JsonObject,
         override val auth: JsonObject,
         override val metadata: JsonObject
-) : Event
+) : Event()
 
 data class ResponseEvent(
         override val name: String,
@@ -35,4 +35,4 @@ data class ResponseEvent(
         override val identity: JsonObject,
         override val auth: JsonObject,
         override val metadata: JsonObject
-) : Event
+) : Event()

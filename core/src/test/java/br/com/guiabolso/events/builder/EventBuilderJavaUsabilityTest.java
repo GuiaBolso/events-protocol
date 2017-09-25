@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.builder;
 
-import br.com.guiabolso.events.model.Event;
+import br.com.guiabolso.events.model.RequestEvent;
+import br.com.guiabolso.events.model.ResponseEvent;
 import com.google.gson.JsonObject;
 import org.junit.Test;
 
@@ -16,11 +17,11 @@ public class EventBuilderJavaUsabilityTest {
         builder.setFlowId("flowId");
         builder.setVersion(1);
         builder.setPayload(42);
-        Event event = builder.build();
+        RequestEvent event = builder.buildRequestEvent();
 
         EventBuilder responseBuilder = EventBuilder.javaResponseFor(event);
         responseBuilder.setPayload(84);
-        Event response = responseBuilder.build();
+        ResponseEvent response = responseBuilder.buildResponseEvent();
 
         assertEquals("test:event", event.getName());
         assertEquals(1, event.getVersion());
@@ -36,17 +37,9 @@ public class EventBuilderJavaUsabilityTest {
 
     @Test
     public void testNotFoundUsability() {
-        EventBuilder builder = new EventBuilder();
-        builder.setName("test:event");
-        builder.setId("id");
-        builder.setFlowId("flowId");
-        builder.setVersion(1);
-        builder.setPayload(42);
-        Event event = builder.build();
+        ResponseEvent response = EventBuilder.eventNotFound("test:event", 1);
 
-        Event response = EventBuilder.notFoundFor(event);
-
-        assertEquals("test:event:notFound", response.getName());
+        assertEquals("eventNotFound", response.getName());
         assertEquals(1, response.getVersion());
 
         JsonObject message = response.getPayload().getAsJsonObject();
