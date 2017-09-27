@@ -1,23 +1,19 @@
-package br.com.guiabolso.events
+package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
-import br.com.guiabolso.events.exception.EventExceptionHandler
-import br.com.guiabolso.events.exception.ExceptionHandlerRegistry
-import br.com.guiabolso.events.exception.ExceptionUtils.getStackTrace
-import br.com.guiabolso.events.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.metric.CompositeMetricReporter
-import br.com.guiabolso.events.metric.MDCMetricReporter
-import br.com.guiabolso.events.metric.MetricReporter
-import br.com.guiabolso.events.metric.NewrelicMetricReporter
-import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.EventMessage
-import br.com.guiabolso.events.model.RawEvent
-import br.com.guiabolso.events.model.RequestEvent
-import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.model.*
+import br.com.guiabolso.events.server.exception.EventExceptionHandler
+import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
+import br.com.guiabolso.events.server.exception.ExceptionUtils.getStackTrace
+import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
+import br.com.guiabolso.events.server.metric.CompositeMetricReporter
+import br.com.guiabolso.events.server.metric.MDCMetricReporter
+import br.com.guiabolso.events.server.metric.MetricReporter
+import br.com.guiabolso.events.server.metric.NewrelicMetricReporter
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
 import org.slf4j.LoggerFactory.getLogger
 

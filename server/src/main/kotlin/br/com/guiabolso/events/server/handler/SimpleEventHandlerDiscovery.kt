@@ -1,4 +1,4 @@
-package br.com.guiabolso.events.handler
+package br.com.guiabolso.events.server.handler
 
 class SimpleEventHandlerDiscovery : EventHandlerDiscovery {
 
@@ -9,4 +9,5 @@ class SimpleEventHandlerDiscovery : EventHandlerDiscovery {
     }
 
     override fun eventHandlerFor(eventName: String, eventVersion: Int) = handlers[eventName to eventVersion]
+
 }

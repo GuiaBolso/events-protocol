@@ -1,13 +1,9 @@
-package br.com.guiabolso.events.exception
+package br.com.guiabolso.events.server.exception
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
-import br.com.guiabolso.events.exception.ExceptionUtils.getStackTrace
-import br.com.guiabolso.events.metric.MetricReporter
-import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.EventErrorType
-import br.com.guiabolso.events.model.EventMessage
-import br.com.guiabolso.events.model.RequestEvent
-import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.model.*
+import br.com.guiabolso.events.server.exception.ExceptionUtils.getStackTrace
+import br.com.guiabolso.events.server.metric.MetricReporter
 import org.slf4j.LoggerFactory
 
 class ExceptionHandlerRegistry {

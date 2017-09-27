@@ -2,8 +2,9 @@ package br.com.guiabolso.events.client
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
-import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.client.exception.BadProtocolException
+import br.com.guiabolso.events.client.exception.TimeoutException
+import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import com.nhaarman.mockito_kotlin.whenever
@@ -11,7 +12,6 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.Mockito.mock
 import java.net.ConnectException
-import java.util.concurrent.TimeoutException
 
 class EventClientTest {
 

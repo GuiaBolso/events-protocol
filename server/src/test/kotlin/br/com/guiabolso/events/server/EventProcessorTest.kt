@@ -1,14 +1,15 @@
-package br.com.guiabolso.events
+package br.com.guiabolso.events.server
 
-import br.com.guiabolso.events.exception.EventExceptionHandler
-import br.com.guiabolso.events.handler.EventHandler
-import br.com.guiabolso.events.handler.SimpleEventHandlerDiscovery
+import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.metric.MetricReporter
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.server.exception.EventExceptionHandler
+import br.com.guiabolso.events.server.handler.EventHandler
+import br.com.guiabolso.events.server.handler.SimpleEventHandlerDiscovery
+import br.com.guiabolso.events.server.metric.MetricReporter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

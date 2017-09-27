@@ -1,4 +1,4 @@
-package br.com.guiabolso.events.handler
+package br.com.guiabolso.events.server.handler
 
 interface EventHandlerDiscovery {
 

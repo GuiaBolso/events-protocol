@@ -1,4 +1,4 @@
-package br.com.guiabolso.events.exception
+package br.com.guiabolso.events.server.exception
 
 import java.io.PrintWriter
 import java.io.StringWriter
