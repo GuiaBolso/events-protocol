@@ -24,11 +24,8 @@ class EventBuilder {
 
         @JvmStatic
         fun responseFor(event: RequestEvent, operations: EventBuilder.() -> Unit): ResponseEvent {
-            val builder = EventBuilder()
-
-            javaResponseFor(event)
+            val builder = javaResponseFor(event)
             builder.operations()
-
             return builder.buildResponseEvent()
         }
 
