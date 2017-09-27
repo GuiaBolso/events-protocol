@@ -15,7 +15,7 @@ sealed class Event {
     abstract val metadata: JsonObject
 }
 
-data class RequestEvent(
+data class ResponseEvent(
         override val name: String,
         override val version: Int,
         override val id: String,
@@ -26,7 +26,7 @@ data class RequestEvent(
         override val metadata: JsonObject
 ) : Event()
 
-data class ResponseEvent(
+data class RequestEvent(
         override val name: String,
         override val version: Int,
         override val id: String,

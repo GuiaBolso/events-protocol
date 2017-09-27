@@ -1,9 +1,13 @@
 package br.com.guiabolso.events.exception
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
+import br.com.guiabolso.events.exception.ExceptionUtils.getStackTrace
 import br.com.guiabolso.events.metric.MetricReporter
-import br.com.guiabolso.events.model.*
-import org.apache.commons.lang3.exception.ExceptionUtils
+import br.com.guiabolso.events.model.Event
+import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RequestEvent
+import br.com.guiabolso.events.model.ResponseEvent
 import org.slf4j.LoggerFactory
 
 class ExceptionHandlerRegistry {
@@ -22,8 +26,9 @@ class ExceptionHandlerRegistry {
                 logger.error("Error processing event.", e)
                 metricReporter.notifyError(e)
                 errorFor(
-                        event, EventErrorType.Generic,
-                        EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to ExceptionUtils.getStackTrace(e)))
+                        event,
+                        EventErrorType.Generic,
+                        EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to getStackTrace(e)))
                 )
             }
             else -> handlers[e::class.java]!!.handleException(e, event, metricReporter)

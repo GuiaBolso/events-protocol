@@ -9,8 +9,8 @@ class MDCMetricReporter : MetricReporter {
         addProperty("Event", "${event.name}:V${event.version}")
         addProperty("EventID", event.id)
         addProperty("FlowID", event.flowId)
-        addProperty("UserID", event.identity.get("userId").asString ?: "unknown")
-        addProperty("Origin", event.metadata.get("origin").asString ?: "unknown")
+        addProperty("UserID", event.identity.get("userId")?.asString ?: "unknown")
+        addProperty("Origin", event.metadata.get("origin")?.asString ?: "unknown")
     }
 
     override fun eventProcessFinished(event: Event) {
