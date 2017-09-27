@@ -1,14 +1,21 @@
 package br.com.guiabolso.events.builder
 
+import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
+import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.event
+import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.context.EventContextHolder.setContext
 import br.com.guiabolso.events.exception.MissingEventInformationException
+import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.EventMessage
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 class EventBuilderTest {
@@ -241,6 +248,62 @@ class EventBuilderTest {
         }
         responseFor(event) {
         }
+    }
+
+    @Test
+    fun testCreateErrorResponseEvent() {
+        val event = event {
+            id = "id"
+            flowId = "flowId"
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        val response = errorFor(event, EventErrorType.Generic, EventMessage("code", emptyMap()))
+
+        assertEquals("id", response.id)
+        assertEquals("flowId", response.flowId)
+        assertEquals("event:error", response.name)
+        assertEquals(1, response.version)
+        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("code", emptyMap())), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testCreateEventNotFoundResponseEvent() {
+        val event = event {
+            id = "id"
+            flowId = "flowId"
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        val response = eventNotFound(event)
+
+        assertEquals("id", response.id)
+        assertEquals("flowId", response.flowId)
+        assertEquals("eventNotFound", response.name)
+        assertEquals(1, response.version)
+        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testCreateBadProtocolResponseEvent() {
+        val response = badProtocol(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap()))
+
+        assertNotNull(response.id)
+        assertNotNull(response.flowId)
+        assertEquals("badProtocol", response.name)
+        assertEquals(1, response.version)
+        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
     }
 
 }
