@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.builder
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.event
+import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.context.EventContextHolder.setContext
@@ -118,5 +119,128 @@ class EventBuilderTest {
         }
     }
 
+    @Test
+    fun testCreateResponseEvent() {
+        val event = event {
+            id = "id"
+            flowId = "flowId"
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        val response = responseFor(event) {
+            payload = 84
+        }
+
+        assertEquals("id", response.id)
+        assertEquals("flowId", response.flowId)
+        assertEquals("event:response", response.name)
+        assertEquals(1, response.version)
+        assertEquals(JsonPrimitive(84), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testCreateResponseEventWithIdAndFlowIdForward() {
+        setContext(EventContext("id", "flowId"))
+
+        val event = event {
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        val response = responseFor(event) {
+            payload = 84
+        }
+
+        assertEquals("id", response.id)
+        assertEquals("flowId", response.flowId)
+        assertEquals("event:response", response.name)
+        assertEquals(1, response.version)
+        assertEquals(JsonPrimitive(84), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+
+        EventContextHolder.clean()
+    }
+
+    @Test
+    fun testCreateResponseEventWithIdAndFlowIdForwardOverwritten() {
+        val event = event {
+            id = "id"
+            flowId = "flowId"
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        val response = responseFor(event) {
+            id = "otherId"
+            flowId = "otherFlowId"
+            payload = 84
+        }
+
+        assertEquals("otherId", response.id)
+        assertEquals("otherFlowId", response.flowId)
+        assertEquals("event:response", response.name)
+        assertEquals(1, response.version)
+        assertEquals(JsonPrimitive(84), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test(expected = MissingEventInformationException::class)
+    fun testCreateResponseEventWithoutIdAndFlowId() {
+        val event = event {
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        responseFor(event) {
+            id = null
+            flowId = null
+            payload = 84
+        }
+    }
+
+    @Test(expected = MissingEventInformationException::class)
+    fun testCreateResponseWithoutName() {
+        val event = event {
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        responseFor(event) {
+            name = null
+            payload = 84
+        }
+    }
+
+    @Test(expected = MissingEventInformationException::class)
+    fun testCreateResponseWithoutVersion() {
+        val event = event {
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        responseFor(event) {
+            version = null
+            payload = 84
+        }
+    }
+
+    @Test(expected = MissingEventInformationException::class)
+    fun testCreateResponseWithoutPayload() {
+        val event = event {
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        responseFor(event) {
+        }
+    }
 
 }
