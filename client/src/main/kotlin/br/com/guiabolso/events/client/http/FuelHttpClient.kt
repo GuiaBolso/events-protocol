@@ -2,11 +2,13 @@ package br.com.guiabolso.events.client.http
 
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.exception.FailedDependencyException
+import br.com.guiabolso.events.client.exception.TimeoutException
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.getAs
+import java.net.SocketTimeoutException
 import java.nio.charset.Charset
 
 class FuelHttpClient : HttpClientAdapter {
@@ -22,7 +24,7 @@ class FuelHttpClient : HttpClientAdapter {
             request.timeoutRead(timeout)
         }
 
-        val (_, _, result) = request.response()
+        val (_, _, result) = request.responseString()
 
         when (result) {
             is Result.Success -> {
@@ -30,7 +32,11 @@ class FuelHttpClient : HttpClientAdapter {
             }
             is Result.Failure -> {
                 val error: FuelError? = result.getAs()
-                throw FailedDependencyException("Failed dependency calling $url. Error: $error", error?.exception)
+                if (error?.exception is SocketTimeoutException) {
+                    throw TimeoutException("Timeout calling $url. Error: $error", error.exception)
+                } else {
+                    throw FailedDependencyException("Failed dependency calling $url. Error: $error", error?.exception)
+                }
             }
         }
     }

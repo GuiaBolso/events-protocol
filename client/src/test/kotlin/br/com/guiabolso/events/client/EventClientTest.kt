@@ -3,7 +3,7 @@ package br.com.guiabolso.events.client
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.model.Response
-import br.com.guiabolso.events.exception.BadProtocolException
+import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import com.nhaarman.mockito_kotlin.whenever

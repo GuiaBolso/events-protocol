@@ -1,8 +1,8 @@
 package br.com.guiabolso.events.client.adapter
 
 import br.com.guiabolso.events.client.exception.FailedDependencyException
+import br.com.guiabolso.events.client.exception.TimeoutException
 import java.nio.charset.Charset
-import java.util.concurrent.TimeoutException
 
 interface HttpClientAdapter {
 

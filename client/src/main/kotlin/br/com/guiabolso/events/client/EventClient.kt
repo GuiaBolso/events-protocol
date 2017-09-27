@@ -1,9 +1,10 @@
 package br.com.guiabolso.events.client
 
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
+import br.com.guiabolso.events.client.exception.BadProtocolException
+import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.http.FuelHttpClient
 import br.com.guiabolso.events.client.model.Response
-import br.com.guiabolso.events.exception.BadProtocolException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -12,7 +13,6 @@ import br.com.guiabolso.events.utils.Events.getErrorType
 import br.com.guiabolso.events.utils.Events.isSuccess
 import br.com.guiabolso.events.validation.EventValidator.validateAsResponseEvent
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeoutException
 
 class EventClient(private val httpClient: HttpClientAdapter = FuelHttpClient()) {
 
