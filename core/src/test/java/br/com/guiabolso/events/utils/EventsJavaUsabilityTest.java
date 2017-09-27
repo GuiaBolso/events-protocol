@@ -28,6 +28,7 @@ public class EventsJavaUsabilityTest {
         assertTrue(Events.isError(event));
         assertEquals("error", Events.getErrorType(event).getTypeName());
         assertEquals(Generic.class, Events.getErrorType(event).getClass());
+        assertEquals(Generic.INSTANCE, Events.getErrorType(event));
     }
 
     @Test
@@ -38,6 +39,7 @@ public class EventsJavaUsabilityTest {
         assertTrue(Events.isError(event));
         assertEquals("notFound", Events.getErrorType(event).getTypeName());
         assertEquals(NotFound.class, Events.getErrorType(event).getClass());
+        assertEquals(NotFound.INSTANCE, Events.getErrorType(event));
     }
 
     private ResponseEvent createEvent(String name) {

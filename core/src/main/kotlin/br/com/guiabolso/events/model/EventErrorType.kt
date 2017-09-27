@@ -1,18 +1,18 @@
 package br.com.guiabolso.events.model
 
-sealed class EventErrorType(val typeName: String) {
+sealed class EventErrorType(open val typeName: String) {
 
     companion object {
         @JvmStatic
         fun getErrorType(errorType: String) = when (errorType) {
-            "error" -> Generic()
-            "notFound" -> NotFound()
+            "error" -> Generic
+            "notFound" -> NotFound
             else -> Unknown(errorType)
         }
     }
 
-    class Generic : EventErrorType("error")
-    class NotFound : EventErrorType("notFound")
-    class Unknown(typeName: String) : EventErrorType(typeName)
+    object Generic : EventErrorType("error")
+    object NotFound : EventErrorType("notFound")
+    data class Unknown(override val typeName: String) : EventErrorType(typeName)
 
 }

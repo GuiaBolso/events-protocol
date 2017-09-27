@@ -9,13 +9,13 @@ class EventErrorTypeTest {
 
     @Test
     fun testErrorMapping() {
-        assertEquals(Generic::class.java, getErrorType("error")::class.java)
+        assertEquals(Generic, getErrorType("error"))
         assertEquals("error", getErrorType("error").typeName)
 
-        assertEquals(NotFound::class.java, getErrorType("notFound")::class.java)
+        assertEquals(NotFound, getErrorType("notFound"))
         assertEquals("notFound", getErrorType("notFound").typeName)
 
-        assertEquals(Unknown::class.java, getErrorType("somethingElse")::class.java)
+        assertEquals(Unknown("somethingElse"), getErrorType("somethingElse"))
         assertEquals("somethingElse", getErrorType("somethingElse").typeName)
     }
 
