@@ -3,6 +3,7 @@ package br.com.guiabolso.events.client
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.http.FuelHttpClient
 import br.com.guiabolso.events.client.model.Response
+import br.com.guiabolso.events.exception.BadProtocolException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -40,6 +41,9 @@ class EventClient(private val httpClient: HttpClientAdapter = FuelHttpClient()) 
         } catch (e: TimeoutException) {
             logger.warn("Event ${requestEvent.name}:${requestEvent.version} timeout.", e)
             return Response.Timeout(e)
+        } catch (e: BadProtocolException) {
+            logger.warn("Event ${requestEvent.name}:${requestEvent.version} bad protocol.", e)
+            return Response.FailedDependency(e, e.payload)
         } catch (e: Exception) {
             logger.warn("Event ${requestEvent.name}:${requestEvent.version} error.", e)
             return Response.FailedDependency(e)
@@ -47,8 +51,12 @@ class EventClient(private val httpClient: HttpClientAdapter = FuelHttpClient()) 
     }
 
     private fun parseEvent(rawResponse: String): ResponseEvent {
-        val rawEvent = MapperHolder.mapper.fromJson(rawResponse, RawEvent::class.java)
-        return validateAsResponseEvent(rawEvent)
+        try {
+            val rawEvent = MapperHolder.mapper.fromJson(rawResponse, RawEvent::class.java)
+            return validateAsResponseEvent(rawEvent)
+        } catch (e: Exception) {
+            throw BadProtocolException(rawResponse, e)
+        }
     }
 
 }

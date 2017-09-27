@@ -5,13 +5,13 @@ import br.com.guiabolso.events.model.ResponseEvent
 
 sealed class Response {
 
-    class Success(val event: ResponseEvent) : Response()
+    data class Success(val event: ResponseEvent) : Response()
 
-    class Error(val event: ResponseEvent, val errorType: EventErrorType) : Response()
+    data class Error(val event: ResponseEvent, val errorType: EventErrorType) : Response()
 
-    class FailedDependency(val exception: Exception) : Response()
+    data class FailedDependency(val exception: Exception, val response: String? = null) : Response()
 
-    class Timeout(val exception: Exception) : Response()
+    data class Timeout(val exception: Exception) : Response()
 
     fun isSuccess() = this is Success
 

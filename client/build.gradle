@@ -2,4 +2,6 @@ dependencies {
     compile project(":core")
 
     compile 'com.github.kittinunf.fuel:fuel:1.10.0'
+
+    testCompile project(':core').sourceSets.test.output
 }
