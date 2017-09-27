@@ -37,7 +37,14 @@ public class EventBuilderJavaUsabilityTest {
 
     @Test
     public void testNotFoundUsability() {
-        ResponseEvent response = EventBuilder.eventNotFound("test:event", 1);
+        EventBuilder builder = new EventBuilder();
+        builder.setName("test:event");
+        builder.setId("id");
+        builder.setFlowId("flowId");
+        builder.setVersion(1);
+        builder.setPayload(42);
+
+        ResponseEvent response = EventBuilder.eventNotFound(builder.buildRequestEvent());
 
         assertEquals("eventNotFound", response.getName());
         assertEquals(1, response.getVersion());

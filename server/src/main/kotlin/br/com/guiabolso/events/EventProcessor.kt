@@ -36,7 +36,7 @@ class EventProcessor(
             is RequestEvent -> {
                 val handler = discovery.eventHandlerFor(event.name, event.version)
                 return if (handler == null) {
-                    eventNotFound(event.name, event.version)
+                    eventNotFound(event)
                 } else {
                     try {
                         reporter.startProcessingEvent(event)

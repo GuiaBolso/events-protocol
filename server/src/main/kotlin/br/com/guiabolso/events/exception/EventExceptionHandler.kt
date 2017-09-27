@@ -22,7 +22,7 @@ class ExceptionHandlerRegistry {
                 logger.error("Error processing event.", e)
                 metricReporter.notifyError(e)
                 errorFor(
-                        event, EventErrorType.Generic(),
+                        event, EventErrorType.Generic,
                         EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to ExceptionUtils.getStackTrace(e)))
                 )
             }

@@ -3,7 +3,10 @@ package br.com.guiabolso.events.builder
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.model.*
+import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RequestEvent
+import br.com.guiabolso.events.model.ResponseEvent
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.util.*
@@ -13,14 +16,14 @@ class EventBuilder {
     companion object {
 
         @JvmStatic
-        fun event(operations: EventBuilder.() -> Unit): Event {
+        fun event(operations: EventBuilder.() -> Unit): RequestEvent {
             val builder = EventBuilder()
             builder.operations()
             return builder.buildRequestEvent()
         }
 
         @JvmStatic
-        fun responseFor(event: RequestEvent, operations: EventBuilder.() -> Unit): Event {
+        fun responseFor(event: RequestEvent, operations: EventBuilder.() -> Unit): ResponseEvent {
             val builder = EventBuilder()
 
             javaResponseFor(event)
@@ -56,13 +59,13 @@ class EventBuilder {
         }
 
         @JvmStatic
-        fun eventNotFound(name: String, version: Int): ResponseEvent {
+        fun eventNotFound(event: RequestEvent): ResponseEvent {
             val builder = EventBuilder()
             builder.name = "eventNotFound"
             builder.version = 1
-            builder.id = UUID.randomUUID().toString()
-            builder.flowId = UUID.randomUUID().toString()
-            builder.payload = EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to name, "version" to version))
+            builder.id = builder.id ?: event.id
+            builder.flowId = builder.flowId ?: event.flowId
+            builder.payload = EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
             return builder.buildResponseEvent()
         }
 
