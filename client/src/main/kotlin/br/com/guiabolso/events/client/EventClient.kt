@@ -14,7 +14,9 @@ import br.com.guiabolso.events.utils.Events.isSuccess
 import br.com.guiabolso.events.validation.EventValidator.validateAsResponseEvent
 import org.slf4j.LoggerFactory
 
-class EventClient(private val httpClient: HttpClientAdapter = FuelHttpClient()) {
+class EventClient(
+        private val httpClient: HttpClientAdapter = FuelHttpClient(),
+        private val defaultTimeout: Int = 60000) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(EventClient::class.java)!!
@@ -28,7 +30,7 @@ class EventClient(private val httpClient: HttpClientAdapter = FuelHttpClient()) 
                     mapOf("Content-Type" to "application/json"),
                     MapperHolder.mapper.toJson(requestEvent),
                     Charsets.UTF_8,
-                    timeout
+                    timeout ?: defaultTimeout
             )
             val event = parseEvent(rawResponse)
             return if (event.isSuccess()) {

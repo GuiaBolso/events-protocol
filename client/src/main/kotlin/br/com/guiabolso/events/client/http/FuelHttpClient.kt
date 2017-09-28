@@ -13,16 +13,14 @@ import java.nio.charset.Charset
 
 class FuelHttpClient : HttpClientAdapter {
 
-    override fun post(url: String, headers: Map<String, String>, payload: String, charset: Charset, timeout: Int?): String {
+    override fun post(url: String, headers: Map<String, String>, payload: String, charset: Charset, timeout: Int): String {
         val request = FuelManager.instance.request(Method.POST, url)
 
         headers.forEach { k, v -> request.header(k to v) }
 
         request.body(payload, charset)
-        if (timeout != null) {
-            request.timeout(timeout)
-            request.timeoutRead(timeout)
-        }
+        request.timeout(timeout)
+        request.timeoutRead(timeout)
 
         val (_, _, result) = request.responseString()
 
