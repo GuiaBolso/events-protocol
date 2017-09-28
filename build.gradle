@@ -2,18 +2,32 @@ buildscript {
     ext.kotlin_version = '1.1.50'
 
     repositories {
+        jcenter()
         mavenCentral()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        classpath 'com.novoda:bintray-release:0.5.0'
+    }
+}
+
+
+allprojects {
+    ext {
+        publish_version = '1.0.0'
     }
 }
 
 subprojects {
     apply plugin: 'kotlin'
 
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+
     group 'br.com.guiabolso'
-    version '0.1-SNAPSHOT'
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 

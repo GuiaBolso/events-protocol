@@ -5,3 +5,17 @@ dependencies {
 
     testCompile project(':core').sourceSets.test.output
 }
+
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    artifactId = 'events-server'
+    autoPublish = true
+    desc = 'Server side helpers for event-protocol'
+    groupId = 'br.com.guiabolso'
+    licences = ['APACHE-2.0']
+    publishVersion = parent.ext.publish_version
+    uploadName = 'Events-Server'
+    website = 'https://github.com/GuiaBolso/events-protocol'
+}
