@@ -8,7 +8,7 @@ import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.handler.EventHandler
-import br.com.guiabolso.events.server.handler.SimpleEventHandlerDiscovery
+import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import br.com.guiabolso.events.server.metric.MetricReporter
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -17,20 +17,20 @@ import org.junit.Test
 class EventProcessorTest {
 
     private lateinit var eventProcessor: EventProcessor
-    private lateinit var eventHandlerDiscovery: SimpleEventHandlerDiscovery
+    private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry
 
     @Before
     fun setUp() {
-        eventHandlerDiscovery = SimpleEventHandlerDiscovery()
+        eventHandlerRegistry = SimpleEventHandlerRegistry()
 
-        eventProcessor = EventProcessor(eventHandlerDiscovery)
+        eventProcessor = EventProcessor(eventHandlerRegistry)
     }
 
     @Test
     fun testCanProcessEvent() {
         val event = EventBuilderForTest.buildRequestEvent()
 
-        eventHandlerDiscovery.add(event.name, event.version, object : EventHandler {
+        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
 
             override fun handle(event: RequestEvent): ResponseEvent {
                 return EventBuilderForTest.buildResponseEvent()
@@ -54,7 +54,7 @@ class EventProcessorTest {
     fun testEventThrowException() {
         val event = EventBuilderForTest.buildRequestEvent()
 
-        eventHandlerDiscovery.add(event.name, event.version, object : EventHandler {
+        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
 
             override fun handle(event: RequestEvent): ResponseEvent {
                 throw RuntimeException("error")
@@ -72,7 +72,7 @@ class EventProcessorTest {
     fun testCanHandleException() {
         val event = EventBuilderForTest.buildRequestEvent()
 
-        eventHandlerDiscovery.add(event.name, event.version, object : EventHandler {
+        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
 
             override fun handle(event: RequestEvent): ResponseEvent {
                 throw RuntimeException("error")
