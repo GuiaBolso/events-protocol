@@ -14,7 +14,9 @@ import br.com.guiabolso.events.utils.Events.isSuccess
 import br.com.guiabolso.events.validation.EventValidator.validateAsResponseEvent
 import org.slf4j.LoggerFactory
 
-class EventClient(
+class EventClient
+@JvmOverloads
+constructor(
         private val httpClient: HttpClientAdapter = FuelHttpClient(),
         private val defaultTimeout: Int = 60000) {
 
@@ -22,6 +24,7 @@ class EventClient(
         private val logger = LoggerFactory.getLogger(EventClient::class.java)!!
     }
 
+    @JvmOverloads
     fun sendEvent(url: String, requestEvent: RequestEvent, timeout: Int? = null): Response {
         try {
             logger.debug("Sending event ${requestEvent.name}:${requestEvent.version} to $url with timeout $timeout.")
