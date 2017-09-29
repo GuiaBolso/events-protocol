@@ -2,14 +2,11 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import br.com.guiabolso.events.server.metric.MetricReporter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -80,13 +77,9 @@ class EventProcessorTest {
 
         })
 
-        eventProcessor.register(RuntimeException::class.java, object : EventExceptionHandler<RuntimeException> {
-
-            override fun handleException(exception: RuntimeException, event: Event, metricReporter: MetricReporter): ResponseEvent {
-                return EventBuilderForTest.buildResponseEvent().copy("${event.name}:bad_request")
-            }
-
-        })
+        eventProcessor.register(RuntimeException::class.java) { _, requestEvent, _ ->
+            EventBuilderForTest.buildResponseEvent().copy("${requestEvent.name}:bad_request")
+        }
 
         val responseEvent = MapperHolder.mapper.fromJson(eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString()), RawEvent::class.java)
 
