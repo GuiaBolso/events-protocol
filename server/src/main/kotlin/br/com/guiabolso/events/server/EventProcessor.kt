@@ -30,28 +30,28 @@ class EventProcessor(
         exceptionHandlerRegistry.register(clazz, handler)
     }
 
-    fun processEvent(rawEvent: String): ResponseEvent {
+    fun processEvent(rawEvent: String): String {
         val event = parseAndValidateEvent(rawEvent)
 
         return when (event) {
             is RequestEvent -> {
                 val handler = discovery.eventHandlerFor(event.name, event.version)
                 return if (handler == null) {
-                    eventNotFound(event)
+                    eventNotFound(event).json()
                 } else {
                     try {
                         EventContextHolder.setContext(EventContext(event.id, event.flowId))
                         reporter.startProcessingEvent(event)
-                        handler.handle(event)
+                        handler.handle(event).json()
                     } catch (e: Exception) {
-                        exceptionHandlerRegistry.handleException(e, event, reporter)
+                        exceptionHandlerRegistry.handleException(e, event, reporter).json()
                     } finally {
                         EventContextHolder.clean()
                         reporter.eventProcessFinished(event)
                     }
                 }
             }
-            is ResponseEvent -> event
+            is ResponseEvent -> event.json()
         }
     }
 
@@ -74,5 +74,7 @@ class EventProcessor(
                         mapOf("message" to e.message, "exception" to getStackTrace(e))
                 ))
             }
+
+    private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
 
 }
