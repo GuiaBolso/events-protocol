@@ -5,7 +5,11 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.model.*
+import br.com.guiabolso.events.model.Event
+import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RawEvent
+import br.com.guiabolso.events.model.RequestEvent
+import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.exception.ExceptionUtils.getStackTrace
@@ -17,7 +21,9 @@ import br.com.guiabolso.events.server.metric.NewrelicMetricReporter
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
 import org.slf4j.LoggerFactory.getLogger
 
-class EventProcessor(
+class EventProcessor
+@JvmOverloads
+constructor(
         private val discovery: EventHandlerDiscovery,
         private val exceptionHandlerRegistry: ExceptionHandlerRegistry = ExceptionHandlerRegistry(),
         private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewrelicMetricReporter())) {

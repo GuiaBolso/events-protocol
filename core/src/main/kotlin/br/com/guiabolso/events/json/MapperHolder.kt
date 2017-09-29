@@ -4,7 +4,7 @@ import com.google.gson.Gson
 
 object MapperHolder {
 
-    @JvmStatic
+    @JvmField
     var mapper = Gson()
 
 }
