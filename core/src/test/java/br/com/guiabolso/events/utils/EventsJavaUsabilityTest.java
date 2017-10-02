@@ -4,8 +4,6 @@ import br.com.guiabolso.events.builder.EventBuilder;
 import br.com.guiabolso.events.model.EventErrorType.Generic;
 import br.com.guiabolso.events.model.EventErrorType.NotFound;
 import br.com.guiabolso.events.model.ResponseEvent;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -44,10 +42,12 @@ public class EventsJavaUsabilityTest {
 
     private ResponseEvent createEvent(String name) {
         EventBuilder builder = new EventBuilder();
+        builder.setId("id");
+        builder.setFlowId("flowId");
         builder.setName(name);
         builder.setVersion(1);
         builder.setPayload(42);
-        return new ResponseEvent(name, 1, "id", "flowId", new JsonPrimitive(42), new JsonObject(), new JsonObject(), new JsonObject());
+        return builder.buildResponseEvent();
     }
 
 }
