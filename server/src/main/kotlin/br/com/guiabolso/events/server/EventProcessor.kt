@@ -10,10 +10,10 @@ import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.exception.ExceptionUtils.getStackTrace
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
-import br.com.guiabolso.events.server.metric.CompositeMetricReporter
-import br.com.guiabolso.events.server.metric.MDCMetricReporter
-import br.com.guiabolso.events.server.metric.MetricReporter
-import br.com.guiabolso.events.server.metric.NewrelicMetricReporter
+import br.com.guiabolso.events.metric.CompositeMetricReporter
+import br.com.guiabolso.events.metric.MDCMetricReporter
+import br.com.guiabolso.events.metric.MetricReporter
+import br.com.guiabolso.events.metric.NewRelicMetricReporter
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
 import org.slf4j.LoggerFactory.getLogger
 
@@ -22,7 +22,7 @@ class EventProcessor
 constructor(
         private val discovery: EventHandlerDiscovery,
         private val exceptionHandlerRegistry: ExceptionHandlerRegistry = ExceptionHandlerRegistry(),
-        private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewrelicMetricReporter())) {
+        private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewRelicMetricReporter())) {
 
     companion object {
         private val logger = getLogger(EventProcessor::class.java)!!

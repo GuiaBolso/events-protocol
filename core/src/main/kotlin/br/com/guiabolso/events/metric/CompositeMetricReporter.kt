@@ -1,4 +1,4 @@
-package br.com.guiabolso.events.server.metric
+package br.com.guiabolso.events.metric
 
 import br.com.guiabolso.events.model.Event
 
