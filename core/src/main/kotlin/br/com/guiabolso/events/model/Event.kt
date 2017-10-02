@@ -52,6 +52,8 @@ data class RequestEvent(
 
     fun <T> payloadAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.payload, clazz)
 
+    inline fun <reified T> payloadAs(): T = MapperHolder.mapper.fromJson(this.payload, T::class.java)
+
     val userId: Long?
         get() = this.identity.getAsJsonPrimitive("userId")?.asLong
 

@@ -60,9 +60,13 @@ class EventsTest {
         })
 
         val vo = request.payloadAs(VO::class.java)
+        val vo2: VO = request.payloadAs()
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)
+
+        assertEquals("someString", vo2.a)
+        assertEquals(60L, vo2.b)
     }
 
     private data class VO(val a: String? = null, val b: Long? = null)
