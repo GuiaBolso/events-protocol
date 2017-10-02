@@ -1,12 +1,11 @@
 package br.com.guiabolso.events.utils
 
+import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.model.EventErrorType
-import br.com.guiabolso.events.utils.Events.getErrorType
-import br.com.guiabolso.events.utils.Events.isError
-import br.com.guiabolso.events.utils.Events.isSuccess
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import org.junit.Assert.*
 import org.junit.Test
 import java.lang.IllegalStateException
 
@@ -42,5 +41,34 @@ class EventsTest {
         val responseEvent = buildResponseEvent()
         responseEvent.getErrorType()
     }
+
+    @Test
+    fun testGetUserIdFromIdentity() {
+        assertNull(buildRequestEvent().userId)
+
+        val responseEvent = buildRequestEvent().copy(
+                identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+        )
+        assertEquals(42L, responseEvent.userId)
+    }
+
+    @Test
+    fun testGetPayload() {
+        val request = buildRequestEvent().copy(payload = JsonObject().apply {
+            this.add("a", JsonPrimitive("someString"))
+            this.add("b", JsonPrimitive(60))
+        })
+
+        val vo = request.payloadAs(VO::class.java)
+        val vo2: VO = request.payloadAs()
+
+        assertEquals("someString", vo.a)
+        assertEquals(60L, vo.b)
+
+        assertEquals("someString", vo2.a)
+        assertEquals(60L, vo2.b)
+    }
+
+    private data class VO(val a: String? = null, val b: Long? = null)
 
 }

@@ -1,36 +1,72 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
-import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.metric.MetricReporter
 import com.google.gson.JsonPrimitive
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.mockito.Mockito
 
 class ExceptionHandlerRegistryTest {
-
 
     @Test
     fun testCanRegisterExceptionHandler() {
         val exceptionHandlerRegistry = ExceptionHandlerRegistry()
 
-        exceptionHandlerRegistry.register(RuntimeException::class.java, object : EventExceptionHandler<RuntimeException> {
-
-            override fun handleException(exception: RuntimeException, event: Event, metricReporter: MetricReporter): ResponseEvent {
-                return EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive(exception.message))
-            }
-
-        })
+        exceptionHandlerRegistry.register(RuntimeException::class.java) { exception, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive(exception.message))
+        }
 
         val response = exceptionHandlerRegistry.handleException(
                 RuntimeException("Some error"),
                 EventBuilderForTest.buildRequestEvent(),
-                NoOpMetricReporter())
+                Mockito.mock(MetricReporter::class.java)
+        )
 
-        Assert.assertEquals("Some error", response.payload.asString)
+        assertEquals("Some error", response.payload.asString)
+    }
+
+    @Test
+    fun testExceptionPriority() {
+        val exceptionHandlerRegistry = ExceptionHandlerRegistry()
+
+        exceptionHandlerRegistry.register(Exception::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("Exception"))
+        }
+
+        exceptionHandlerRegistry.register(RuntimeException::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("RuntimeException"))
+        }
+
+        val response = exceptionHandlerRegistry.handleException(
+                RuntimeException("Some error"),
+                EventBuilderForTest.buildRequestEvent(),
+                Mockito.mock(MetricReporter::class.java)
+        )
+
+        assertEquals("Exception", response.payload.asString)
+    }
+
+    @Test
+    fun testExceptionPriority2() {
+        val exceptionHandlerRegistry = ExceptionHandlerRegistry()
+
+        exceptionHandlerRegistry.register(RuntimeException::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("RuntimeException"))
+        }
+
+        exceptionHandlerRegistry.register(Exception::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("Exception"))
+        }
+
+        val response = exceptionHandlerRegistry.handleException(
+                RuntimeException("Some error"),
+                EventBuilderForTest.buildRequestEvent(),
+                Mockito.mock(MetricReporter::class.java)
+        )
+
+        assertEquals("RuntimeException", response.payload.asString)
     }
 
 
@@ -41,28 +77,10 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
                 RuntimeException("Some error"),
                 EventBuilderForTest.buildRequestEvent(),
-                NoOpMetricReporter())
+                Mockito.mock(MetricReporter::class.java)
+        )
 
-        Assert.assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)
-    }
-}
-
-
-class NoOpMetricReporter : MetricReporter {
-    override fun startProcessingEvent(event: Event) {
-        //NOTHING
-    }
-
-    override fun eventProcessFinished(event: Event) {
-        //NOTHING
-    }
-
-    override fun addProperty(key: String, value: String) {
-        //NOTHING
-    }
-
-    override fun notifyError(exception: Throwable) {
-        //NOTHING
+        assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)
     }
 
 }

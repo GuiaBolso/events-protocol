@@ -5,11 +5,7 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.EventMessage
-import br.com.guiabolso.events.model.RawEvent
-import br.com.guiabolso.events.model.RequestEvent
-import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.model.*
 import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.exception.ExceptionUtils.getStackTrace
@@ -33,6 +29,10 @@ constructor(
     }
 
     fun <T : Throwable> register(clazz: Class<T>, handler: EventExceptionHandler<T>) {
+        exceptionHandlerRegistry.register(clazz, handler)
+    }
+
+    fun <T : Throwable> register(clazz: Class<T>, handler: (T, Event, MetricReporter) -> ResponseEvent) {
         exceptionHandlerRegistry.register(clazz, handler)
     }
 

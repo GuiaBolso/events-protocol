@@ -9,8 +9,6 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.events.utils.Events.getErrorType
-import br.com.guiabolso.events.utils.Events.isSuccess
 import br.com.guiabolso.events.validation.EventValidator.validateAsResponseEvent
 import org.slf4j.LoggerFactory
 
