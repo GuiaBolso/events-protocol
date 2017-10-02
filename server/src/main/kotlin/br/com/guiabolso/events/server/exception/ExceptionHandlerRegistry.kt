@@ -20,7 +20,7 @@ class ExceptionHandlerRegistry {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Throwable> register(clazz: Class<T>, handler: (T, RequestEvent, MetricReporter) -> ResponseEvent) {
-        handlers.put(clazz, LambdaEventExceptionHandler(handler as (Throwable, RequestEvent, MetricReporter) -> ResponseEvent))
+        register(clazz, LambdaEventExceptionHandler(handler as (Throwable, RequestEvent, MetricReporter) -> ResponseEvent))
     }
 
     fun <T : Throwable> handleException(e: T, event: RequestEvent, metricReporter: MetricReporter): ResponseEvent {

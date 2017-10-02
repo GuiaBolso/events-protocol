@@ -28,6 +28,49 @@ class ExceptionHandlerRegistryTest {
     }
 
     @Test
+    fun testExceptionPriority() {
+        val exceptionHandlerRegistry = ExceptionHandlerRegistry()
+
+        exceptionHandlerRegistry.register(Exception::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("Exception"))
+        }
+
+        exceptionHandlerRegistry.register(RuntimeException::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("RuntimeException"))
+        }
+
+        val response = exceptionHandlerRegistry.handleException(
+                RuntimeException("Some error"),
+                EventBuilderForTest.buildRequestEvent(),
+                Mockito.mock(MetricReporter::class.java)
+        )
+
+        assertEquals("Exception", response.payload.asString)
+    }
+
+    @Test
+    fun testExceptionPriority2() {
+        val exceptionHandlerRegistry = ExceptionHandlerRegistry()
+
+        exceptionHandlerRegistry.register(RuntimeException::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("RuntimeException"))
+        }
+
+        exceptionHandlerRegistry.register(Exception::class.java) { _, _, _ ->
+            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("Exception"))
+        }
+
+        val response = exceptionHandlerRegistry.handleException(
+                RuntimeException("Some error"),
+                EventBuilderForTest.buildRequestEvent(),
+                Mockito.mock(MetricReporter::class.java)
+        )
+
+        assertEquals("RuntimeException", response.payload.asString)
+    }
+
+
+    @Test
     fun testHandleDefaultError() {
         val exceptionHandlerRegistry = ExceptionHandlerRegistry()
 

@@ -18,8 +18,7 @@ class SimpleEventHandlerRegistry : EventHandlerDiscovery {
     }
 
     fun add(eventName: String, eventVersion: Int, handler: (RequestEvent) -> ResponseEvent) {
-        logger.info("Registering event handler for $eventName V$eventVersion")
-        handlers[eventName to eventVersion] = LambdaEventHandler(handler)
+        add(eventName, eventVersion, LambdaEventHandler(handler))
     }
 
     override fun eventHandlerFor(eventName: String, eventVersion: Int) = handlers[eventName to eventVersion]
