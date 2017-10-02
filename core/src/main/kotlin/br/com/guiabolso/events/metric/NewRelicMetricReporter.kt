@@ -1,9 +1,9 @@
-package br.com.guiabolso.events.server.metric
+package br.com.guiabolso.events.metric
 
 import br.com.guiabolso.events.model.Event
 import com.newrelic.api.agent.NewRelic
 
-class NewrelicMetricReporter : MetricReporter {
+class NewRelicMetricReporter : MetricReporter {
 
     override fun startProcessingEvent(event: Event) {
         NewRelic.setTransactionName("EventProcessor", "${event.name}:V${event.version}")
