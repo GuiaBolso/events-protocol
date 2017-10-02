@@ -3,11 +3,6 @@ package br.com.guiabolso.events.utils
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.model.EventErrorType
-import br.com.guiabolso.events.utils.Events.getErrorType
-import br.com.guiabolso.events.utils.Events.isError
-import br.com.guiabolso.events.utils.Events.isSuccess
-import br.com.guiabolso.events.utils.Events.payloadAs
-import br.com.guiabolso.events.utils.Events.userId
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.junit.Assert.*

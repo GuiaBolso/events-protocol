@@ -1,7 +1,9 @@
 package br.com.guiabolso.events.model
 
+import br.com.guiabolso.events.json.MapperHolder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import java.lang.IllegalStateException
 
 
 sealed class Event {
@@ -24,7 +26,18 @@ data class ResponseEvent(
         override val identity: JsonObject,
         override val auth: JsonObject,
         override val metadata: JsonObject
-) : Event()
+) : Event() {
+
+    fun isSuccess() = this.name.endsWith(":response")
+
+    fun isError() = !this.isSuccess()
+
+    fun getErrorType(): EventErrorType {
+        if (isSuccess()) throw IllegalStateException("This is not an error event.")
+        return EventErrorType.getErrorType(this.name.substringAfterLast(":"))
+    }
+
+}
 
 data class RequestEvent(
         override val name: String,
@@ -35,4 +48,11 @@ data class RequestEvent(
         override val identity: JsonObject,
         override val auth: JsonObject,
         override val metadata: JsonObject
-) : Event()
+) : Event() {
+
+    fun <T> payloadAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.payload, clazz)
+
+    val userId: Long?
+        get() = this.identity.getAsJsonPrimitive("userId")?.asLong
+
+}

@@ -15,36 +15,36 @@ public class EventsJavaUsabilityTest {
     public void testUsability() {
         ResponseEvent event = createResponseEvent("test:event:response");
 
-        assertTrue(Events.isSuccess(event));
-        assertFalse(Events.isError(event));
+        assertTrue(event.isSuccess());
+        assertFalse(event.isError());
     }
 
     @Test
     public void testUsabilityWithError() {
         ResponseEvent event = createResponseEvent("test:event:error");
 
-        assertFalse(Events.isSuccess(event));
-        assertTrue(Events.isError(event));
-        assertEquals("error", Events.getErrorType(event).getTypeName());
-        assertEquals(Generic.class, Events.getErrorType(event).getClass());
-        assertEquals(Generic.INSTANCE, Events.getErrorType(event));
+        assertFalse(event.isSuccess());
+        assertTrue(event.isError());
+        assertEquals("error", event.getErrorType().getTypeName());
+        assertEquals(Generic.class, event.getErrorType().getClass());
+        assertEquals(Generic.INSTANCE, event.getErrorType());
     }
 
     @Test
     public void testUsabilityWithNotFound() {
         ResponseEvent event = createResponseEvent("test:event:notFound");
 
-        assertFalse(Events.isSuccess(event));
-        assertTrue(Events.isError(event));
-        assertEquals("notFound", Events.getErrorType(event).getTypeName());
-        assertEquals(NotFound.class, Events.getErrorType(event).getClass());
-        assertEquals(NotFound.INSTANCE, Events.getErrorType(event));
+        assertFalse(event.isSuccess());
+        assertTrue(event.isError());
+        assertEquals("notFound", event.getErrorType().getTypeName());
+        assertEquals(NotFound.class, event.getErrorType().getClass());
+        assertEquals(NotFound.INSTANCE, event.getErrorType());
     }
 
     @Test
     public void testUsabilityWithPayloadAs() {
         RequestEvent event = createRequestEvent("test:event");
-        assertEquals(42L, Events.payloadAs(event, Long.class).longValue());
+        assertEquals(42L, event.payloadAs(Long.class).longValue());
     }
 
     private ResponseEvent createResponseEvent(String name) {
