@@ -61,7 +61,7 @@ O protocolo foi desenhado para ser facilmente acoplado em qualquer estrutura par
 
 ### ```EventHandlerDiscovery```
 
-É o responsável por avaliar se, dado o nome e versão de um evento, o sistema é capaz de fazer o tratamento do mesmo. A implementação padrão da interface é ```SimpleEventHandlerRegistry``` que cadastra uma série de ```EventHandler```s (ou lambdas) para fazer o tratamento de um determinado evento pelo seu nome e versão. Em ambos os casos, um ```RequestEvent``` é recebido e um ```ResponseEvent``` é gerado baseado na requisição e a resposta do processamento realizado (se necessário).
+É o responsável por avaliar se, dado o nome e versão de um evento, o sistema é capaz de fazer o tratamento do mesmo. A implementação padrão da interface é ```SimpleEventHandlerRegistry``` que cadastra uma série de ```EventHandler```'s (ou lambdas) para fazer o tratamento de um determinado evento pelo seu nome e versão. Em ambos os casos, um ```RequestEvent``` é recebido e um ```ResponseEvent``` é gerado baseado na requisição e a resposta do processamento realizado (se necessário).
 
 #### Exemplo:
 ```groovy
@@ -81,7 +81,7 @@ Responsável por efetivamente processar os eventos. O evento nessa classe é rep
 #### Exemplo:
 ```groovy
 post("/events", { request, response ->
-    eventProcessor.processEvent(req.body())
+	eventProcessor.processEvent(req.body())
 })
 ```
 
