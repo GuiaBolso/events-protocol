@@ -34,8 +34,11 @@ Qualquer comunicação entre sistemas é considerado um evento.
 		"an_int64": 65484548474984654,
 		"some_float": 1864.4568
 	},
-	"identity":{
+	"identity": {
 		"userId": 99999999
+	},
+	"auth": {
+		"token": "fk20f2p9o2v2l923"
 	}
 	"metadata": {
 		"origin": "Documentation",
@@ -44,6 +47,45 @@ Qualquer comunicação entre sistemas é considerado um evento.
 	}
 }
 ```
+
+Como usar
+------------------
+
+## Cliente
+
+```TODO```
+
+## Servidor
+
+O protocolo foi desenhado para ser facilmente acoplado em qualquer estrutura para receber requisições: sockets, chamadas HTTP. Para tanto, dois tipos de objetos precisam ser cadastrados na sua aplicação para que tudo funcione.
+
+### ```EventHandlerDiscovery```
+
+É o responsável por avaliar se, dado o nome e versão de um evento, o sistema é capaz de fazer o tratamento do mesmo. A implementação padrão da interface é ```SimpleEventHandlerRegistry``` que cadastra uma série de ```EventHandler```s (ou lambdas) para fazer o tratamento de um determinado evento pelo seu nome e versão. Em ambos os casos, um ```RequestEvent``` é recebido e um ```ResponseEvent``` é gerado baseado na requisição e a resposta do processamento realizado (se necessário).
+
+#### Exemplo:
+```groovy
+simpleEventHandlerRegistry.add("say:hello", 13, (EventHandler) { RequestEvent event ->
+	def firstname = event.payload.asJsonObject.get("firstname").asString
+	def lastname = event.payload.asJsonObject.get("lastname").asString
+	def eventBuilder = EventBuilder.javaResponseFor(event)
+	eventBuilder.payload = helloService.to(firstname, lastname)
+	eventBuilder.buildResponseEvent()
+})
+```
+
+### ```EventProcessor```
+
+Responsável por efetivamente processar os eventos. O evento nessa classe é representado por uma ```String``` que é traduzido para um objeto no modelo do protocolo de eventos e avaliado para garantir se há ou não suporte para que seja tratado. Um ```EventHandlerDiscovery``` que avalia qual o processador para um dado evento deve ser passado como parâmetro para esse objeto. É nele ainda que os tratamentos de erro e avaliação de métricas podem ser sobrescritos.
+
+#### Exemplo:
+```groovy
+post("/events", { request, response ->
+    eventProcessor.processEvent(req.body())
+})
+```
+
+Nota: no caso de chamadas via HTTP, recomenda-se que se crie uma única rota para tratamento de eventos (vide exemplo) para que todos os eventos sejam processados de maneira igual. Quem define a rota do evento nesse caso é o ```EventProcessor```.
 
 Tipos padrão de resposta
 ------------------
