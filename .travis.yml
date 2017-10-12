@@ -1,11 +1,9 @@
 sudo: required
 
-dist: precise
-
 language: java
 
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
 cache:
   directories:
