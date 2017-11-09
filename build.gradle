@@ -15,7 +15,7 @@ buildscript {
 
 allprojects {
     ext {
-        publish_version = '1.0.3'
+        publish_version = '1.0.4'
     }
 }
 

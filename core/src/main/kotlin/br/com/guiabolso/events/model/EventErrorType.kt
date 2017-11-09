@@ -9,6 +9,7 @@ sealed class EventErrorType(open val typeName: String) {
             "notFound" -> NotFound
             "badRequest" -> BadRequest
             "unauthorized" -> Unauthorized
+            "forbidden" -> Forbidden
             else -> Unknown(errorType)
         }
     }
@@ -17,6 +18,7 @@ sealed class EventErrorType(open val typeName: String) {
     object BadRequest : EventErrorType("badRequest")
     object Unauthorized : EventErrorType("unauthorized")
     object NotFound : EventErrorType("notFound")
+    object Forbidden : EventErrorType("forbidden")
     data class Unknown(override val typeName: String) : EventErrorType(typeName)
 
 }
