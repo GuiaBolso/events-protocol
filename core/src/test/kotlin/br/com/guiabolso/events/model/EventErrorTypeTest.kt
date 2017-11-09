@@ -15,6 +15,12 @@ class EventErrorTypeTest {
         assertEquals(NotFound, getErrorType("notFound"))
         assertEquals("notFound", getErrorType("notFound").typeName)
 
+        assertEquals(Unauthorized, getErrorType("unauthorized"))
+        assertEquals("unauthorized", getErrorType("unauthorized").typeName)
+
+        assertEquals(Forbidden, getErrorType("forbidden"))
+        assertEquals("forbidden", getErrorType("forbidden").typeName)
+
         assertEquals(Unknown("somethingElse"), getErrorType("somethingElse"))
         assertEquals("somethingElse", getErrorType("somethingElse").typeName)
     }
