@@ -228,6 +228,30 @@ Indica que o servidor não encontrou o recurso solicitado pelo cliente.
 }
 ```
 
+### Forbidden:
+
+Indica que o servidor impede o acesso a um recurso devido ser proibido por algum motivo. 
+
+#### Exemplo:
+
+```javascript
+{
+	"name": "some:event:forbidden",
+	"version": 1,
+	"id": "e577b9d8-5b39-4aa6-bd74-418ec2f74174",
+	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
+	"payload": {
+		"code": "NOT_ALLOWED",
+		"parameters": {
+		}
+	},
+	"metadata": {
+		"origin": "Midgard",
+		"timestamp": 1282162952
+	}
+}
+```
+
 ### Failed Dependency:
 
 Tipo padronizado para indicar que não foi possível responder com sucesso pois algum worker/dependência não respondeu corretamente (base de dados não são consideradas dependências/workers).
