@@ -3,6 +3,34 @@ Events Protocol
 
 [![Build Status](https://travis-ci.org/GuiaBolso/events-protocol.svg?branch=master)](https://travis-ci.org/GuiaBolso/events-protocol)
 
+
+Dependencias
+---------------
+
+Para utilizar as dependências é necessário habilitar o repositório do jcenter no gradle:
+
+```
+repositories {
+    mavenCentral()
+    jcenter()  <---------
+}
+```
+
+
+A biblioteca é composta de 3 modulos. Server, Client e Core.
+
+```
+ compile "br.com.guiabolso:events-client:1.0.4"
+ compile "br.com.guiabolso:events-server:1.0.4"
+ compile "br.com.guiabolso:events-core:1.0.4"
+```
+Geralmente as dependências a serem importadas são:
+
+* Server: Quando é necessário tratar requisições de eventos;
+* Client: Quando é necessário realizar requisições de evento;
+* Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado.
+
+
 Motivação
 ---------------
 **Padronizar a comunicação entre as aplicações do GuiaBolso.** Atualmente cada aplicação é livre para definir seus padrões de request/response e protocolo: Thrift, REST, "JSON over HTTP", etc. O que torna difícil trafegar dados padronizados (trackingID, por exemplo) entre as aplicações.
