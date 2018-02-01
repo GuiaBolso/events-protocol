@@ -21,6 +21,10 @@ class MDCMetricReporter : MetricReporter {
         MDC.put(key, value)
     }
 
+    override fun addProperty(key: String, value: Number) {
+        MDC.put(key, value.toString())
+    }
+
     override fun notifyError(exception: Throwable) {
     }
 
