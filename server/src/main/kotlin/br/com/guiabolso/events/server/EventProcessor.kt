@@ -22,7 +22,8 @@ class EventProcessor
 constructor(
         private val discovery: EventHandlerDiscovery,
         private val exceptionHandlerRegistry: ExceptionHandlerRegistry = ExceptionHandlerRegistry(),
-        private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewRelicMetricReporter())) {
+        private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewRelicMetricReporter()),
+        private val exposeException: Boolean = false){
 
     companion object {
         private val logger = getLogger(EventProcessor::class.java)!!
@@ -36,7 +37,7 @@ constructor(
         exceptionHandlerRegistry.register(clazz, handler)
     }
 
-    fun processEvent(rawEvent: String, exposeException: Boolean = false): String {
+    fun processEvent(rawEvent: String): String {
         val event = parseAndValidateEvent(rawEvent)
 
         return when (event) {
@@ -52,9 +53,8 @@ constructor(
                     } catch (e: Exception) {
                         if(exposeException){
                             throw e
-                        } else {
-                            exceptionHandlerRegistry.handleException(e, event, reporter).json()
                         }
+                        exceptionHandlerRegistry.handleException(e, event, reporter).json()
                     } finally {
                         EventContextHolder.clean()
                         reporter.eventProcessFinished(event)
