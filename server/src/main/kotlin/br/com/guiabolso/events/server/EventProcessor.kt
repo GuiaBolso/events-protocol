@@ -36,7 +36,7 @@ constructor(
         exceptionHandlerRegistry.register(clazz, handler)
     }
 
-    fun processEvent(rawEvent: String): String {
+    fun processEvent(rawEvent: String, exposeException: Boolean = false): String {
         val event = parseAndValidateEvent(rawEvent)
 
         return when (event) {
@@ -50,7 +50,11 @@ constructor(
                         reporter.startProcessingEvent(event)
                         handler.handle(event).json()
                     } catch (e: Exception) {
-                        exceptionHandlerRegistry.handleException(e, event, reporter).json()
+                        if(exposeException){
+                            throw e
+                        } else {
+                            exceptionHandlerRegistry.handleException(e, event, reporter).json()
+                        }
                     } finally {
                         EventContextHolder.clean()
                         reporter.eventProcessFinished(event)

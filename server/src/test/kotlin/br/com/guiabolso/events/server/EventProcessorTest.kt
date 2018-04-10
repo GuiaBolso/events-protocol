@@ -114,4 +114,19 @@ class EventProcessorTest {
         assertEquals("version", responseEvent.payload!!.asJsonObject["parameters"].asJsonObject["missingProperty"].asString)
     }
 
+    @Test(expected = Exception::class)
+    fun testProcessEventWithThrowException() {
+        val event = EventBuilderForTest.buildRequestEvent()
+
+        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
+
+            override fun handle(event: RequestEvent): ResponseEvent {
+                throw Exception("Test throw exception")
+            }
+
+        })
+
+        eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString(), true)
+    }
+
 }
