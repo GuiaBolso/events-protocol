@@ -5,6 +5,7 @@ import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.model.Response
+import br.com.guiabolso.events.client.model.Response.UnexpectedError
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import com.nhaarman.mockito_kotlin.whenever
@@ -77,8 +78,8 @@ class EventClientTest {
 
         val response = eventClient.sendEvent("url", event, 1000)
 
-        assertTrue(response is Response.Timeout)
-        assertTrue((response as Response.Timeout).exception is TimeoutException)
+        assertTrue(response is UnexpectedError.Timeout)
+        assertTrue((response as UnexpectedError.Timeout).exception is TimeoutException)
     }
 
     @Test
@@ -98,8 +99,8 @@ class EventClientTest {
 
         val response = eventClient.sendEvent("url", event, 1000)
 
-        assertTrue(response is Response.FailedDependency)
-        assertEquals("something", (response as Response.FailedDependency).response)
+        assertTrue(response is UnexpectedError.FailedDependency)
+        assertEquals("something", (response as UnexpectedError.FailedDependency).response)
         assertTrue(response.exception is BadProtocolException)
     }
 
@@ -120,8 +121,8 @@ class EventClientTest {
 
         val response = eventClient.sendEvent("url", event, 1000)
 
-        assertTrue(response is Response.FailedDependency)
-        assertNull((response as Response.FailedDependency).response)
+        assertTrue(response is UnexpectedError.FailedDependency)
+        assertNull((response as UnexpectedError.FailedDependency).response)
         assertTrue(response.exception is ConnectException)
     }
 

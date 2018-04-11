@@ -16,6 +16,10 @@ class CompositeMetricReporter(private vararg val reporters: MetricReporter) : Me
         reporters.forEach { it.addProperty(key, value) }
     }
 
+    override fun addProperty(key: String, value: Number) {
+        reporters.forEach { it.addProperty(key, value) }
+    }
+
     override fun notifyError(exception: Throwable) {
         reporters.forEach { it.notifyError(exception) }
     }

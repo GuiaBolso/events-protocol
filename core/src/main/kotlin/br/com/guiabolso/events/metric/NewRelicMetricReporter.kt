@@ -9,14 +9,18 @@ class NewRelicMetricReporter : MetricReporter {
         NewRelic.setTransactionName("EventProcessor", "${event.name}:V${event.version}")
         NewRelic.addCustomParameter("EventID", event.id)
         NewRelic.addCustomParameter("FlowID", event.flowId)
-        NewRelic.addCustomParameter("UserID", event.identity.get("userId")?.asString ?: "unknown")
-        NewRelic.addCustomParameter("Origin", event.metadata.get("origin")?.asString ?: "unknown")
+        NewRelic.addCustomParameter("UserID", event.userId?.toString() ?: "Unknown")
+        NewRelic.addCustomParameter("Origin", event.origin)
     }
 
     override fun eventProcessFinished(event: Event) {
     }
 
     override fun addProperty(key: String, value: String) {
+        NewRelic.addCustomParameter(key, value)
+    }
+
+    override fun addProperty(key: String, value: Number) {
         NewRelic.addCustomParameter(key, value)
     }
 

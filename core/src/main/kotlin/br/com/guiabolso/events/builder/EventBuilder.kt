@@ -3,12 +3,11 @@ package br.com.guiabolso.events.builder
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.model.EventErrorType
-import br.com.guiabolso.events.model.EventMessage
-import br.com.guiabolso.events.model.RequestEvent
-import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.model.*
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import com.newrelic.api.agent.NewRelic
 import java.util.*
 
 class EventBuilder {
@@ -42,7 +41,8 @@ class EventBuilder {
         }
 
         @JvmStatic
-        fun errorFor(event: RequestEvent, type: EventErrorType, message: EventMessage): ResponseEvent {
+        @JvmOverloads
+        fun errorFor(event: RequestEvent, type: EventErrorType, message: EventMessage, origin: String? = null, deprecationDetails: DeprecationDetails? = null): ResponseEvent {
             if (type is EventErrorType.Unknown) throw IllegalArgumentException("This error type should not be used to send events. This error error type only exists to provide future compatibility with newer versions of this API.")
 
             val builder = EventBuilder()
@@ -51,6 +51,9 @@ class EventBuilder {
             builder.payload = message
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
+
+            builder.origin = origin
+            builder.deprecationDetails = deprecationDetails
 
             return builder.buildResponseEvent()
         }
@@ -84,10 +87,15 @@ class EventBuilder {
     var version: Int? = null
     var id = context?.id
     var flowId = context?.flowId
+
     var payload: Any? = null
+
     var identity: Any? = null
+
     var auth: Any? = null
-    var metadata: Any? = null
+
+    var origin: String? = null
+    var deprecationDetails: DeprecationDetails? = null
 
     fun buildRequestEvent() = RequestEvent(
             name = this.name ?: throw MissingEventInformationException("Missing event name."),
@@ -97,7 +105,7 @@ class EventBuilder {
             payload = convertPayload(),
             identity = convertToJsonObjectOrEmpty(this.identity),
             auth = convertToJsonObjectOrEmpty(this.auth),
-            metadata = convertToJsonObjectOrEmpty(this.metadata)
+            metadata = buildMetadata()
     )
 
     fun buildResponseEvent() = ResponseEvent(
@@ -108,12 +116,22 @@ class EventBuilder {
             payload = convertPayload(),
             identity = convertToJsonObjectOrEmpty(this.identity),
             auth = convertToJsonObjectOrEmpty(this.auth),
-            metadata = convertToJsonObjectOrEmpty(this.metadata)
+            metadata = buildMetadata()
     )
 
     private fun convertPayload(): JsonElement {
         if (this.payload == null) throw MissingEventInformationException("Missing event payload.")
         return MapperHolder.mapper.toJsonTree(this.payload)
+    }
+
+    private fun buildMetadata(): JsonObject {
+        val appName = origin ?: NewRelic.getAgent().config.getValue("app_name", "Unknown")
+
+        return JsonObject().apply {
+            add("origin", JsonPrimitive(appName))
+            if (deprecationDetails != null)
+                add("deprecationDetails", MapperHolder.mapper.toJsonTree(deprecationDetails))
+        }
     }
 
     private fun convertToJsonObjectOrEmpty(value: Any?): JsonObject {
