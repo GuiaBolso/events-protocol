@@ -22,7 +22,8 @@ class EventProcessor
 constructor(
         private val discovery: EventHandlerDiscovery,
         private val exceptionHandlerRegistry: ExceptionHandlerRegistry = ExceptionHandlerRegistry(),
-        private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewRelicMetricReporter())) {
+        private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewRelicMetricReporter()),
+        private val exposeExceptions: Boolean = false){
 
     companion object {
         private val logger = getLogger(EventProcessor::class.java)!!
@@ -50,6 +51,9 @@ constructor(
                         reporter.startProcessingEvent(event)
                         handler.handle(event).json()
                     } catch (e: Exception) {
+                        if(exposeExceptions){
+                            throw e
+                        }
                         exceptionHandlerRegistry.handleException(e, event, reporter).json()
                     } finally {
                         EventContextHolder.clean()
