@@ -21,7 +21,9 @@ import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
 import org.slf4j.LoggerFactory.getLogger
 
-class EventProcessor(
+class EventProcessor
+@JvmOverloads
+constructor(
         private val discovery: EventHandlerDiscovery,
         private val exceptionHandlerRegistry: ExceptionHandlerRegistry = ExceptionHandlerRegistry(),
         private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewRelicMetricReporter()),
