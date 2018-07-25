@@ -15,7 +15,7 @@ class ExceptionHandlerRegistry {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Throwable> register(clazz: Class<T>, handler: EventExceptionHandler<T>) {
-        handlers.put(clazz, handler as EventExceptionHandler<Throwable>)
+        handlers[clazz] = handler as EventExceptionHandler<Throwable>
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -24,4 +24,7 @@ class MDCMetricReporter : MetricReporter {
     override fun notifyError(exception: Throwable) {
     }
 
+    override fun notifyError(exception: Throwable, expected: Boolean) {
+    }
+
 }
