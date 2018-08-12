@@ -31,6 +31,6 @@ object EventBuilderForTest {
     )
 
     fun buildRequestEventString(event: RequestEvent = buildRequestEvent()) =
-            MapperHolder.mapper.toJson(event)
+            MapperHolder.mapper.toJson(event)!!
 
 }

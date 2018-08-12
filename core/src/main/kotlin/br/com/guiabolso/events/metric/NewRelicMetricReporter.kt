@@ -24,4 +24,8 @@ class NewRelicMetricReporter : MetricReporter {
         NewRelic.noticeError(exception)
     }
 
+    override fun notifyError(exception: Throwable, expected: Boolean) {
+        NewRelic.noticeError(exception, expected)
+    }
+
 }

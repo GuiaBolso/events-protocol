@@ -20,4 +20,8 @@ class CompositeMetricReporter(private vararg val reporters: MetricReporter) : Me
         reporters.forEach { it.notifyError(exception) }
     }
 
+    override fun notifyError(exception: Throwable, expected: Boolean) {
+        reporters.forEach { it.notifyError(exception, expected) }
+    }
+
 }
