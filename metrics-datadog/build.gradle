@@ -1,0 +1,24 @@
+dependencies {
+    compile project(":core")
+
+    compile group: 'io.opentracing', name: 'opentracing-api', version: "0.31.0"
+    compile group: 'io.opentracing', name: 'opentracing-util', version: "0.31.0"
+    compile group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.12.0'
+    compile group: 'com.datadoghq', name: 'dd-trace-api', version: '0.12.0'
+
+    testCompile project(':core').sourceSets.test.output
+}
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    artifactId = 'events-metrics-datadog'
+    autoPublish = true
+    desc = 'Datadog metrics adapter for event-protocol'
+    userOrg = 'guiabolso'
+    groupId = 'br.com.guiabolso'
+    licences = ['APACHE-2.0']
+    publishVersion = parent.ext.publish_version
+    uploadName = 'Events-Metrics-Datadog'
+    website = 'https://github.com/GuiaBolso/events-protocol'
+}

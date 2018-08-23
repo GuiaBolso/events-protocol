@@ -131,7 +131,7 @@ class EventProcessorTest {
             }
 
         })
-        val eventProcessor = EventProcessor(eventHandlerRegistry,exceptionHandlerRegistry,reporter,true)
+        val eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, true, reporter)
 
         eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
     }
