@@ -5,7 +5,8 @@ import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.events.metric.MetricReporter
+import br.com.guiabolso.metrics.MetricReporter
+import br.com.guiabolso.metrics.utils.ExceptionUtils
 import org.slf4j.LoggerFactory
 
 class ExceptionHandlerRegistry {
@@ -30,7 +31,7 @@ class ExceptionHandlerRegistry {
             handler.handleException(e, event, metricReporter)
         } else {
             logger.error("Error processing event.", e)
-            metricReporter.notifyError(e)
+            metricReporter.notifyError(e, false)
             EventBuilder.errorFor(
                     event,
                     EventErrorType.Generic,

@@ -2,13 +2,13 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.metric.MetricReporter
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
+import br.com.guiabolso.metrics.MetricReporter
 import com.nhaarman.mockito_kotlin.mock
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -131,7 +131,7 @@ class EventProcessorTest {
             }
 
         })
-        val eventProcessor = EventProcessor(eventHandlerRegistry,exceptionHandlerRegistry,reporter,true)
+        val eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, reporter, true)
 
         eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
     }
