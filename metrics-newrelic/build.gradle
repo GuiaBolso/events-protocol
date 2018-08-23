@@ -1,0 +1,21 @@
+dependencies {
+    compile project(":core")
+
+    compile group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
+
+    testCompile project(':core').sourceSets.test.output
+}
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    artifactId = 'events-metrics-newrelic'
+    autoPublish = true
+    desc = 'NewRelic metrics adapter for event-protocol'
+    userOrg = 'guiabolso'
+    groupId = 'br.com.guiabolso'
+    licences = ['APACHE-2.0']
+    publishVersion = parent.ext.publish_version
+    uploadName = 'Events-Metrics-NewRelic'
+    website = 'https://github.com/GuiaBolso/events-protocol'
+}

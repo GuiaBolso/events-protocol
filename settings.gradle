@@ -1,2 +1,2 @@
 rootProject.name = 'events-protocol'
-include 'core', 'server', 'client'
+include 'core', 'server', 'client', 'metrics-newrelic', 'metrics-datadog'

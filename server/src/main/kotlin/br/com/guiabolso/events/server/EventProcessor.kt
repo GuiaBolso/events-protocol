@@ -8,7 +8,6 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.metric.CompositeMetricReporter
 import br.com.guiabolso.events.metric.MDCMetricReporter
 import br.com.guiabolso.events.metric.MetricReporter
-import br.com.guiabolso.events.metric.NewRelicMetricReporter
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RawEvent
@@ -26,12 +25,10 @@ class EventProcessor
 constructor(
         private val discovery: EventHandlerDiscovery,
         private val exceptionHandlerRegistry: ExceptionHandlerRegistry = ExceptionHandlerRegistry(),
-        private val reporter: MetricReporter = CompositeMetricReporter(MDCMetricReporter(), NewRelicMetricReporter()),
-        private val exposeExceptions: Boolean = false) {
+        private val exposeExceptions: Boolean = false,
+        vararg reporters: MetricReporter) {
 
-    companion object {
-        private val logger = getLogger(EventProcessor::class.java)!!
-    }
+    private val reporter = CompositeMetricReporter(MDCMetricReporter(), *reporters)
 
     fun <T : Throwable> register(clazz: Class<T>, handler: EventExceptionHandler<T>) {
         exceptionHandlerRegistry.register(clazz, handler)
@@ -90,5 +87,9 @@ constructor(
             }
 
     private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
+
+    companion object {
+        private val logger = getLogger(EventProcessor::class.java)!!
+    }
 
 }
