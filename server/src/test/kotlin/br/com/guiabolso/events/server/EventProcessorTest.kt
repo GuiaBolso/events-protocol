@@ -8,7 +8,7 @@ import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import br.com.guiabolso.metrics.MetricReporter
+import br.com.guiabolso.tracing.MetricReporter
 import com.nhaarman.mockito_kotlin.mock
 import org.junit.Assert.assertEquals
 import org.junit.Before

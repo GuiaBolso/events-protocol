@@ -10,9 +10,9 @@ import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
-import br.com.guiabolso.metrics.MetricReporter
-import br.com.guiabolso.metrics.factory.MetricReporterFactory
-import br.com.guiabolso.metrics.utils.ExceptionUtils.getStackTrace
+import br.com.guiabolso.tracing.MetricReporter
+import br.com.guiabolso.tracing.factory.MetricReporterFactory
+import br.com.guiabolso.tracing.utils.ExceptionUtils.getStackTrace
 
 class EventProcessor
 @JvmOverloads

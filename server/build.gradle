@@ -1,5 +1,6 @@
 dependencies {
     compile project(":core")
+    compile project(":tracing")
 
     testCompile project(':core').sourceSets.test.output
 }

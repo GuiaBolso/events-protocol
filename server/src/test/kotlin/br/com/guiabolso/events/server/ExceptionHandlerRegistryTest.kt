@@ -2,7 +2,7 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
-import br.com.guiabolso.metrics.MetricReporter
+import br.com.guiabolso.tracing.MetricReporter
 import com.google.gson.JsonPrimitive
 import org.junit.Assert.assertEquals
 import org.junit.Test

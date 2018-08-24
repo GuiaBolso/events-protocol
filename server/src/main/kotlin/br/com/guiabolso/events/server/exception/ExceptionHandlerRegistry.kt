@@ -5,8 +5,8 @@ import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.metrics.MetricReporter
-import br.com.guiabolso.metrics.utils.ExceptionUtils
+import br.com.guiabolso.tracing.MetricReporter
+import br.com.guiabolso.tracing.utils.ExceptionUtils
 import org.slf4j.LoggerFactory
 
 class ExceptionHandlerRegistry {
