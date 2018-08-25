@@ -1,11 +1,11 @@
 package br.com.guiabolso.tracing.engine.slf4j
 
-import br.com.guiabolso.tracing.engine.MetricReporterEngine
+import br.com.guiabolso.tracing.engine.TracerEngine
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import java.io.Closeable
 
-class Slf4jMetricReporter : MetricReporterEngine<Map<String, String?>> {
+class Slf4JTracer : TracerEngine<Map<String, String?>> {
 
     override fun setOperationName(name: String) {
         addProperty("Operation", name)
@@ -61,7 +61,7 @@ class Slf4jMetricReporter : MetricReporterEngine<Map<String, String?>> {
 
     companion object {
         @JvmStatic
-        private val LOGGER = LoggerFactory.getLogger(Slf4jMetricReporter::class.java)
+        private val LOGGER = LoggerFactory.getLogger(Slf4JTracer::class.java)
     }
 
 }

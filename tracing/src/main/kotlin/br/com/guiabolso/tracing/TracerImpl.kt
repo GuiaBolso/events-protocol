@@ -1,50 +1,50 @@
 package br.com.guiabolso.tracing
 
 import br.com.guiabolso.tracing.async.AsyncExecutor
-import br.com.guiabolso.tracing.engine.MetricReporterEngine
+import br.com.guiabolso.tracing.engine.TracerEngine
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
-class MetricReporterImpl(
-        private val metricReporterEngine: MetricReporterEngine<*>,
+class TracerImpl(
+        private val tracerEngine: TracerEngine<*>,
         private val asyncExecutor: AsyncExecutor
-) : MetricReporter {
+) : Tracer {
 
     override fun setOperationName(name: String) {
-        metricReporterEngine.setOperationName(name)
+        tracerEngine.setOperationName(name)
     }
 
     override fun addProperty(key: String, value: String?) {
-        metricReporterEngine.addProperty(key, value)
+        tracerEngine.addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: Number?) {
-        metricReporterEngine.addProperty(key, value)
+        tracerEngine.addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: Boolean?) {
-        metricReporterEngine.addProperty(key, value)
+        tracerEngine.addProperty(key, value)
     }
 
     override fun <T> executeAsync(executor: ExecutorService, task: () -> T): Future<T> {
-        return asyncExecutor.executeAsync(metricReporterEngine, executor, task)
+        return asyncExecutor.executeAsync(tracerEngine, executor, task)
     }
 
     override fun <T> executeAsync(executor: ExecutorService, task: Callable<T>): Future<T> {
-        return asyncExecutor.executeAsync(metricReporterEngine, executor, task)
+        return asyncExecutor.executeAsync(tracerEngine, executor, task)
     }
 
     override fun notifyError(exception: Throwable, expected: Boolean) {
-        metricReporterEngine.notifyError(exception, expected)
+        tracerEngine.notifyError(exception, expected)
     }
 
     override fun notifyError(message: String, params: Map<String, String?>, expected: Boolean) {
-        metricReporterEngine.notifyError(message, params, expected)
+        tracerEngine.notifyError(message, params, expected)
     }
 
     override fun clear() {
-        metricReporterEngine.clear()
+        tracerEngine.clear()
     }
 
 }

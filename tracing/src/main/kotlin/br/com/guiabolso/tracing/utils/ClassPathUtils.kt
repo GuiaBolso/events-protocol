@@ -6,7 +6,7 @@ object ClassPathUtils {
 
     fun isDatadogPresent() = isClassPresent("datadog.opentracing.DDTracer")
 
-    private fun isClassPresent(name: String) = try {
+    fun isClassPresent(name: String) = try {
         Class.forName(name)
         true
     } catch (_: ClassNotFoundException) {

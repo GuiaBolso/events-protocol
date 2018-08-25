@@ -2,10 +2,10 @@ package br.com.guiabolso.events.server.exception
 
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.tracing.MetricReporter
+import br.com.guiabolso.tracing.Tracer
 
 interface EventExceptionHandler<in T : Throwable> {
 
-    fun handleException(exception: T, event: RequestEvent, metricReporter: MetricReporter): ResponseEvent
+    fun handleException(exception: T, event: RequestEvent, tracer: Tracer): ResponseEvent
 
 }

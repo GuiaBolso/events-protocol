@@ -9,8 +9,8 @@ import br.com.guiabolso.events.model.*
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
-import br.com.guiabolso.tracing.MetricReporter
-import br.com.guiabolso.tracing.factory.MetricReporterFactory
+import br.com.guiabolso.tracing.Tracer
+import br.com.guiabolso.tracing.factory.TracerFactory
 import br.com.guiabolso.tracing.utils.ExceptionUtils.getStackTrace
 
 class EventProcessor
@@ -18,7 +18,7 @@ class EventProcessor
 constructor(
         private val discovery: EventHandlerDiscovery,
         private val exceptionHandlerRegistry: ExceptionHandlerRegistry,
-        private val reporter: MetricReporter = MetricReporterFactory.createMetricReporter(),
+        private val tracer: Tracer = TracerFactory.createTracer(),
         private val exposeExceptions: Boolean = false) {
 
     fun processEvent(rawEvent: String): String {
@@ -38,7 +38,7 @@ constructor(
                         if (exposeExceptions) {
                             throw e
                         }
-                        exceptionHandlerRegistry.handleException(e, event, reporter).json()
+                        exceptionHandlerRegistry.handleException(e, event, tracer).json()
                     } finally {
                         EventContextHolder.clean()
                         eventProcessFinished()
@@ -54,13 +54,13 @@ constructor(
                 val input = MapperHolder.mapper.fromJson(rawEvent, RawEvent::class.java)
                 validateAsRequestEvent(input)
             } catch (e: IllegalArgumentException) {
-                reporter.notifyError(e, false)
+                tracer.notifyError(e, false)
                 badProtocol(EventMessage(
                         "INVALID_COMMUNICATION_PROTOCOL",
                         mapOf("missingProperty" to e.message)
                 ))
             } catch (e: Exception) {
-                reporter.notifyError(e, false)
+                tracer.notifyError(e, false)
                 badProtocol(EventMessage(
                         "INVALID_COMMUNICATION_PROTOCOL",
                         mapOf("message" to e.message, "exception" to getStackTrace(e))
@@ -68,15 +68,15 @@ constructor(
             }
 
     private fun startProcessingEvent(event: RequestEvent) {
-        reporter.setOperationName("${event.name}:V${event.version}")
-        reporter.addProperty("EventID", event.id)
-        reporter.addProperty("FlowID", event.flowId)
-        reporter.addProperty("UserID", event.userId?.toString() ?: "unknown")
-        reporter.addProperty("Origin", event.origin ?: "unknown")
+        tracer.setOperationName("${event.name}:V${event.version}")
+        tracer.addProperty("EventID", event.id)
+        tracer.addProperty("FlowID", event.flowId)
+        tracer.addProperty("UserID", event.userId?.toString() ?: "unknown")
+        tracer.addProperty("Origin", event.origin ?: "unknown")
     }
 
     private fun eventProcessFinished() {
-        reporter.clear()
+        tracer.clear()
     }
 
     private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)

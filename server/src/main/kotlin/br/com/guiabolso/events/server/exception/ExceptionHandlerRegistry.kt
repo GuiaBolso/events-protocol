@@ -5,7 +5,7 @@ import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.tracing.MetricReporter
+import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.utils.ExceptionUtils
 import org.slf4j.LoggerFactory
 
@@ -20,18 +20,18 @@ class ExceptionHandlerRegistry {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Throwable> register(clazz: Class<T>, handler: (T, RequestEvent, MetricReporter) -> ResponseEvent) {
-        register(clazz, LambdaEventExceptionHandler(handler as (Throwable, RequestEvent, MetricReporter) -> ResponseEvent))
+    fun <T : Throwable> register(clazz: Class<T>, handler: (T, RequestEvent, Tracer) -> ResponseEvent) {
+        register(clazz, LambdaEventExceptionHandler(handler as (Throwable, RequestEvent, Tracer) -> ResponseEvent))
     }
 
-    fun <T : Throwable> handleException(e: T, event: RequestEvent, metricReporter: MetricReporter): ResponseEvent {
+    fun <T : Throwable> handleException(e: T, event: RequestEvent, tracer: Tracer): ResponseEvent {
         val handler = handlerFor(e)
 
         return if (handler != null) {
-            handler.handleException(e, event, metricReporter)
+            handler.handleException(e, event, tracer)
         } else {
             logger.error("Error processing event.", e)
-            metricReporter.notifyError(e, false)
+            tracer.notifyError(e, false)
             EventBuilder.errorFor(
                     event,
                     EventErrorType.Generic,

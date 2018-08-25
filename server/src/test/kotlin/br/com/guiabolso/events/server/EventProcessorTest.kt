@@ -5,7 +5,7 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import br.com.guiabolso.tracing.MetricReporter
+import br.com.guiabolso.tracing.Tracer
 import com.nhaarman.mockito_kotlin.mock
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -16,13 +16,13 @@ class EventProcessorTest {
     private lateinit var eventProcessor: EventProcessor
     private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry
     private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
-    private lateinit var reporter: MetricReporter
+    private lateinit var tracer: Tracer
 
     @Before
     fun setUp() {
         eventHandlerRegistry = SimpleEventHandlerRegistry()
         exceptionHandlerRegistry = ExceptionHandlerRegistry()
-        reporter = mock()
+        tracer = mock()
         eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
     }
 
@@ -113,7 +113,7 @@ class EventProcessorTest {
             throw Exception("Test throw exception")
         }
 
-        val eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, reporter, true)
+        val eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, tracer, true)
 
         eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
     }

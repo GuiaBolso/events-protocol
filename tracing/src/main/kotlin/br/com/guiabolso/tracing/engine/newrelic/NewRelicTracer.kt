@@ -1,12 +1,12 @@
 package br.com.guiabolso.tracing.engine.newrelic
 
-import br.com.guiabolso.tracing.engine.MetricReporterEngine
+import br.com.guiabolso.tracing.engine.TracerEngine
 import com.newrelic.api.agent.NewRelic
 import com.newrelic.api.agent.NewRelic.*
 import com.newrelic.api.agent.Token
 import java.io.Closeable
 
-class NewRelicMetricReporter : MetricReporterEngine<Token> {
+class NewRelicTracer : TracerEngine<Token> {
 
     override fun setOperationName(name: String) {
         setTransactionName(null, name)

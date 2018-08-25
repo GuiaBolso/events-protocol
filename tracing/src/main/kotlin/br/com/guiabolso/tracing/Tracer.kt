@@ -1,8 +1,10 @@
-package br.com.guiabolso.tracing.engine
+package br.com.guiabolso.tracing
 
-import java.io.Closeable
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Future
 
-interface MetricReporterEngine<C> {
+interface Tracer {
 
     /**
      * Defines the operation name.
@@ -13,7 +15,7 @@ interface MetricReporterEngine<C> {
     fun setOperationName(name: String)
 
     /**
-     * Add a key/value pair to the current metric operation. These should be reported in errors and tracings.
+     * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
@@ -22,7 +24,7 @@ interface MetricReporterEngine<C> {
     fun addProperty(key: String, value: String?)
 
     /**
-     * Add a key/value pair to the current metric operation. These should be reported in errors and tracings.
+     * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
@@ -31,7 +33,7 @@ interface MetricReporterEngine<C> {
     fun addProperty(key: String, value: Number?)
 
     /**
-     * Add a key/value pair to the current metric operation. These should be reported in errors and tracings.
+     * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
@@ -40,7 +42,25 @@ interface MetricReporterEngine<C> {
     fun addProperty(key: String, value: Boolean?)
 
     /**
-     * Notice an error and report it to the metric reporter.
+     * Track an asynchronous task execution
+     *
+     * @param executor The desired executor.
+     * @param task The task.
+     * @since 2.0.0
+     */
+    fun <T> executeAsync(executor: ExecutorService, task: () -> T): Future<T>
+
+    /**
+     * Track an asynchronous task execution
+     *
+     * @param executor The desired executor.
+     * @param task The task.
+     * @since 2.0.0
+     */
+    fun <T> executeAsync(executor: ExecutorService, task: Callable<T>): Future<T>
+
+    /**
+     * Notice an error and report it to the tracer.
      *
      * @param exception The exception to be reported.
      * @param expected true if this error is expected, false otherwise.
@@ -49,7 +69,7 @@ interface MetricReporterEngine<C> {
     fun notifyError(exception: Throwable, expected: Boolean)
 
     /**
-     * Notice an error and report it to the metric reporter.
+     * Notice an error and report it to the tracer.
      *
      * @param message Error message.
      * @param params Custom parameters to include in the traced error. May be null.
@@ -59,23 +79,7 @@ interface MetricReporterEngine<C> {
     fun notifyError(message: String, params: Map<String, String?>, expected: Boolean)
 
     /**
-     * Extract the current trace context
-     */
-    fun extractContext(): C
-
-    /**
-     * Uses the current trace context. After the execution the the context must be closed.
-     * Its safer to use {@link #withContext(context: C, func: () -> Any) withContext}
-     */
-    fun withContext(context: Any): Closeable
-
-    /**
-     * Uses the current trace context
-     */
-    fun withContext(context: C, func: () -> Any)
-
-    /**
-     * Cleans the metric reporter state.
+     * Cleans the tracer state.
      */
     fun clear()
 

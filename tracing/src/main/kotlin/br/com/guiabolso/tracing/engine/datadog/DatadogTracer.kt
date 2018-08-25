@@ -1,6 +1,6 @@
 package br.com.guiabolso.tracing.engine.datadog
 
-import br.com.guiabolso.tracing.engine.MetricReporterEngine
+import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.utils.ExceptionUtils
 import datadog.trace.api.DDTags.*
 import io.opentracing.Tracer
@@ -9,7 +9,7 @@ import io.opentracing.util.GlobalTracer
 import java.io.Closeable
 
 
-class DatadogMetricReporter : MetricReporterEngine<SpanBuilder> {
+class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun setOperationName(name: String) {
         addProperty(RESOURCE_NAME, name)
