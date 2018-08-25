@@ -10,27 +10,19 @@ fun main(vararg args: String) {
     val executor = Executors.newFixedThreadPool(2)
 
     (1..100).forEach {
-        DatadogUtils.traceOperation("testAsync1") {
+        DatadogUtils.traceOperation("testAsync4") {
+            reporter.addProperty("run", it)
             reporter.executeAsync(executor) {
-                Thread.sleep(100L)
+                Thread.sleep((100 * Math.random()).toLong())
             }
             reporter.executeAsync(executor) {
-                Thread.sleep(100L)
+                Thread.sleep((100 * Math.random()).toLong())
+                reporter.notifyError(RuntimeException(":D"), false)
             }
-            Thread.sleep(10L)
+            Thread.sleep(150L)
         }
-
-        DatadogUtils.traceOperation("testAsync2") {
-            reporter.executeAsync(executor) {
-                Thread.sleep(100L)
-            }
-            reporter.executeAsync(executor) {
-                Thread.sleep(100L)
-            }
-            Thread.sleep(200L)
-        }
-        Thread.sleep(it * 100L)
     }
+
 
     executor.shutdown()
     executor.awaitTermination(3, TimeUnit.MINUTES)

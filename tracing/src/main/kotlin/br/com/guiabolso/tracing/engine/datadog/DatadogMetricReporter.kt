@@ -2,19 +2,14 @@ package br.com.guiabolso.tracing.engine.datadog
 
 import br.com.guiabolso.tracing.engine.MetricReporterEngine
 import br.com.guiabolso.tracing.utils.ExceptionUtils
-import datadog.trace.api.DDTags.ERROR_MSG
-import datadog.trace.api.DDTags.ERROR_STACK
-import datadog.trace.api.DDTags.ERROR_TYPE
-import datadog.trace.api.DDTags.RESOURCE_NAME
-import datadog.trace.api.DDTags.THREAD_ID
-import datadog.trace.api.DDTags.THREAD_NAME
-import io.opentracing.Span
+import datadog.trace.api.DDTags.*
 import io.opentracing.Tracer
+import io.opentracing.Tracer.SpanBuilder
 import io.opentracing.util.GlobalTracer
 import java.io.Closeable
 
 
-class DatadogMetricReporter : MetricReporterEngine<Span> {
+class DatadogMetricReporter : MetricReporterEngine<SpanBuilder> {
 
     override fun setOperationName(name: String) {
         addProperty(RESOURCE_NAME, name)
@@ -45,21 +40,16 @@ class DatadogMetricReporter : MetricReporterEngine<Span> {
         params.forEach { k, v -> addProperty(k, v) }
     }
 
-    override fun extractContext(): Span {
-        val scope = tracer.buildSpan("asyncTask").startActive(false)
-        return scope.span()
+    override fun extractContext(): SpanBuilder {
+        return tracer.buildSpan("asyncTask")
+                .asChildOf(tracer.activeSpan())
     }
 
     override fun withContext(context: Any): Closeable {
-        val scope = tracer.scopeManager().activate(context as Span, true)
-
-        addProperty(THREAD_ID, Thread.currentThread().id)
-        addProperty(THREAD_NAME, Thread.currentThread().name)
-
-        return scope
+        return (context as SpanBuilder).startActive(true)
     }
 
-    override fun withContext(context: Span, func: () -> Any) {
+    override fun withContext(context: SpanBuilder, func: () -> Any) {
         withContext(context).use { func() }
     }
 
