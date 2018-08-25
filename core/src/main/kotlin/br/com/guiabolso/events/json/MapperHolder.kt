@@ -1,10 +1,12 @@
 package br.com.guiabolso.events.json
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 
 object MapperHolder {
 
     @JvmField
-    var mapper = Gson()
+    var mapper = GsonBuilder()
+            .serializeNulls()
+            .create()!!
 
 }

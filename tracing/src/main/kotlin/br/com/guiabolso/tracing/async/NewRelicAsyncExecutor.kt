@@ -18,9 +18,7 @@ class NewRelicAsyncExecutor : AsyncExecutor {
     override fun <T> executeAsync(engine: TracerEngine<*>, executor: ExecutorService, task: Callable<T>): Future<T> {
         val context = engine.extractContext()!!
         return executor.submit((Callable {
-            engine.withContext(context).use {
-                asyncTask(engine, context, task)
-            }
+            asyncTask(engine, context, task)
         }))
     }
 
