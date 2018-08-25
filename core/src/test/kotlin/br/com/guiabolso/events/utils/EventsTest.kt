@@ -53,6 +53,16 @@ class EventsTest {
     }
 
     @Test
+    fun testGetOriginFromMetadata() {
+        assertNull(buildRequestEvent().origin)
+
+        val responseEvent = buildRequestEvent().copy(
+                metadata = JsonObject().apply { this.add("origin", JsonPrimitive("batata")) }
+        )
+        assertEquals("batata", responseEvent.origin)
+    }
+
+    @Test
     fun testGetPayload() {
         val request = buildRequestEvent().copy(payload = JsonObject().apply {
             this.add("a", JsonPrimitive("someString"))
@@ -61,6 +71,40 @@ class EventsTest {
 
         val vo = request.payloadAs(VO::class.java)
         val vo2: VO = request.payloadAs()
+
+        assertEquals("someString", vo.a)
+        assertEquals(60L, vo.b)
+
+        assertEquals("someString", vo2.a)
+        assertEquals(60L, vo2.b)
+    }
+
+    @Test
+    fun testGetIdentity() {
+        val request = buildRequestEvent().copy(identity = JsonObject().apply {
+            this.add("a", JsonPrimitive("someString"))
+            this.add("b", JsonPrimitive(60))
+        })
+
+        val vo = request.identityAs(VO::class.java)
+        val vo2: VO = request.identityAs()
+
+        assertEquals("someString", vo.a)
+        assertEquals(60L, vo.b)
+
+        assertEquals("someString", vo2.a)
+        assertEquals(60L, vo2.b)
+    }
+
+    @Test
+    fun testGetAuth() {
+        val request = buildRequestEvent().copy(auth = JsonObject().apply {
+            this.add("a", JsonPrimitive("someString"))
+            this.add("b", JsonPrimitive(60))
+        })
+
+        val vo = request.authAs(VO::class.java)
+        val vo2: VO = request.authAs()
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)

@@ -1,12 +1,12 @@
 package br.com.guiabolso.events.builder
 
-import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.utils.EventUtils
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.util.*
@@ -20,6 +20,13 @@ class EventBuilder {
             val builder = EventBuilder()
             builder.operations()
             return builder.buildRequestEvent()
+        }
+
+        @JvmStatic
+        fun responseEvent(operations: EventBuilder.() -> Unit): ResponseEvent {
+            val builder = EventBuilder()
+            builder.operations()
+            return builder.buildResponseEvent()
         }
 
         @JvmStatic
@@ -79,11 +86,10 @@ class EventBuilder {
 
     }
 
-    private val context = EventContextHolder.getContext()
     var name: String? = null
     var version: Int? = null
-    var id = context?.id
-    var flowId = context?.flowId
+    var id = EventUtils.eventId
+    var flowId = EventUtils.flowId
     var payload: Any? = null
     var identity: Any? = null
     var auth: Any? = null

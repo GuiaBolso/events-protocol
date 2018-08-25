@@ -6,7 +6,6 @@ import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.*
-import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.validation.EventValidator.validateAsRequestEvent
@@ -18,17 +17,9 @@ class EventProcessor
 @JvmOverloads
 constructor(
         private val discovery: EventHandlerDiscovery,
-        private val exceptionHandlerRegistry: ExceptionHandlerRegistry = ExceptionHandlerRegistry(),
+        private val exceptionHandlerRegistry: ExceptionHandlerRegistry,
         private val reporter: MetricReporter = MetricReporterFactory.createMetricReporter(),
         private val exposeExceptions: Boolean = false) {
-
-    fun <T : Throwable> register(clazz: Class<T>, handler: EventExceptionHandler<T>) {
-        exceptionHandlerRegistry.register(clazz, handler)
-    }
-
-    fun <T : Throwable> register(clazz: Class<T>, handler: (T, Event, MetricReporter) -> ResponseEvent) {
-        exceptionHandlerRegistry.register(clazz, handler)
-    }
 
     fun processEvent(rawEvent: String): String {
         val event = parseAndValidateEvent(rawEvent)
@@ -80,8 +71,8 @@ constructor(
         reporter.setOperationName("${event.name}:V${event.version}")
         reporter.addProperty("EventID", event.id)
         reporter.addProperty("FlowID", event.flowId)
-        reporter.addProperty("UserID", event.identity.get("userId")?.asString ?: "unknown")
-        reporter.addProperty("Origin", event.metadata.get("origin")?.asString ?: "unknown")
+        reporter.addProperty("UserID", event.userId?.toString() ?: "unknown")
+        reporter.addProperty("Origin", event.origin ?: "unknown")
     }
 
     private fun eventProcessFinished() {

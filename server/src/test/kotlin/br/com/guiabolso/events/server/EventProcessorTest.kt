@@ -3,10 +3,7 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
-import br.com.guiabolso.events.model.RequestEvent
-import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
-import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import br.com.guiabolso.tracing.MetricReporter
 import com.nhaarman.mockito_kotlin.mock
@@ -26,20 +23,16 @@ class EventProcessorTest {
         eventHandlerRegistry = SimpleEventHandlerRegistry()
         exceptionHandlerRegistry = ExceptionHandlerRegistry()
         reporter = mock()
-        eventProcessor = EventProcessor(eventHandlerRegistry)
+        eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
     }
 
     @Test
     fun testCanProcessEvent() {
         val event = EventBuilderForTest.buildRequestEvent()
 
-        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
-
-            override fun handle(event: RequestEvent): ResponseEvent {
-                return EventBuilderForTest.buildResponseEvent()
-            }
-
-        })
+        eventHandlerRegistry.add(event.name, event.version) {
+            EventBuilderForTest.buildResponseEvent()
+        }
 
         val responseEvent = eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
 
@@ -57,13 +50,9 @@ class EventProcessorTest {
     fun testEventThrowException() {
         val event = EventBuilderForTest.buildRequestEvent()
 
-        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
-
-            override fun handle(event: RequestEvent): ResponseEvent {
-                throw RuntimeException("error")
-            }
-
-        })
+        eventHandlerRegistry.add(event.name, event.version) {
+            throw RuntimeException("error")
+        }
 
         val responseEvent = MapperHolder.mapper.fromJson(eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString()), RawEvent::class.java)
 
@@ -75,15 +64,11 @@ class EventProcessorTest {
     fun testCanHandleException() {
         val event = EventBuilderForTest.buildRequestEvent()
 
-        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
+        eventHandlerRegistry.add(event.name, event.version) {
+            throw RuntimeException("error")
+        }
 
-            override fun handle(event: RequestEvent): ResponseEvent {
-                throw RuntimeException("error")
-            }
-
-        })
-
-        eventProcessor.register(RuntimeException::class.java) { _, requestEvent, _ ->
+        exceptionHandlerRegistry.register(RuntimeException::class.java) { _, requestEvent, _ ->
             EventBuilderForTest.buildResponseEvent().copy("${requestEvent.name}:bad_request")
         }
 
@@ -124,13 +109,10 @@ class EventProcessorTest {
     fun testProcessEventWithThrowException() {
         val event = EventBuilderForTest.buildRequestEvent()
 
-        eventHandlerRegistry.add(event.name, event.version, object : EventHandler {
+        eventHandlerRegistry.add(event.name, event.version) {
+            throw Exception("Test throw exception")
+        }
 
-            override fun handle(event: RequestEvent): ResponseEvent {
-                throw Exception("Test throw exception")
-            }
-
-        })
         val eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, reporter, true)
 
         eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
