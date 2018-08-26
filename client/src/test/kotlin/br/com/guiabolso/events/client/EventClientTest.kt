@@ -3,6 +3,7 @@ package br.com.guiabolso.events.client
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.exception.BadProtocolException
+import br.com.guiabolso.events.client.exception.FailedDependencyException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.json.MapperHolder
@@ -10,9 +11,7 @@ import br.com.guiabolso.events.model.EventErrorType
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-
 import org.mockito.Mockito.mock
-import java.net.ConnectException
 
 class EventClientTest {
 
@@ -117,13 +116,13 @@ class EventClientTest {
                 MapperHolder.mapper.toJson(event),
                 Charsets.UTF_8,
                 1000)
-        ).thenThrow(ConnectException::class.java)
+        ).thenThrow(FailedDependencyException::class.java)
 
         val response = eventClient.sendEvent("url", event, 1000)
 
         assertTrue(response is Response.FailedDependency)
         assertNull((response as Response.FailedDependency).response)
-        assertTrue(response.exception is ConnectException)
+        assertTrue(response.exception is FailedDependencyException)
     }
 
 }
