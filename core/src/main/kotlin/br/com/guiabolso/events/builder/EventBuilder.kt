@@ -9,7 +9,7 @@ import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.utils.EventUtils
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import java.util.*
+import java.util.UUID
 
 class EventBuilder {
 
