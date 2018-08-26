@@ -7,9 +7,10 @@ import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import br.com.guiabolso.tracing.Tracer
 import com.nhaarman.mockito_kotlin.mock
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class EventProcessorTest {
 
@@ -18,7 +19,7 @@ class EventProcessorTest {
     private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
     private lateinit var tracer: Tracer
 
-    @Before
+    @BeforeEach
     fun setUp() {
         eventHandlerRegistry = SimpleEventHandlerRegistry()
         exceptionHandlerRegistry = ExceptionHandlerRegistry()
@@ -105,7 +106,7 @@ class EventProcessorTest {
         assertEquals("version", responseEvent.payload!!.asJsonObject["parameters"].asJsonObject["missingProperty"].asString)
     }
 
-    @Test(expected = Exception::class)
+    @Test
     fun testProcessEventWithThrowException() {
         val event = EventBuilderForTest.buildRequestEvent()
 
@@ -115,7 +116,9 @@ class EventProcessorTest {
 
         val eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, tracer, true)
 
-        eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
+        assertThrows(Exception::class.java) {
+            eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
+        }
     }
 
 }

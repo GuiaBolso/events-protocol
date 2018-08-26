@@ -5,8 +5,8 @@ import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.model.EventErrorType
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import org.junit.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.lang.IllegalStateException
 
 class EventsTest {
@@ -36,10 +36,12 @@ class EventsTest {
         assertTrue(responseEvent.getErrorType() == EventErrorType.Generic)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun testGetErrorTypeOnSuccess() {
-        val responseEvent = buildResponseEvent()
-        responseEvent.getErrorType()
+        assertThrows(IllegalStateException::class.java) {
+            val responseEvent = buildResponseEvent()
+            responseEvent.getErrorType()
+        }
     }
 
     @Test

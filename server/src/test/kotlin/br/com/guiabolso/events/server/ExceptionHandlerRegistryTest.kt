@@ -4,8 +4,8 @@ import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.tracing.Tracer
 import com.google.gson.JsonPrimitive
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
 class ExceptionHandlerRegistryTest {
