@@ -2,7 +2,9 @@ package br.com.guiabolso.tracing.engine.newrelic
 
 import br.com.guiabolso.tracing.engine.TracerEngine
 import com.newrelic.api.agent.NewRelic
-import com.newrelic.api.agent.NewRelic.*
+import com.newrelic.api.agent.NewRelic.addCustomParameter
+import com.newrelic.api.agent.NewRelic.noticeError
+import com.newrelic.api.agent.NewRelic.setTransactionName
 import com.newrelic.api.agent.Token
 import java.io.Closeable
 

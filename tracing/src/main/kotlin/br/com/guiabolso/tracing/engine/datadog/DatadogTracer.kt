@@ -2,7 +2,10 @@ package br.com.guiabolso.tracing.engine.datadog
 
 import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.utils.ExceptionUtils
-import datadog.trace.api.DDTags.*
+import datadog.trace.api.DDTags.ERROR_MSG
+import datadog.trace.api.DDTags.ERROR_STACK
+import datadog.trace.api.DDTags.ERROR_TYPE
+import datadog.trace.api.DDTags.RESOURCE_NAME
 import io.opentracing.Tracer
 import io.opentracing.Tracer.SpanBuilder
 import io.opentracing.tag.Tags
