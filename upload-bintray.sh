@@ -1,6 +1,6 @@
 #!/bin/bash
 
-modules=("core" "server" "client")
+modules=("tracing" "core" "server" "client")
 
 for i in "${modules[@]}"
 do
