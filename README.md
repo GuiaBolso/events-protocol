@@ -2,6 +2,7 @@ Events Protocol
 =================
 
 [![Build Status](https://travis-ci.org/GuiaBolso/events-protocol.svg?branch=master)](https://travis-ci.org/GuiaBolso/events-protocol)
+[ ![Download](https://api.bintray.com/packages/gb-opensource/maven/Events-Core/images/download.svg) ](https://bintray.com/gb-opensource/maven/Events-Core/_latestVersion)
 
 
 Dependencias
@@ -20,9 +21,9 @@ repositories {
 A biblioteca é composta de 3 modulos. Server, Client e Core.
 
 ```
- compile "br.com.guiabolso:events-client:1.0.4"
- compile "br.com.guiabolso:events-server:1.0.4"
- compile "br.com.guiabolso:events-core:1.0.4"
+ compile "br.com.guiabolso:events-client:2.0.0"
+ compile "br.com.guiabolso:events-server:2.0.0"
+ compile "br.com.guiabolso:events-core:2.0.0"
 ```
 Geralmente as dependências a serem importadas são:
 
