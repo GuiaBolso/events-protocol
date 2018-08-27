@@ -2,8 +2,8 @@ package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.model.EventErrorType.*
 import br.com.guiabolso.events.model.EventErrorType.Companion.getErrorType
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class EventErrorTypeTest {
 

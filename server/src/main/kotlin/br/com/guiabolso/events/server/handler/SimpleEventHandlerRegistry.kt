@@ -12,13 +12,13 @@ class SimpleEventHandlerRegistry : EventHandlerRegistry {
 
     private val handlers = mutableMapOf<Pair<String, Int>, EventHandler>()
 
-    override fun add(eventName: String, eventVersion: Int, handler: EventHandler) {
-        logger.info("Registering event handler for $eventName V$eventVersion")
-        handlers[eventName to eventVersion] = handler
+    override fun add(handler: EventHandler) {
+        logger.info("Registering event handler for ${handler.eventName} V${handler.eventVersion}")
+        handlers[handler.eventName to handler.eventVersion] = handler
     }
 
     override fun add(eventName: String, eventVersion: Int, handler: (RequestEvent) -> ResponseEvent) {
-        add(eventName, eventVersion, LambdaEventHandler(handler))
+        add(LambdaEventHandler(eventName, eventVersion, handler))
     }
 
     override fun eventHandlerFor(eventName: String, eventVersion: Int) = handlers[eventName to eventVersion]

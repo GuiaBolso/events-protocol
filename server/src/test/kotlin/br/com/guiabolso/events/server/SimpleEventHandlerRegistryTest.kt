@@ -2,9 +2,9 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
 class SimpleEventHandlerRegistryTest {
 

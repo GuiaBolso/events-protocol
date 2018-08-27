@@ -5,8 +5,12 @@ import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.model.EventErrorType
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import org.junit.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.lang.IllegalStateException
 
 class EventsTest {
@@ -36,10 +40,12 @@ class EventsTest {
         assertTrue(responseEvent.getErrorType() == EventErrorType.Generic)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun testGetErrorTypeOnSuccess() {
-        val responseEvent = buildResponseEvent()
-        responseEvent.getErrorType()
+        assertThrows(IllegalStateException::class.java) {
+            val responseEvent = buildResponseEvent()
+            responseEvent.getErrorType()
+        }
     }
 
     @Test
@@ -53,6 +59,16 @@ class EventsTest {
     }
 
     @Test
+    fun testGetOriginFromMetadata() {
+        assertNull(buildRequestEvent().origin)
+
+        val responseEvent = buildRequestEvent().copy(
+                metadata = JsonObject().apply { this.add("origin", JsonPrimitive("batata")) }
+        )
+        assertEquals("batata", responseEvent.origin)
+    }
+
+    @Test
     fun testGetPayload() {
         val request = buildRequestEvent().copy(payload = JsonObject().apply {
             this.add("a", JsonPrimitive("someString"))
@@ -61,6 +77,40 @@ class EventsTest {
 
         val vo = request.payloadAs(VO::class.java)
         val vo2: VO = request.payloadAs()
+
+        assertEquals("someString", vo.a)
+        assertEquals(60L, vo.b)
+
+        assertEquals("someString", vo2.a)
+        assertEquals(60L, vo2.b)
+    }
+
+    @Test
+    fun testGetIdentity() {
+        val request = buildRequestEvent().copy(identity = JsonObject().apply {
+            this.add("a", JsonPrimitive("someString"))
+            this.add("b", JsonPrimitive(60))
+        })
+
+        val vo = request.identityAs(VO::class.java)
+        val vo2: VO = request.identityAs()
+
+        assertEquals("someString", vo.a)
+        assertEquals(60L, vo.b)
+
+        assertEquals("someString", vo2.a)
+        assertEquals(60L, vo2.b)
+    }
+
+    @Test
+    fun testGetAuth() {
+        val request = buildRequestEvent().copy(auth = JsonObject().apply {
+            this.add("a", JsonPrimitive("someString"))
+            this.add("b", JsonPrimitive(60))
+        })
+
+        val vo = request.authAs(VO::class.java)
+        val vo2: VO = request.authAs()
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)

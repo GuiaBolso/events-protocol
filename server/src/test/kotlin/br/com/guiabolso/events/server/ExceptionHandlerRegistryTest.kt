@@ -2,10 +2,10 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
-import br.com.guiabolso.events.metric.MetricReporter
+import br.com.guiabolso.tracing.Tracer
 import com.google.gson.JsonPrimitive
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
 class ExceptionHandlerRegistryTest {
@@ -21,7 +21,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
                 RuntimeException("Some error"),
                 EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(MetricReporter::class.java)
+                Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("Some error", response.payload.asString)
@@ -42,7 +42,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
                 RuntimeException("Some error"),
                 EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(MetricReporter::class.java)
+                Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("Exception", response.payload.asString)
@@ -63,7 +63,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
                 RuntimeException("Some error"),
                 EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(MetricReporter::class.java)
+                Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("RuntimeException", response.payload.asString)
@@ -77,7 +77,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
                 RuntimeException("Some error"),
                 EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(MetricReporter::class.java)
+                Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)

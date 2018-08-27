@@ -4,9 +4,9 @@ import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 
 interface EventHandlerRegistry : EventHandlerDiscovery {
-	
-    fun add(eventName: String, eventVersion: Int, handler: EventHandler)
+
+    fun add(handler: EventHandler)
 
     fun add(eventName: String, eventVersion: Int, handler: (RequestEvent) -> ResponseEvent)
-	
+
 }

@@ -4,19 +4,19 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.event
 import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
+import br.com.guiabolso.events.builder.EventBuilder.Companion.responseEvent
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
-import br.com.guiabolso.events.context.EventContextHolder.setContext
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.utils.EventUtils
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 class EventBuilderTest {
 
@@ -42,12 +42,12 @@ class EventBuilderTest {
 
     @Test
     fun testCreateEventWithIdAndFlowIdForward() {
-        setContext(EventContext("id", "flowId"))
-
-        val event = event {
-            name = "event"
-            version = 1
-            payload = 42
+        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+            event {
+                name = "event"
+                version = 1
+                payload = 42
+            }
         }
 
         assertEquals("id", event.id)
@@ -58,20 +58,18 @@ class EventBuilderTest {
         assertEquals(JsonObject(), event.auth)
         assertEquals(JsonObject(), event.identity)
         assertEquals(JsonObject(), event.metadata)
-
-        EventContextHolder.clean()
     }
 
     @Test
     fun testCreateEventWithIdAndFlowIdForwardOverwritten() {
-        setContext(EventContext("id", "flowId"))
-
-        val event = event {
-            name = "event"
-            id = "otherId"
-            flowId = "otherFlowId"
-            version = 1
-            payload = 42
+        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+            event {
+                name = "event"
+                id = "otherId"
+                flowId = "otherFlowId"
+                version = 1
+                payload = 42
+            }
         }
 
         assertEquals("otherId", event.id)
@@ -82,52 +80,76 @@ class EventBuilderTest {
         assertEquals(JsonObject(), event.auth)
         assertEquals(JsonObject(), event.identity)
         assertEquals(JsonObject(), event.metadata)
-
-        EventContextHolder.clean()
     }
 
-    @Test(expected = MissingEventInformationException::class)
+    @Test
     fun testCreateEventWithoutIdAndFlowId() {
-        event {
-            name = "event"
-            version = 1
-            payload = 42
-        }
-    }
-
-    @Test(expected = MissingEventInformationException::class)
-    fun testCreateWithoutName() {
-        event {
-            id = "id"
-            flowId = "flowId"
-            version = 1
-            payload = 42
-        }
-
-    }
-
-    @Test(expected = MissingEventInformationException::class)
-    fun testCreateWithoutVersion() {
-        event {
-            id = "id"
-            flowId = "flowId"
-            name = "event"
-            payload = 42
-        }
-
-    }
-
-    @Test(expected = MissingEventInformationException::class)
-    fun testCreateWithoutPayload() {
-        event {
-            id = "id"
-            flowId = "flowId"
-            name = "event"
+        assertThrows(MissingEventInformationException::class.java) {
+            event {
+                name = "event"
+                version = 1
+                payload = 42
+            }
         }
     }
 
     @Test
-    fun testCreateResponseEvent() {
+    fun testCreateWithoutName() {
+        assertThrows(MissingEventInformationException::class.java) {
+            event {
+                id = "id"
+                flowId = "flowId"
+                version = 1
+                payload = 42
+            }
+        }
+    }
+
+    @Test
+    fun testCreateWithoutVersion() {
+        assertThrows(MissingEventInformationException::class.java) {
+            event {
+                id = "id"
+                flowId = "flowId"
+                name = "event"
+                payload = 42
+            }
+        }
+    }
+
+    @Test
+    fun testCreateWithoutPayload() {
+        assertThrows(MissingEventInformationException::class.java) {
+            event {
+                id = "id"
+                flowId = "flowId"
+                name = "event"
+            }
+        }
+    }
+
+    @Test
+    fun testResponseEvent() {
+        val response = responseEvent {
+            id = "id"
+            flowId = "flowId"
+            name = "event:response"
+            version = 1
+            payload = 84
+        }
+
+        assertEquals("id", response.id)
+        assertEquals("flowId", response.flowId)
+        assertEquals("event:response", response.name)
+        assertEquals(1, response.version)
+        assertEquals(JsonPrimitive(84), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testResponseForEvent() {
         val event = event {
             id = "id"
             flowId = "flowId"
@@ -150,13 +172,13 @@ class EventBuilderTest {
     }
 
     @Test
-    fun testCreateResponseEventWithIdAndFlowIdForward() {
-        setContext(EventContext("id", "flowId"))
-
-        val event = event {
-            name = "event"
-            version = 1
-            payload = 42
+    fun testResponseForEventWithIdAndFlowIdForward() {
+        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+            event {
+                name = "event"
+                version = 1
+                payload = 42
+            }
         }
         val response = responseFor(event) {
             payload = 84
@@ -175,7 +197,7 @@ class EventBuilderTest {
     }
 
     @Test
-    fun testCreateResponseEventWithIdAndFlowIdForwardOverwritten() {
+    fun testResponseForEventWithIdAndFlowIdForwardOverwritten() {
         val event = event {
             id = "id"
             flowId = "flowId"
@@ -199,54 +221,62 @@ class EventBuilderTest {
         assertEquals(JsonObject(), response.metadata)
     }
 
-    @Test(expected = MissingEventInformationException::class)
-    fun testCreateResponseEventWithoutIdAndFlowId() {
-        val event = event {
-            name = "event"
-            version = 1
-            payload = 42
-        }
-        responseFor(event) {
-            id = null
-            flowId = null
-            payload = 84
-        }
-    }
-
-    @Test(expected = MissingEventInformationException::class)
-    fun testCreateResponseWithoutName() {
-        val event = event {
-            name = "event"
-            version = 1
-            payload = 42
-        }
-        responseFor(event) {
-            name = null
-            payload = 84
+    @Test
+    fun testResponseForEventWithoutIdAndFlowId() {
+        assertThrows(MissingEventInformationException::class.java) {
+            val event = event {
+                name = "event"
+                version = 1
+                payload = 42
+            }
+            responseFor(event) {
+                id = null
+                flowId = null
+                payload = 84
+            }
         }
     }
 
-    @Test(expected = MissingEventInformationException::class)
-    fun testCreateResponseWithoutVersion() {
-        val event = event {
-            name = "event"
-            version = 1
-            payload = 42
-        }
-        responseFor(event) {
-            version = null
-            payload = 84
+    @Test
+    fun testResponseForEventWithoutName() {
+        assertThrows(MissingEventInformationException::class.java) {
+            val event = event {
+                name = "event"
+                version = 1
+                payload = 42
+            }
+            responseFor(event) {
+                name = null
+                payload = 84
+            }
         }
     }
 
-    @Test(expected = MissingEventInformationException::class)
-    fun testCreateResponseWithoutPayload() {
-        val event = event {
-            name = "event"
-            version = 1
-            payload = 42
+    @Test
+    fun testResponseForEventWithoutVersion() {
+        assertThrows(MissingEventInformationException::class.java) {
+            val event = event {
+                name = "event"
+                version = 1
+                payload = 42
+            }
+            responseFor(event) {
+                version = null
+                payload = 84
+            }
         }
-        responseFor(event) {
+    }
+
+    @Test
+    fun testResponseForEventWithoutPayload() {
+        assertThrows(MissingEventInformationException::class.java) {
+            val event = event {
+                name = "event"
+                version = 1
+                payload = 42
+            }
+            responseFor(event) {
+            }
         }
     }
 

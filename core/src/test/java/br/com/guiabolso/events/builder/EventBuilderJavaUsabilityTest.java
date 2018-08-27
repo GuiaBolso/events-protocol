@@ -3,9 +3,9 @@ package br.com.guiabolso.events.builder;
 import br.com.guiabolso.events.model.RequestEvent;
 import br.com.guiabolso.events.model.ResponseEvent;
 import com.google.gson.JsonObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventBuilderJavaUsabilityTest {
 
