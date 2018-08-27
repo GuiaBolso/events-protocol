@@ -8,7 +8,6 @@ publish {
     artifactId = 'events-core'
     autoPublish = true
     desc = 'Core classes for event-protocol'
-    userOrg = 'guiabolso'
     groupId = 'br.com.guiabolso'
     licences = ['APACHE-2.0']
     publishVersion = parent.ext.publish_version

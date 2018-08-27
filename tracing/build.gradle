@@ -23,7 +23,6 @@ publish {
     artifactId = 'tracing'
     autoPublish = true
     desc = 'Tracing library'
-    userOrg = 'guiabolso'
     groupId = 'br.com.guiabolso'
     licences = ['APACHE-2.0']
     publishVersion = parent.ext.publish_version
