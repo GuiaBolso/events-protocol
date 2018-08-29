@@ -1,7 +1,6 @@
 package br.com.guiabolso.events.model
 
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 
 data class RawEvent(
         val name: String?,
@@ -9,7 +8,7 @@ data class RawEvent(
         val id: String?,
         val flowId: String?,
         val payload: JsonElement?,
-        val identity: JsonObject?,
-        val auth: JsonObject?,
-        val metadata: JsonObject?
+        val identity: JsonElement?,
+        val auth: JsonElement?,
+        val metadata: JsonElement?
 )

@@ -10,6 +10,9 @@ interface EventValidator {
 
     fun validateAsRequestEvent(rawEvent: RawEvent): RequestEvent
 
-    fun <T> T?.required(name: String): T = this ?: throw IllegalArgumentException(name)
+    fun <T> T?.required(name: String) = when (this) {
+        null -> throw IllegalArgumentException(name)
+        else -> this
+    }
 
 }

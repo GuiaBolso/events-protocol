@@ -3,6 +3,8 @@ package br.com.guiabolso.events.validation
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 
 class StrictEventValidator : EventValidator {
 
@@ -12,9 +14,9 @@ class StrictEventValidator : EventValidator {
             id = rawEvent.id.required("id"),
             flowId = rawEvent.flowId.required("flowId"),
             payload = rawEvent.payload.required("payload"),
-            identity = rawEvent.identity.required("identity"),
-            auth = rawEvent.auth.required("auth"),
-            metadata = rawEvent.metadata.required("metadata")
+            identity = rawEvent.identity.requiredJsonObject("identity"),
+            auth = rawEvent.auth.requiredJsonObject("auth"),
+            metadata = rawEvent.metadata.requiredJsonObject("metadata")
     )
 
     override fun validateAsRequestEvent(rawEvent: RawEvent) = RequestEvent(
@@ -23,9 +25,14 @@ class StrictEventValidator : EventValidator {
             id = rawEvent.id.required("id"),
             flowId = rawEvent.flowId.required("flowId"),
             payload = rawEvent.payload.required("payload"),
-            identity = rawEvent.identity.required("identity"),
-            auth = rawEvent.auth.required("auth"),
-            metadata = rawEvent.metadata.required("metadata")
+            identity = rawEvent.identity.requiredJsonObject("identity"),
+            auth = rawEvent.auth.requiredJsonObject("auth"),
+            metadata = rawEvent.metadata.requiredJsonObject("metadata")
     )
+
+    private fun JsonElement?.requiredJsonObject(name: String): JsonObject {
+        if (this == null || !this.isJsonObject) throw IllegalArgumentException(name)
+        return this.asJsonObject
+    }
 
 }

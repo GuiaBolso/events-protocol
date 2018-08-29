@@ -3,6 +3,7 @@ package br.com.guiabolso.events.validation
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
+import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import org.slf4j.LoggerFactory
@@ -25,10 +26,10 @@ class LenientEventValidator : EventValidator {
                 version = version,
                 id = rawEvent.id.required("id"),
                 flowId = flowId,
-                payload = rawEvent.payload.getOr(missingProperties, "payload", JsonNull.INSTANCE),
-                identity = rawEvent.identity.getOr(missingProperties, "identity", JsonObject()),
-                auth = rawEvent.auth.getOr(missingProperties, "auth", JsonObject()),
-                metadata = rawEvent.metadata.getOr(missingProperties, "metadata", JsonObject())
+                payload = rawEvent.payload.getPayload(missingProperties, "payload"),
+                identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
+                auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
+                metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
         )
 
         if (missingProperties.isNotEmpty()) {
@@ -50,10 +51,10 @@ class LenientEventValidator : EventValidator {
                 version = version,
                 id = rawEvent.id.required("id"),
                 flowId = flowId,
-                payload = rawEvent.payload.getOr(missingProperties, "payload", JsonNull.INSTANCE),
-                identity = rawEvent.identity.getOr(missingProperties, "identity", JsonObject()),
-                auth = rawEvent.auth.getOr(missingProperties, "auth", JsonObject()),
-                metadata = rawEvent.metadata.getOr(missingProperties, "metadata", JsonObject())
+                payload = rawEvent.payload.getPayload(missingProperties, "payload"),
+                identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
+                auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
+                metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
         )
 
         if (missingProperties.isNotEmpty()) {
@@ -63,12 +64,21 @@ class LenientEventValidator : EventValidator {
         return request
     }
 
-    private fun <T> T?.getOr(missingProperties: MutableList<String>, name: String, default: T): T {
-        return if (this == null) {
+    private fun JsonElement?.getPayload(missingProperties: MutableList<String>, name: String): JsonElement {
+        return if (this == null || this == JsonNull.INSTANCE) {
             missingProperties.add(name)
-            default
+            JsonNull.INSTANCE
         } else {
             this
+        }
+    }
+
+    private fun JsonElement?.getAsJsonObject(missingProperties: MutableList<String>, name: String): JsonObject {
+        return if (this == null || this == JsonNull.INSTANCE || !this.isJsonObject) {
+            missingProperties.add(name)
+            JsonObject()
+        } else {
+            this.asJsonObject
         }
     }
 
