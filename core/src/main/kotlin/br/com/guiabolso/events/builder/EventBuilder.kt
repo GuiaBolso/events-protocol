@@ -7,7 +7,7 @@ import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.utils.EventUtils
-import com.google.gson.JsonElement
+import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import java.util.UUID
 
@@ -117,17 +117,14 @@ class EventBuilder {
             metadata = convertToJsonObjectOrEmpty(this.metadata)
     )
 
-    private fun convertPayload(): JsonElement {
-        if (this.payload == null) throw MissingEventInformationException("Missing event payload.")
-        return MapperHolder.mapper.toJsonTree(this.payload)
+    private fun convertPayload() = when (this.payload) {
+        null -> JsonNull.INSTANCE
+        else -> MapperHolder.mapper.toJsonTree(this.payload)
     }
 
-    private fun convertToJsonObjectOrEmpty(value: Any?): JsonObject {
-        return if (value == null) {
-            JsonObject()
-        } else {
-            MapperHolder.mapper.toJsonTree(value).asJsonObject
-        }
+    private fun convertToJsonObjectOrEmpty(value: Any?) = when (value) {
+        null -> JsonObject()
+        else -> MapperHolder.mapper.toJsonTree(value).asJsonObject
     }
 
 }

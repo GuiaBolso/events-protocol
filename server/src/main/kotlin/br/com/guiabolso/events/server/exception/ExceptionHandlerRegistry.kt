@@ -6,7 +6,6 @@ import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.tracing.Tracer
-import br.com.guiabolso.tracing.utils.ExceptionUtils
 import org.slf4j.LoggerFactory
 
 class ExceptionHandlerRegistry {
@@ -35,7 +34,7 @@ class ExceptionHandlerRegistry {
             EventBuilder.errorFor(
                     event,
                     EventErrorType.Generic,
-                    EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message, "exception" to ExceptionUtils.getStackTrace(e)))
+                    EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message))
             )
         }
     }

@@ -9,14 +9,17 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.events.validation.EventValidator.validateAsResponseEvent
+import br.com.guiabolso.events.validation.EventValidator
+import br.com.guiabolso.events.validation.StrictEventValidator
 import org.slf4j.LoggerFactory
 
 class EventClient
 @JvmOverloads
 constructor(
         private val httpClient: HttpClientAdapter = FuelHttpClient(),
-        private val defaultTimeout: Int = 60000) {
+        private val eventValidator: EventValidator = StrictEventValidator(),
+        private val defaultTimeout: Int = 60000
+) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(EventClient::class.java)!!
@@ -56,7 +59,7 @@ constructor(
     private fun parseEvent(rawResponse: String): ResponseEvent {
         try {
             val rawEvent = MapperHolder.mapper.fromJson(rawResponse, RawEvent::class.java)
-            return validateAsResponseEvent(rawEvent)
+            return eventValidator.validateAsResponseEvent(rawEvent)
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)
         }
