@@ -7,6 +7,10 @@ import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import org.slf4j.LoggerFactory
 
+@Deprecated(
+        message = "Used only to validate events from applications that doesn't implements protocol fully.",
+        replaceWith = ReplaceWith("StrictEventValidator", "br.com.guiabolso.events.validation.StrictEventValidator")
+)
 class LenientEventValidator : EventValidator {
 
     override fun validateAsResponseEvent(rawEvent: RawEvent): ResponseEvent {
