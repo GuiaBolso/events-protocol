@@ -101,4 +101,18 @@ class ExceptionHandlerRegistryTest {
         assertEquals(event, exception.request)
     }
 
+    @Test
+    fun testBypassExceptionHandlerWithoutWrappingException() {
+        val exceptionHandlerRegistry = bypassExceptionHandler(false)
+
+        val cause = RuntimeException("Some error")
+        val event = EventBuilderForTest.buildRequestEvent()
+
+        val exception = assertThrows(RuntimeException::class.java) {
+            exceptionHandlerRegistry.handleException(cause, event, Mockito.mock(Tracer::class.java))
+        }
+
+        assertEquals(cause, exception)
+    }
+
 }

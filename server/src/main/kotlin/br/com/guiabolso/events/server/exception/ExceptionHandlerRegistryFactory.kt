@@ -6,11 +6,15 @@ object ExceptionHandlerRegistryFactory {
     fun exceptionHandler() = ExceptionHandlerRegistry()
 
     @JvmStatic
-    fun bypassExceptionHandler(): ExceptionHandlerRegistry {
+    fun bypassExceptionHandler(wrapExceptionAndEvent: Boolean = true): ExceptionHandlerRegistry {
         val handler = ExceptionHandlerRegistry()
 
         handler.register(Exception::class.java) { ex, request, _ ->
-            throw BypassedException(ex, request)
+            if (wrapExceptionAndEvent) {
+                throw BypassedException(ex, request)
+            } else {
+                throw ex
+            }
         }
 
         return handler

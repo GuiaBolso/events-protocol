@@ -11,6 +11,7 @@ import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
+import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.bypassExceptionHandler
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
@@ -25,6 +26,22 @@ constructor(
         private val tracer: Tracer = TracerFactory.createTracer(),
         private val eventValidator: EventValidator = StrictEventValidator()
 ) {
+
+    @JvmOverloads
+    @Deprecated(
+            "The 'exposeExceptions' should not be used. Use 'ExceptionHandlerRegistryFactory.bypassExceptionHandler()' as exception handler instead.",
+            ReplaceWith(
+                    "EventProcessor(discovery, ExceptionHandlerRegistryFactory.bypassExceptionHandler(), eventValidator, tracer)",
+                    "br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory"
+            )
+    )
+    constructor(
+            discovery: EventHandlerDiscovery,
+            exceptionHandlerRegistry: ExceptionHandlerRegistry,
+            tracer: Tracer = TracerFactory.createTracer(),
+            eventValidator: EventValidator = StrictEventValidator(),
+            exposeExceptions: Boolean
+    ) : this(discovery, configureExceptionHandler(exceptionHandlerRegistry, exposeExceptions), tracer, eventValidator)
 
     fun processEvent(rawEvent: String): String {
         val event = parseAndValidateEvent(rawEvent)
@@ -83,4 +100,15 @@ constructor(
 
     private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
 
+    companion object {
+
+        private fun configureExceptionHandler(handler: ExceptionHandlerRegistry, exposeExceptions: Boolean): ExceptionHandlerRegistry {
+            return if (exposeExceptions) {
+                bypassExceptionHandler(false)
+            } else {
+                handler
+            }
+        }
+
+    }
 }
