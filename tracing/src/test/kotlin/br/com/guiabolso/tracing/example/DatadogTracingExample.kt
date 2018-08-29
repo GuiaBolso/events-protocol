@@ -20,18 +20,18 @@ fun main(vararg args: String) {
     val tracer = TracerFactory.createTracerWithDatadog()
     val executor = Executors.newFixedThreadPool(2)
 
-    //You don't need to use DatadogUtils.traceOperation when using servlet, its automatic.
-    DatadogUtils.traceOperation("simpleOperation") {
+    //You don't need to use DatadogUtils.traceAsNewOperation when using servlet, its automatic.
+    DatadogUtils.traceAsNewOperation("simpleOperation") {
         tracer.addProperty("oneTag", "someValue1")
         someWork()
     }
 
-    DatadogUtils.traceOperation("simpleOperationWithError") {
+    DatadogUtils.traceAsNewOperation("simpleOperationWithError") {
         tracer.addProperty("oneTag", "someValue2")
         someWorkWithError()
     }
 
-    DatadogUtils.traceOperation("simpleOperationWithErrorHandled") {
+    DatadogUtils.traceAsNewOperation("simpleOperationWithErrorHandled") {
         tracer.addProperty("oneTag", "someValue3")
         try {
             someWorkWithError()
@@ -41,7 +41,7 @@ fun main(vararg args: String) {
         }
     }
 
-    DatadogUtils.traceOperation("someAsyncOperation") {
+    DatadogUtils.traceAsNewOperation("someAsyncOperation") {
         tracer.addProperty("oneTag", "someValue4")
         someWork()
 
@@ -54,7 +54,7 @@ fun main(vararg args: String) {
         someWork()
     }
 
-    DatadogUtils.traceOperation("someAsyncOperationWithError") {
+    DatadogUtils.traceAsNewOperation("someAsyncOperationWithError") {
         tracer.addProperty("oneTag", "someValue5")
         someWork()
 

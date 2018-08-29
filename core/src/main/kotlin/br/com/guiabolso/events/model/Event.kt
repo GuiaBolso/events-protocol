@@ -15,6 +15,25 @@ sealed class Event {
     abstract val identity: JsonObject
     abstract val auth: JsonObject
     abstract val metadata: JsonObject
+
+    fun <T> payloadAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.payload, clazz)
+
+    inline fun <reified T> payloadAs(): T = MapperHolder.mapper.fromJson(this.payload, T::class.java)
+
+    fun <T> identityAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.identity, clazz)
+
+    inline fun <reified T> identityAs(): T = MapperHolder.mapper.fromJson(this.identity, T::class.java)
+
+    fun <T> authAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.auth, clazz)
+
+    inline fun <reified T> authAs(): T = MapperHolder.mapper.fromJson(this.auth, T::class.java)
+
+    val userId: Long?
+        get() = this.identity.getAsJsonPrimitive("userId")?.asLong
+
+    val origin: String?
+        get() = this.metadata.getAsJsonPrimitive("origin")?.asString
+
 }
 
 data class ResponseEvent(
@@ -48,24 +67,4 @@ data class RequestEvent(
         override val identity: JsonObject,
         override val auth: JsonObject,
         override val metadata: JsonObject
-) : Event() {
-
-    fun <T> payloadAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.payload, clazz)
-
-    inline fun <reified T> payloadAs(): T = MapperHolder.mapper.fromJson(this.payload, T::class.java)
-
-    fun <T> identityAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.identity, clazz)
-
-    inline fun <reified T> identityAs(): T = MapperHolder.mapper.fromJson(this.identity, T::class.java)
-
-    fun <T> authAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.auth, clazz)
-
-    inline fun <reified T> authAs(): T = MapperHolder.mapper.fromJson(this.auth, T::class.java)
-
-    val userId: Long?
-        get() = this.identity.getAsJsonPrimitive("userId")?.asLong
-
-    val origin: String?
-        get() = this.metadata.getAsJsonPrimitive("origin")?.asString
-
-}
+) : Event()
