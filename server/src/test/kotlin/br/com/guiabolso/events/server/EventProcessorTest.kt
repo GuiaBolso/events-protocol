@@ -8,7 +8,6 @@ import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import br.com.guiabolso.tracing.Tracer
 import com.nhaarman.mockito_kotlin.mock
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -104,21 +103,6 @@ class EventProcessorTest {
         assertEquals("badProtocol", responseEvent.name)
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload!!.asJsonObject["code"].asString)
         assertEquals("version", responseEvent.payload!!.asJsonObject["parameters"].asJsonObject["missingProperty"].asString)
-    }
-
-    @Test
-    fun testProcessEventWithThrowException() {
-        val event = EventBuilderForTest.buildRequestEvent()
-
-        eventHandlerRegistry.add(event.name, event.version) {
-            throw Exception("Test throw exception")
-        }
-
-        val eventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, tracer, true)
-
-        assertThrows(Exception::class.java) {
-            eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
-        }
     }
 
 }

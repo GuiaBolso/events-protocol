@@ -4,32 +4,12 @@ import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 
-object EventValidator {
+interface EventValidator {
 
-    fun validateAsResponseEvent(rawEvent: RawEvent) = ResponseEvent(
-            name = rawEvent.name.required("name"),
-            version = rawEvent.version.required("version"),
-            id = rawEvent.id.required("id"),
-            flowId = rawEvent.flowId.required("flowId"),
-            payload = rawEvent.payload.required("payload"),
-            identity = rawEvent.identity.required("identity"),
-            auth = rawEvent.auth.required("auth"),
-            metadata = rawEvent.metadata.required("metadata")
-    )
+    fun validateAsResponseEvent(rawEvent: RawEvent): ResponseEvent
 
-    fun validateAsRequestEvent(rawEvent: RawEvent) = RequestEvent(
-            name = rawEvent.name.required("name"),
-            version = rawEvent.version.required("version"),
-            id = rawEvent.id.required("id"),
-            flowId = rawEvent.flowId.required("flowId"),
-            payload = rawEvent.payload.required("payload"),
-            identity = rawEvent.identity.required("identity"),
-            auth = rawEvent.auth.required("auth"),
-            metadata = rawEvent.metadata.required("metadata")
-    )
+    fun validateAsRequestEvent(rawEvent: RawEvent): RequestEvent
 
-    private fun <T> T?.required(name: String): T {
-        return this ?: throw IllegalArgumentException(name)
-    }
+    fun <T> T?.required(name: String): T = this ?: throw IllegalArgumentException(name)
 
 }
