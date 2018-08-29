@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 
 class LenientEventValidatorTest {
 
+    @Suppress("DEPRECATION")
     private val validator = LenientEventValidator()
 
     @Test
