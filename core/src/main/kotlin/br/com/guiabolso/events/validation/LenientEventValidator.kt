@@ -65,7 +65,7 @@ class LenientEventValidator : EventValidator {
     }
 
     private fun JsonElement?.getPayload(missingProperties: MutableList<String>, name: String): JsonElement {
-        return if (this == null || this == JsonNull.INSTANCE) {
+        return if (this == null) {
             missingProperties.add(name)
             JsonNull.INSTANCE
         } else {
@@ -73,12 +73,11 @@ class LenientEventValidator : EventValidator {
         }
     }
 
-    private fun JsonElement?.getAsJsonObject(missingProperties: MutableList<String>, name: String): JsonObject {
-        return if (this == null || this == JsonNull.INSTANCE || !this.isJsonObject) {
+    private fun JsonElement?.getAsJsonObject(missingProperties: MutableList<String>, name: String): JsonObject = when (this) {
+        is JsonObject -> this
+        else -> {
             missingProperties.add(name)
             JsonObject()
-        } else {
-            this.asJsonObject
         }
     }
 
