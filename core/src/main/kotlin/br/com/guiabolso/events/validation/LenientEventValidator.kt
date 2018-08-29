@@ -8,7 +8,7 @@ import com.google.gson.JsonObject
 import org.slf4j.LoggerFactory
 
 @Deprecated(
-        message = "Used only to validate events from applications that doesn't implements protocol fully.",
+        message = "Used only to validate events of applications that don't fully implement this protocol.",
         replaceWith = ReplaceWith("StrictEventValidator", "br.com.guiabolso.events.validation.StrictEventValidator")
 )
 class LenientEventValidator : EventValidator {
