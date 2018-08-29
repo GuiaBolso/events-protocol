@@ -57,7 +57,7 @@ class LenientEventValidator : EventValidator {
         )
 
         if (missingProperties.isNotEmpty()) {
-            logger.warn("Event $name:V$version($flowId) with missing required properties [${missingProperties.joinToString()}].")
+            logger.warn("Event $name:V$version($flowId) missing required properties [${missingProperties.joinToString()}].")
         }
 
         return request
