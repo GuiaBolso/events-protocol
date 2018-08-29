@@ -242,7 +242,6 @@ class LenientEventValidatorTest {
         assertEquals(JsonObject(), request.metadata)
     }
 
-
     @Test
     fun testRequestValidationWithoutIdentity() {
         val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), null, JsonObject(), JsonObject())

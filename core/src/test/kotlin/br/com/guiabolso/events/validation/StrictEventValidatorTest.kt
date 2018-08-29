@@ -6,7 +6,6 @@ import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import com.google.gson.JsonNull.INSTANCE as JsonNull
 
 class StrictEventValidatorTest {
 
@@ -53,16 +52,12 @@ class StrictEventValidatorTest {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", null, JsonObject(), JsonObject(), JsonObject()))
         }
-        validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", JsonNull, JsonObject(), JsonObject(), JsonObject()))
     }
 
     @Test
     fun testResponseValidationWithoutIdentity() {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), null, JsonObject(), JsonObject()))
-        }
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonNull, JsonObject(), JsonObject()))
         }
     }
 
@@ -71,18 +66,12 @@ class StrictEventValidatorTest {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), null, JsonObject()))
         }
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonNull, JsonObject()))
-        }
     }
 
     @Test
     fun testResponseValidationWithoutMetadata() {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), null))
-        }
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsResponseEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonNull))
         }
     }
 
@@ -134,16 +123,12 @@ class StrictEventValidatorTest {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", null, JsonObject(), JsonObject(), JsonObject()))
         }
-        validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", JsonNull, JsonObject(), JsonObject(), JsonObject()))
     }
 
     @Test
     fun testRequestValidationWithoutIdentity() {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), null, JsonObject(), JsonObject()))
-        }
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonNull, JsonObject(), JsonObject()))
         }
     }
 
@@ -152,18 +137,12 @@ class StrictEventValidatorTest {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), null, JsonObject()))
         }
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonNull, JsonObject()))
-        }
     }
 
     @Test
     fun testRequestValidationWithoutMetadata() {
         assertThrows(IllegalArgumentException::class.java) {
             validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), null))
-        }
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsRequestEvent(RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonNull))
         }
     }
 
