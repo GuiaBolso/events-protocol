@@ -1,12 +1,12 @@
 package br.com.guiabolso.events.validation
 
 import br.com.guiabolso.events.model.RawEvent
-import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import com.google.gson.JsonNull.INSTANCE as JsonNull
 
 class LenientEventValidatorTest {
 
@@ -58,7 +58,22 @@ class LenientEventValidatorTest {
         assertEquals(1, response.version)
         assertEquals("id", response.id)
         assertEquals("flow", response.flowId)
-        assertEquals(JsonNull.INSTANCE, response.payload)
+        assertEquals(JsonNull, response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testResponseValidationWithNullPayload() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonNull, JsonObject(), JsonObject(), JsonObject())
+
+        val response = validator.validateAsResponseEvent(raw)
+        assertEquals("event", response.name)
+        assertEquals(1, response.version)
+        assertEquals("id", response.id)
+        assertEquals("flow", response.flowId)
+        assertEquals(JsonNull, response.payload)
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)
@@ -67,6 +82,21 @@ class LenientEventValidatorTest {
     @Test
     fun testResponseValidationWithoutIdentity() {
         val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), null, JsonObject(), JsonObject())
+
+        val response = validator.validateAsResponseEvent(raw)
+        assertEquals("event", response.name)
+        assertEquals(1, response.version)
+        assertEquals("id", response.id)
+        assertEquals("flow", response.flowId)
+        assertEquals(JsonPrimitive(42), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testResponseValidationWithNullIdentity() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonNull, JsonObject(), JsonObject())
 
         val response = validator.validateAsResponseEvent(raw)
         assertEquals("event", response.name)
@@ -95,8 +125,38 @@ class LenientEventValidatorTest {
     }
 
     @Test
+    fun testResponseValidationWithNullAuth() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonNull, JsonObject())
+
+        val response = validator.validateAsResponseEvent(raw)
+        assertEquals("event", response.name)
+        assertEquals(1, response.version)
+        assertEquals("id", response.id)
+        assertEquals("flow", response.flowId)
+        assertEquals(JsonPrimitive(42), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
     fun testResponseValidationWithoutMetadata() {
         val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), null)
+
+        val response = validator.validateAsResponseEvent(raw)
+        assertEquals("event", response.name)
+        assertEquals(1, response.version)
+        assertEquals("id", response.id)
+        assertEquals("flow", response.flowId)
+        assertEquals(JsonPrimitive(42), response.payload)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testResponseValidationWithNullMetadata() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonNull)
 
         val response = validator.validateAsResponseEvent(raw)
         assertEquals("event", response.name)
@@ -161,7 +221,22 @@ class LenientEventValidatorTest {
         assertEquals(1, request.version)
         assertEquals("id", request.id)
         assertEquals("flow", request.flowId)
-        assertEquals(JsonNull.INSTANCE, request.payload)
+        assertEquals(JsonNull, request.payload)
+        assertEquals(JsonObject(), request.auth)
+        assertEquals(JsonObject(), request.identity)
+        assertEquals(JsonObject(), request.metadata)
+    }
+
+    @Test
+    fun testRequestValidationWithNullPayload() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonNull, JsonObject(), JsonObject(), JsonObject())
+
+        val request = validator.validateAsRequestEvent(raw)
+        assertEquals("event", request.name)
+        assertEquals(1, request.version)
+        assertEquals("id", request.id)
+        assertEquals("flow", request.flowId)
+        assertEquals(JsonNull, request.payload)
         assertEquals(JsonObject(), request.auth)
         assertEquals(JsonObject(), request.identity)
         assertEquals(JsonObject(), request.metadata)
@@ -170,6 +245,21 @@ class LenientEventValidatorTest {
     @Test
     fun testRequestValidationWithoutIdentity() {
         val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), null, JsonObject(), JsonObject())
+
+        val request = validator.validateAsRequestEvent(raw)
+        assertEquals("event", request.name)
+        assertEquals(1, request.version)
+        assertEquals("id", request.id)
+        assertEquals("flow", request.flowId)
+        assertEquals(JsonPrimitive(42), request.payload)
+        assertEquals(JsonObject(), request.auth)
+        assertEquals(JsonObject(), request.identity)
+        assertEquals(JsonObject(), request.metadata)
+    }
+
+    @Test
+    fun testRequestValidationWithNullIdentity() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonNull, JsonObject(), JsonObject())
 
         val request = validator.validateAsRequestEvent(raw)
         assertEquals("event", request.name)
@@ -198,8 +288,38 @@ class LenientEventValidatorTest {
     }
 
     @Test
+    fun testRequestValidationWithNullAuth() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonNull, JsonObject())
+
+        val request = validator.validateAsRequestEvent(raw)
+        assertEquals("event", request.name)
+        assertEquals(1, request.version)
+        assertEquals("id", request.id)
+        assertEquals("flow", request.flowId)
+        assertEquals(JsonPrimitive(42), request.payload)
+        assertEquals(JsonObject(), request.auth)
+        assertEquals(JsonObject(), request.identity)
+        assertEquals(JsonObject(), request.metadata)
+    }
+
+    @Test
     fun testRequestValidationWithoutMetadata() {
         val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), null)
+
+        val request = validator.validateAsRequestEvent(raw)
+        assertEquals("event", request.name)
+        assertEquals(1, request.version)
+        assertEquals("id", request.id)
+        assertEquals("flow", request.flowId)
+        assertEquals(JsonPrimitive(42), request.payload)
+        assertEquals(JsonObject(), request.auth)
+        assertEquals(JsonObject(), request.identity)
+        assertEquals(JsonObject(), request.metadata)
+    }
+
+    @Test
+    fun testRequestValidationWithNullMetadata() {
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonNull)
 
         val request = validator.validateAsRequestEvent(raw)
         assertEquals("event", request.name)

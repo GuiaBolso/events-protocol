@@ -124,6 +124,7 @@ class EventBuilder {
 
     private fun convertToJsonObjectOrEmpty(value: Any?) = when (value) {
         null -> JsonObject()
+        JsonNull.INSTANCE -> JsonObject()
         else -> MapperHolder.mapper.toJsonTree(value).asJsonObject
     }
 
