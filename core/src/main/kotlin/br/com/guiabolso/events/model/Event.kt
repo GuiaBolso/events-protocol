@@ -1,10 +1,10 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.lang.IllegalStateException
-
 
 sealed class Event {
     abstract val name: String
@@ -29,11 +29,14 @@ sealed class Event {
     inline fun <reified T> authAs(): T = MapperHolder.mapper.fromJson(this.auth, T::class.java)
 
     val userId: Long?
-        get() = this.identity.getAsJsonPrimitive("userId")?.asLong
+        get() = this.identity.withCheckedJsonNull("userId") {
+            it.getAsJsonPrimitive("userId")?.asLong
+        }
 
     val origin: String?
-        get() = this.metadata.getAsJsonPrimitive("origin")?.asString
-
+        get() = this.metadata.withCheckedJsonNull("origin") {
+            it.getAsJsonPrimitive("origin")?.asString
+        }
 }
 
 data class ResponseEvent(
