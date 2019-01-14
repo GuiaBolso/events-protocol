@@ -9,12 +9,16 @@ import io.opentracing.Span
 import io.opentracing.tag.Tags
 import io.opentracing.util.GlobalTracer
 
-
 object DatadogUtils {
 
     @JvmStatic
     @JvmOverloads
-    fun traceAsNewOperation(name: String, exposeExceptions: Boolean = false, type: String = WEB_SERVLET, func: () -> Any) {
+    fun traceAsNewOperation(
+        name: String,
+        exposeExceptions: Boolean = false,
+        type: String = WEB_SERVLET,
+        func: () -> Unit
+    ) {
         val tracer = GlobalTracer.get()!!
         tracer.buildSpan(name).ignoreActiveSpan().startActive(true).use {
             try {
@@ -22,9 +26,9 @@ object DatadogUtils {
                 func()
             } catch (e: Exception) {
                 notifyError(it.span(), e, false)
-                if(exposeExceptions){
+                if (exposeExceptions) {
                     throw e
-                } else {}
+                }
             }
         }
     }
