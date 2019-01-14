@@ -14,13 +14,17 @@ object DatadogUtils {
 
     @JvmStatic
     @JvmOverloads
-    fun traceAsNewOperation(name: String, type: String = WEB_SERVLET, func: () -> Any) {
+    fun traceAsNewOperation(name: String, exposeExceptions: Boolean = false, type: String = WEB_SERVLET, func: () -> Any) {
         val tracer = GlobalTracer.get()!!
         tracer.buildSpan(name).ignoreActiveSpan().startActive(true).use {
             try {
                 it.span().setTag(SPAN_TYPE, type)
                 func()
             } catch (e: Exception) {
+                if(exposeExceptions){
+                    notifyError(it.span(), e, true)
+                    throw e
+                }
                 notifyError(it.span(), e, false)
             }
         }
