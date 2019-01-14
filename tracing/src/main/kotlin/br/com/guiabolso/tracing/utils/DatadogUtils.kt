@@ -15,7 +15,6 @@ object DatadogUtils {
     @JvmOverloads
     fun traceAsNewOperation(
         name: String,
-        exposeExceptions: Boolean = false,
         type: String = WEB_SERVLET,
         func: () -> Unit
     ) {
@@ -26,9 +25,7 @@ object DatadogUtils {
                 func()
             } catch (e: Exception) {
                 notifyError(it.span(), e, false)
-                if (exposeExceptions) {
-                    throw e
-                }
+                throw e
             }
         }
     }
