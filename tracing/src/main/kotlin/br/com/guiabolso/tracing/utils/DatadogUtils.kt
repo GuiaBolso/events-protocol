@@ -21,11 +21,10 @@ object DatadogUtils {
                 it.span().setTag(SPAN_TYPE, type)
                 func()
             } catch (e: Exception) {
-                if(exposeExceptions){
-                    notifyError(it.span(), e, true)
-                    throw e
-                }
                 notifyError(it.span(), e, false)
+                if(exposeExceptions){
+                    throw e
+                } else {}
             }
         }
     }
