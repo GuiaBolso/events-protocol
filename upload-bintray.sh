@@ -1,6 +1,6 @@
 #!/bin/bash
 
-modules=("tracing" "core" "server" "client")
+modules=("tracing" "tracing-aspectj" "core" "server" "client")
 
 for i in "${modules[@]}"
 do

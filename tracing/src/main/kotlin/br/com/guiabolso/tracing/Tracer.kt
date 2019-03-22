@@ -41,6 +41,8 @@ interface Tracer {
      */
     fun addProperty(key: String, value: Boolean?)
 
+    fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T
+
     /**
      * Track an asynchronous task execution
      *

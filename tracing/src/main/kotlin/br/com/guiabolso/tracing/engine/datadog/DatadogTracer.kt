@@ -9,7 +9,9 @@ import io.opentracing.util.GlobalTracer
 import java.io.Closeable
 
 
-class DatadogTracer : TracerEngine<SpanBuilder> {
+open class DatadogTracer : TracerEngine<SpanBuilder> {
+    private val tracer: Tracer
+        get() = GlobalTracer.get()
 
     override fun setOperationName(name: String) {
         addProperty(RESOURCE_NAME, name)
@@ -25,6 +27,14 @@ class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun addProperty(key: String, value: Boolean?) {
         if (value != null) tracer.activeSpan()?.setTag(key, value)
+    }
+
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
+    }
+
+    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+        throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
     }
 
     override fun notifyError(exception: Throwable, expected: Boolean) {
@@ -55,8 +65,5 @@ class DatadogTracer : TracerEngine<SpanBuilder> {
     }
 
     override fun clear() {}
-
-    private val tracer: Tracer
-        get() = GlobalTracer.get()
 
 }

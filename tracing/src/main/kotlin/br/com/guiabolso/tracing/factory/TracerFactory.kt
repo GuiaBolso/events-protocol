@@ -5,6 +5,7 @@ import br.com.guiabolso.tracing.TracerImpl
 import br.com.guiabolso.tracing.async.DefaultAsyncExecutor
 import br.com.guiabolso.tracing.async.NewRelicAsyncExecutor
 import br.com.guiabolso.tracing.engine.TracerEngine
+import br.com.guiabolso.tracing.engine.datadog.DatadogStatsDTracer
 import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
 import br.com.guiabolso.tracing.engine.newrelic.NewRelicTracer
 import br.com.guiabolso.tracing.engine.slf4j.Slf4JTracer
@@ -29,6 +30,18 @@ object TracerFactory {
         LOGGER.info("Using Datadog as APM tracer.")
         return TracerImpl(
                 compose(Slf4JTracer(), DatadogTracer()),
+                DefaultAsyncExecutor()
+        )
+    }
+
+    @JvmStatic
+    fun createTracerWithDatadogStatsD(prefix: String, host: String, port: Int): Tracer {
+        LOGGER.info("Using Datadog as APM tracer with StatsD.")
+        return TracerImpl(
+                compose(
+                        Slf4JTracer(),
+                        DatadogStatsDTracer(prefix, host, port)
+                ),
                 DefaultAsyncExecutor()
         )
     }

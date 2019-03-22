@@ -39,6 +39,10 @@ interface TracerEngine<C> {
      */
     fun addProperty(key: String, value: Boolean?)
 
+    fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>)
+
+    fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T
+
     /**
      * Notice an error and report it to the tracer.
      *

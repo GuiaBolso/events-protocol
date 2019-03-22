@@ -23,6 +23,23 @@ class CompositeTracerEngine(
         tracers.forEach { it.addProperty(key, value) }
     }
 
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        tracers.forEach {
+            it.recordExecutionTime(name, elapsedTime, context)
+        }
+    }
+
+    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+        val start = System.currentTimeMillis()
+        val context = mutableMapOf<String, String>()
+        try {
+            return block(context)
+        } finally {
+            val elapsedTime = System.currentTimeMillis() - start
+            recordExecutionTime(name, elapsedTime, context)
+        }
+    }
+
     override fun notifyError(exception: Throwable, expected: Boolean) {
         tracers.forEach { it.notifyError(exception, expected) }
     }

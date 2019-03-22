@@ -1,74 +1,30 @@
 package br.com.guiabolso.tracing.engine.datadog
 
-import br.com.guiabolso.tracing.engine.TracerEngine
-import br.com.guiabolso.tracing.utils.DatadogUtils
-import com.timgroup.statsd.StatsDClient
-import datadog.trace.api.DDTags.RESOURCE_NAME
-import io.opentracing.Tracer
-import io.opentracing.Tracer.SpanBuilder
-import io.opentracing.util.GlobalTracer
-import java.io.Closeable
+import com.timgroup.statsd.NonBlockingStatsDClient
 
 
-class DatadogTracer(private val statsDClient: StatsDClient) : TracerEngine<SpanBuilder> {
+class DatadogStatsDTracer(
+        prefix: String,
+        host: String,
+        port: Int
+) : DatadogTracer() {
 
-    private val tracer: Tracer
-        get() = GlobalTracer.get()
+    private val statsDClient = NonBlockingStatsDClient(prefix, host, port)
 
-    override fun setOperationName(name: String) {
-        addProperty(RESOURCE_NAME, name)
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        val tags = context.map { it.key + ":" + it.value }
+        statsDClient.recordExecutionTime(name, elapsedTime, 1.0, *tags.toTypedArray())
     }
 
-    override fun addProperty(key: String, value: String?) {
-        tracer.activeSpan()?.setTag(key, value)
-    }
-
-    override fun addProperty(key: String, value: Number?) {
-        tracer.activeSpan()?.setTag(key, value)
-    }
-
-    override fun addProperty(key: String, value: Boolean?) {
-        if (value != null) tracer.activeSpan()?.setTag(key, value)
-    }
-
-    override fun <T> recordExecutionTime(name: String, block: (MutableSet<String>) -> T): T {
+    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
         val start = System.currentTimeMillis()
-        val context = mutableSetOf<String>()
+        val context = mutableMapOf<String, String>()
         try {
             return block(context)
         } finally {
             val elapsedTime = System.currentTimeMillis() - start
-            statsDClient.recordExecutionTime(name, elapsedTime, 1.0, *context.toTypedArray())
+            recordExecutionTime(name, elapsedTime, context)
         }
     }
-
-    override fun notifyError(exception: Throwable, expected: Boolean) {
-        val span = tracer.activeSpan()
-        if (span != null) {
-            DatadogUtils.notifyError(span, exception, expected)
-        }
-    }
-
-    override fun notifyError(message: String, params: Map<String, String?>, expected: Boolean) {
-        val span = tracer.activeSpan()
-        if (span != null) {
-            DatadogUtils.notifyError(span, message, params, expected)
-        }
-    }
-
-    override fun extractContext(): SpanBuilder {
-        return tracer.buildSpan("asyncTask")
-                .asChildOf(tracer.activeSpan())
-    }
-
-    override fun withContext(context: Any): Closeable {
-        return (context as SpanBuilder).startActive(true)
-    }
-
-    override fun withContext(context: SpanBuilder, func: () -> Any) {
-        withContext(context).use { func() }
-    }
-
-    override fun clear() {}
 
 }
