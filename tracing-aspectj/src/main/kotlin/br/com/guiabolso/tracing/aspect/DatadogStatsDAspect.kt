@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.reflect.MethodSignature
 import java.io.Closeable
 
-class TimeTrackerAspect(private val tracer: Tracer) {
+class DatadogStatsDAspect(private val tracer: Tracer) {
 
     @Around("@annotation(datadog.trace.api.Trace)")
     fun withTimer(pjp: ProceedingJoinPoint): Any {
@@ -17,11 +17,12 @@ class TimeTrackerAspect(private val tracer: Tracer) {
         val prefix = if (prefixAux == "") annotation.operationName else prefixAux + "." + annotation.operationName
 
         return tracer.recordExecutionTime(prefix) { context ->
-            val ret = pjp.proceed()
-            context.putAll(StatsDTags.getTags())
-            StatsDTags.put("prefix", prefixAux)
-            if (StatsDTags.get("prefix") == "") StatsDTags.close()
-            return@recordExecutionTime ret
+            StatsDTags.use {
+                val ret = pjp.proceed()
+                context.putAll(StatsDTags.getTags())
+                StatsDTags.put("prefix", prefixAux)
+                return@recordExecutionTime ret
+            }
         }
     }
 
@@ -36,20 +37,19 @@ object StatsDTags : Closeable {
         tags.get()[key] = value
     }
 
-    fun getTags(): Map<String, String> {
-        return tags.get() ?: emptyMap()
-    }
+    fun getTags(): Map<String, String> =
+            tags.get()?.let { map ->
+                map.filterNot { entry -> entry.key == "prefix" }
+            } ?: emptyMap()
 
-    fun get(key: String): String? {
-        return tags.get()[key]
-    }
+    fun get(key: String): String? = tags.get()[key]
 
     fun put(key: String, value: String) {
         tags.get()[key] = value
     }
 
     override fun close() {
-        tags.remove()
+        if (this.get("prefix") == "") tags.remove()
     }
 
 }
