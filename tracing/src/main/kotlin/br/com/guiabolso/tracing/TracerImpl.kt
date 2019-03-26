@@ -6,7 +6,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
-class TracerImpl(
+open class TracerImpl(
         private val tracerEngine: TracerEngine<*>,
         private val asyncExecutor: AsyncExecutor
 ) : Tracer {
@@ -25,10 +25,6 @@ class TracerImpl(
 
     override fun addProperty(key: String, value: Boolean?) {
         tracerEngine.addProperty(key, value)
-    }
-
-    override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
-        return tracerEngine.executeAndRecordTime(name, block)
     }
 
     override fun <T> executeAsync(executor: ExecutorService, task: () -> T): Future<T> {

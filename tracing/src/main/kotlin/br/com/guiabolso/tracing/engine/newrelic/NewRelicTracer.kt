@@ -1,6 +1,6 @@
 package br.com.guiabolso.tracing.engine.newrelic
 
-import br.com.guiabolso.tracing.engine.TracerEngine
+import br.com.guiabolso.tracing.engine.TimeRecorderTracerEngine
 import com.newrelic.api.agent.NewRelic
 import com.newrelic.api.agent.NewRelic.addCustomParameter
 import com.newrelic.api.agent.NewRelic.noticeError
@@ -9,7 +9,7 @@ import com.newrelic.api.agent.NewRelic.setTransactionName
 import com.newrelic.api.agent.Token
 import java.io.Closeable
 
-class NewRelicTracer : TracerEngine<Token> {
+class NewRelicTracer : TimeRecorderTracerEngine<Token> {
     override fun setOperationName(name: String) {
         setTransactionName(null, name)
     }

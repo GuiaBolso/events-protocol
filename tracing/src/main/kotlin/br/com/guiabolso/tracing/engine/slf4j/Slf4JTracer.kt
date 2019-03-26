@@ -1,11 +1,11 @@
 package br.com.guiabolso.tracing.engine.slf4j
 
-import br.com.guiabolso.tracing.engine.TracerEngine
+import br.com.guiabolso.tracing.engine.TimeRecorderTracerEngine
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import java.io.Closeable
 
-class Slf4JTracer : TracerEngine<Map<String, String?>> {
+class Slf4JTracer : TimeRecorderTracerEngine<Map<String, String?>> {
 
     override fun setOperationName(name: String) {
         addProperty("Operation", name)
@@ -24,8 +24,8 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
     }
 
     override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
-        addProperty(name, elapsedTime)
-        context.forEach{ addProperty(it.key, it.value) }
+        LOGGER.info("[$name] elapsedTime= $elapsedTime")
+        context.forEach{ LOGGER.info("${it.key}:${it.value}") }
     }
 
     override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
@@ -35,7 +35,7 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
             return block(context)
         } finally {
             val elapsedTime = System.currentTimeMillis() - start
-            addProperty(name, elapsedTime)
+            recordExecutionTime(name, elapsedTime, context)
         }
     }
 

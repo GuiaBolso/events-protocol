@@ -1,9 +1,11 @@
 package br.com.guiabolso.tracing.factory
 
+import br.com.guiabolso.tracing.TimeRecorderTracerImpl
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.TracerImpl
 import br.com.guiabolso.tracing.async.DefaultAsyncExecutor
 import br.com.guiabolso.tracing.async.NewRelicAsyncExecutor
+import br.com.guiabolso.tracing.engine.TimeRecorderTracerEngine
 import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.engine.datadog.DatadogStatsDTracer
 import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
@@ -37,8 +39,8 @@ object TracerFactory {
     @JvmStatic
     fun createTracerWithDatadogStatsD(prefix: String, host: String, port: Int): Tracer {
         LOGGER.info("Using Datadog as APM tracer with StatsD.")
-        return TracerImpl(
-                compose(
+        return TimeRecorderTracerImpl(
+                composeTimeRecorder(
                         Slf4JTracer(),
                         DatadogStatsDTracer(prefix, host, port)
                 ),
@@ -66,5 +68,8 @@ object TracerFactory {
 
     @JvmStatic
     private fun compose(vararg tracers: TracerEngine<*>) = CompositeTracerEngine(tracers.toList())
+
+    @JvmStatic
+    private fun composeTimeRecorder(vararg tracers: TimeRecorderTracerEngine<*>) = CompositeTimeRecorderTracerEngine(tracers.toList())
 
 }

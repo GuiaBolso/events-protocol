@@ -2,11 +2,11 @@ dependencies {
     compile project(":tracing")
 
     //Datadog
-    compile group: 'io.opentracing', name: 'opentracing-api', version: "0.31.0"
-    compile group: 'io.opentracing', name: 'opentracing-util', version: "0.31.0"
-    compile group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.12.0'
-    compile group: 'com.datadoghq', name: 'dd-trace-api', version: '0.12.0'
-    compile group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.5'
+    compile group: 'io.opentracing', name: 'opentracing-api', version: "0.32.0"
+    compile group: 'io.opentracing', name: 'opentracing-util', version: "0.32.0"
+    compile group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.26.0'
+    compile group: 'com.datadoghq', name: 'dd-trace-api', version: '0.26.0'
+    compile group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.7'
 
     compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
 }

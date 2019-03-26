@@ -1,13 +1,15 @@
 package br.com.guiabolso.tracing.engine.datadog
 
+import br.com.guiabolso.tracing.engine.TimeRecorderTracerEngine
 import com.timgroup.statsd.NonBlockingStatsDClient
+import io.opentracing.Tracer
 
 
 class DatadogStatsDTracer(
         prefix: String,
         host: String,
         port: Int
-) : DatadogTracer() {
+) : DatadogTracer(), TimeRecorderTracerEngine<Tracer.SpanBuilder> {
 
     private val statsDClient = NonBlockingStatsDClient(prefix, host, port)
 
