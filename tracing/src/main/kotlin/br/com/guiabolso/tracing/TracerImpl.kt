@@ -6,7 +6,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
-open class TracerImpl(
+class TracerImpl(
         private val tracerEngine: TracerEngine<*>,
         private val asyncExecutor: AsyncExecutor
 ) : Tracer {

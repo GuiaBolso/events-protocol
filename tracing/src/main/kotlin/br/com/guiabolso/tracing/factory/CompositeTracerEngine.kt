@@ -3,7 +3,7 @@ package br.com.guiabolso.tracing.factory
 import br.com.guiabolso.tracing.engine.TracerEngine
 import java.io.Closeable
 
-open class CompositeTracerEngine(
+class CompositeTracerEngine(
         private var tracers: List<TracerEngine<*>>
 ) : TracerEngine<Map<TracerEngine<*>, Any>> {
 
