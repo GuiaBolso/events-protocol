@@ -1,11 +1,9 @@
 package br.com.guiabolso.tracing.factory
 
-import br.com.guiabolso.tracing.TimeRecorderTracerImpl
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.TracerImpl
 import br.com.guiabolso.tracing.async.DefaultAsyncExecutor
 import br.com.guiabolso.tracing.async.NewRelicAsyncExecutor
-import br.com.guiabolso.tracing.engine.TimeRecorderTracerEngine
 import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.engine.datadog.DatadogStatsDTracer
 import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
@@ -13,6 +11,8 @@ import br.com.guiabolso.tracing.engine.newrelic.NewRelicTracer
 import br.com.guiabolso.tracing.engine.slf4j.Slf4JTracer
 import br.com.guiabolso.tracing.utils.ClassPathUtils.isDatadogPresent
 import br.com.guiabolso.tracing.utils.ClassPathUtils.isNewRelicPresent
+import br.com.guiabolso.tracing.utils.ClassPathUtils.isStatsDPresent
+import br.com.guiabolso.tracing.utils.EnvironmentUtils
 import org.slf4j.LoggerFactory
 
 object TracerFactory {
@@ -23,6 +23,7 @@ object TracerFactory {
     @JvmStatic
     fun createTracer(): Tracer = when {
         isDatadogPresent() -> createTracerWithDatadog()
+        isStatsDPresent() -> createTracerWithDatadogStatsD()
         isNewRelicPresent() -> createTracerWithNewRelic()
         else -> createTracerWithoutAnyAPM()
     }
@@ -37,12 +38,15 @@ object TracerFactory {
     }
 
     @JvmStatic
-    fun createTracerWithDatadogStatsD(prefix: String, host: String, port: Int): Tracer {
+    fun createTracerWithDatadogStatsD(): Tracer {
         LOGGER.info("Using Datadog as APM tracer with StatsD.")
-        return TimeRecorderTracerImpl(
-                composeTimeRecorder(
+        return TracerImpl(
+                compose(
                         Slf4JTracer(),
-                        DatadogStatsDTracer(prefix, host, port)
+                        DatadogStatsDTracer(
+                                EnvironmentUtils.getProperty("DD_SERVICE_NAME", "unknown-application"),
+                                EnvironmentUtils.getProperty("DD_AGENT_HOST", "localhost"),
+                                EnvironmentUtils.getProperty("DD_AGENT_PORT", 8125))
                 ),
                 DefaultAsyncExecutor()
         )
@@ -68,8 +72,5 @@ object TracerFactory {
 
     @JvmStatic
     private fun compose(vararg tracers: TracerEngine<*>) = CompositeTracerEngine(tracers.toList())
-
-    @JvmStatic
-    private fun composeTimeRecorder(vararg tracers: TimeRecorderTracerEngine<*>) = CompositeTimeRecorderTracerEngine(tracers.toList())
 
 }

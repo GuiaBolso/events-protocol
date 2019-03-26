@@ -1,12 +1,12 @@
 package br.com.guiabolso.tracing.aspect
 
-import br.com.guiabolso.tracing.TimeRecorderTracer
+import br.com.guiabolso.tracing.Tracer
 import datadog.trace.api.Trace
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.reflect.MethodSignature
 
-class StatsDAspect(private val tracer: TimeRecorderTracer) {
+class StatsDAspect(private val tracer: Tracer) {
 
     @Around("@annotation(datadog.trace.api.Trace)")
     fun withTimer(pjp: ProceedingJoinPoint): Any {

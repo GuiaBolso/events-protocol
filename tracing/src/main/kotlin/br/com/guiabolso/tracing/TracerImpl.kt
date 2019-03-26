@@ -27,6 +27,10 @@ open class TracerImpl(
         tracerEngine.addProperty(key, value)
     }
 
+    override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
+        return tracerEngine.executeAndRecordTime(name, block)
+    }
+
     override fun <T> executeAsync(executor: ExecutorService, task: () -> T): Future<T> {
         return asyncExecutor.executeAsync(tracerEngine, executor, task)
     }

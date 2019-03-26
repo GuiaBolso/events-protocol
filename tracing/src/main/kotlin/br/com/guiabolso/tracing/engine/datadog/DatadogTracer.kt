@@ -29,6 +29,14 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         if (value != null) tracer.activeSpan()?.setTag(key, value)
     }
 
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
+    }
+
+    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+        throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
+    }
+
     override fun notifyError(exception: Throwable, expected: Boolean) {
         val span = tracer.activeSpan()
         if (span != null) {
