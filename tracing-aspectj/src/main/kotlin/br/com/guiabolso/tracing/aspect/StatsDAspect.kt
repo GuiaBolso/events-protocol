@@ -16,8 +16,8 @@ class StatsDAspect(private val tracer: TimeRecorderTracer) {
         val prefix = if (prefixAux == "") annotation.operationName else prefixAux + "." + annotation.operationName
 
         return tracer.recordExecutionTime(prefix) { context ->
-            pjp.proceed().also {
-                StatsDTags.use {
+            StatsDTags.use {
+                pjp.proceed().also {
                     context.putAll(StatsDTags.getTags())
                     StatsDTags.addTag("prefix", prefixAux)
                 }
