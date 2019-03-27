@@ -22,8 +22,9 @@ object TracerFactory {
 
     @JvmStatic
     fun createTracer(): Tracer = when {
-        isDatadogPresent() -> createTracerWithDatadog()
-        isStatsDPresent() -> createTracerWithDatadogStatsD()
+        isDatadogPresent() -> {
+            if (isStatsDPresent()) createTracerWithDatadogStatsD() else createTracerWithDatadog()
+        }
         isNewRelicPresent() -> createTracerWithNewRelic()
         else -> createTracerWithoutAnyAPM()
     }
