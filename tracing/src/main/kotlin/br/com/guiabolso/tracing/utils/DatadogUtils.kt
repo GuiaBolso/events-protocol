@@ -1,5 +1,6 @@
 package br.com.guiabolso.tracing.utils
 
+import datadog.trace.api.DDSpanTypes.HTTP_SERVER
 import datadog.trace.api.DDSpanTypes.WEB_SERVLET
 import datadog.trace.api.DDTags.ERROR_MSG
 import datadog.trace.api.DDTags.ERROR_STACK
@@ -15,7 +16,7 @@ object DatadogUtils {
     @JvmOverloads
     fun traceAsNewOperation(
         name: String,
-        type: String = WEB_SERVLET,
+        type: String = HTTP_SERVER,
         func: () -> Unit
     ) {
         val tracer = GlobalTracer.get()!!

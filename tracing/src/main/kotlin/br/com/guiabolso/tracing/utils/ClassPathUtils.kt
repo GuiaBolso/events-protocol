@@ -9,6 +9,9 @@ object ClassPathUtils {
     fun isDatadogPresent() = isClassPresent("datadog.opentracing.DDTracer")
 
     @JvmStatic
+    fun isStatsDPresent() = isClassPresent("com.timgroup.statsd.StatsDClient")
+
+    @JvmStatic
     fun isClassPresent(name: String) = try {
         Class.forName(name)
         true

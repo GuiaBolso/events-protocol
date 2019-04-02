@@ -23,6 +23,22 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         MDC.put(key, value?.toString())
     }
 
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        LOGGER.info("[$name] elapsedTime= $elapsedTime")
+        context.forEach{ addProperty(it.key, it.value) }
+    }
+
+    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+        val start = System.currentTimeMillis()
+        val context = mutableMapOf<String, String>()
+        try {
+            return block(context)
+        } finally {
+            val elapsedTime = System.currentTimeMillis() - start
+            recordExecutionTime(name, elapsedTime, context)
+        }
+    }
+
     override fun notifyError(exception: Throwable, expected: Boolean) {
         if (expected) {
             LOGGER.info("[EXPECTED] ${exception.message}", exception)
