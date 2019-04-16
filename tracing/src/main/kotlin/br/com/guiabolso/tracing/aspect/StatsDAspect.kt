@@ -4,8 +4,10 @@ import br.com.guiabolso.tracing.Tracer
 import datadog.trace.api.Trace
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
+import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
 
+@Aspect
 class StatsDAspect(private val tracer: Tracer) {
 
     @Around("@annotation(datadog.trace.api.Trace)")

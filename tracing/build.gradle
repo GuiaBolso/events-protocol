@@ -14,8 +14,8 @@ dependencies {
     //To run NewRelic examples
     testCompile group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
     //To run Datadog examples
-    testCompile group: 'io.opentracing', name: 'opentracing-api', version: "0.32.0"
-    testCompile group: 'io.opentracing', name: 'opentracing-util', version: "0.32.0"
+    testCompile group: 'io.opentracing', name: 'opentracing-api', version: "0.31.0"
+    testCompile group: 'io.opentracing', name: 'opentracing-util', version: "0.31.0"
     testCompile group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.26.0'
     testCompile group: 'com.datadoghq', name: 'dd-trace-api', version: '0.26.0'
 
