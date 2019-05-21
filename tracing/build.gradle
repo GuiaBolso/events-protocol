@@ -1,15 +1,15 @@
 dependencies {
     //NewRelic
-    implementation group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
+    compileOnly group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
 
     //Datadog
-    implementation group: 'io.opentracing', name: 'opentracing-api', version: "0.31.0"
-    implementation group: 'io.opentracing', name: 'opentracing-util', version: "0.31.0"
-    implementation group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.26.0'
-    implementation group: 'com.datadoghq', name: 'dd-trace-api', version: '0.26.0'
-    implementation group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.7'
+    compileOnly group: 'io.opentracing', name: 'opentracing-api', version: "0.31.0"
+    compileOnly group: 'io.opentracing', name: 'opentracing-util', version: "0.31.0"
+    compileOnly group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.26.0'
+    compileOnly group: 'com.datadoghq', name: 'dd-trace-api', version: '0.26.0'
+    compileOnly group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.7'
 
-    implementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
+    compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
 
     //To run NewRelic examples
     testImplementation group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
