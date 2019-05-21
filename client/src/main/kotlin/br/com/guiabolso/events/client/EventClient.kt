@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory
 class EventClient
 @JvmOverloads
 constructor(
-        private val httpClient: HttpClientAdapter = FuelHttpClient(),
-        private val eventValidator: EventValidator = StrictEventValidator(),
-        private val defaultTimeout: Int = 60000
+    private val httpClient: HttpClientAdapter = FuelHttpClient(),
+    private val eventValidator: EventValidator = StrictEventValidator(),
+    private val defaultTimeout: Int = 60000
 ) {
 
     companion object {
@@ -30,11 +30,11 @@ constructor(
         try {
             logger.debug("Sending event ${requestEvent.name}:${requestEvent.version} to $url with timeout $timeout.")
             val rawResponse = httpClient.post(
-                    url,
-                    mapOf("Content-Type" to "application/json"),
-                    MapperHolder.mapper.toJson(requestEvent),
-                    Charsets.UTF_8,
-                    timeout ?: defaultTimeout
+                url,
+                mapOf("Content-Type" to "application/json"),
+                MapperHolder.mapper.toJson(requestEvent),
+                Charsets.UTF_8,
+                timeout ?: defaultTimeout
             )
             val event = parseEvent(rawResponse)
             return if (event.isSuccess()) {
