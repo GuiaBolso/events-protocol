@@ -21,9 +21,9 @@ repositories {
 A biblioteca é composta de 3 modulos. Server, Client e Core.
 
 ```
- compile "br.com.guiabolso:events-client:2.1.4"
- compile "br.com.guiabolso:events-server:2.1.4"
- compile "br.com.guiabolso:events-core:2.1.4"
+ compile "br.com.guiabolso:events-client:2.3.2"
+ compile "br.com.guiabolso:events-server:2.3.2"
+ compile "br.com.guiabolso:events-core:2.3.2"
 ```
 Geralmente as dependências a serem importadas são:
 
