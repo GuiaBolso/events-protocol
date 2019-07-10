@@ -4,6 +4,7 @@ import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.utils.EventUtils
@@ -56,6 +57,18 @@ class EventBuilder {
             builder.name = "${event.name}:${type.typeName}"
             builder.version = event.version
             builder.payload = message
+            builder.id = builder.id ?: event.id
+            builder.flowId = builder.flowId ?: event.flowId
+
+            return builder.buildResponseEvent()
+        }
+
+        @JvmStatic
+        fun redirectFor(event: RequestEvent, redirectPayload: RedirectPayload): ResponseEvent {
+            val builder = EventBuilder()
+            builder.name = "${event.name}:redirect"
+            builder.version = event.version
+            builder.payload = redirectPayload
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
 
