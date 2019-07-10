@@ -15,7 +15,9 @@ import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.utils.EventUtils
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class EventBuilderTest {
@@ -316,7 +318,14 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("eventNotFound", response.name)
         assertEquals(1, response.version)
-        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))), response.payload)
+        assertEquals(
+            MapperHolder.mapper.toJsonTree(
+                EventMessage(
+                    "NO_EVENT_HANDLER_FOUND",
+                    mapOf("event" to event.name, "version" to event.version)
+                )
+            ), response.payload
+        )
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)
@@ -330,7 +339,10 @@ class EventBuilderTest {
         assertNotNull(response.flowId)
         assertEquals("badProtocol", response.name)
         assertEquals(1, response.version)
-        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())), response.payload)
+        assertEquals(
+            MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())),
+            response.payload
+        )
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)

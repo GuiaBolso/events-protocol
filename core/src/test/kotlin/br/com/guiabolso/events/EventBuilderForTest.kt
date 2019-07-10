@@ -9,28 +9,28 @@ import com.google.gson.JsonPrimitive
 object EventBuilderForTest {
 
     fun buildRequestEvent() = RequestEvent(
-            name = "event:name",
-            version = 1,
-            id = "id",
-            flowId = "flowId",
-            payload = JsonPrimitive(42),
-            identity = JsonObject(),
-            auth = JsonObject(),
-            metadata = JsonObject()
+        name = "event:name",
+        version = 1,
+        id = "id",
+        flowId = "flowId",
+        payload = JsonPrimitive(42),
+        identity = JsonObject(),
+        auth = JsonObject(),
+        metadata = JsonObject()
     )
 
     fun buildResponseEvent() = ResponseEvent(
-            name = "event:name:response",
-            version = 1,
-            id = "id",
-            flowId = "flowId",
-            payload = JsonPrimitive(42),
-            identity = JsonObject(),
-            auth = JsonObject(),
-            metadata = JsonObject()
+        name = "event:name:response",
+        version = 1,
+        id = "id",
+        flowId = "flowId",
+        payload = JsonPrimitive(42),
+        identity = JsonObject(),
+        auth = JsonObject(),
+        metadata = JsonObject()
     )
 
     fun buildRequestEventString(event: RequestEvent = buildRequestEvent()) =
-            MapperHolder.mapper.toJson(event)!!
+        MapperHolder.mapper.toJson(event)!!
 
 }

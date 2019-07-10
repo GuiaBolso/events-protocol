@@ -32,9 +32,9 @@ class ExceptionHandlerRegistry {
             logger.error("Error processing event.", e)
             tracer.notifyError(e, false)
             EventBuilder.errorFor(
-                    event,
-                    EventErrorType.Generic,
-                    EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message))
+                event,
+                EventErrorType.Generic,
+                EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message))
             )
         }
     }

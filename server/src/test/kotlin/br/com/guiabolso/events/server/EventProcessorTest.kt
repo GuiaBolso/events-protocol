@@ -36,14 +36,20 @@ class EventProcessorTest {
 
         val responseEvent = eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
 
-        assertEquals("{\"name\":\"event:name:response\",\"version\":1,\"id\":\"id\",\"flowId\":\"flowId\",\"payload\":42,\"identity\":{},\"auth\":{},\"metadata\":{}}", responseEvent)
+        assertEquals(
+            "{\"name\":\"event:name:response\",\"version\":1,\"id\":\"id\",\"flowId\":\"flowId\",\"payload\":42,\"identity\":{},\"auth\":{},\"metadata\":{}}",
+            responseEvent
+        )
     }
 
     @Test
     fun testEventNotFound() {
         val responseEvent = eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString())
 
-        assertEquals("{\"name\":\"eventNotFound\",\"version\":1,\"id\":\"id\",\"flowId\":\"flowId\",\"payload\":{\"code\":\"NO_EVENT_HANDLER_FOUND\",\"parameters\":{\"event\":\"event:name\",\"version\":1}},\"identity\":{},\"auth\":{},\"metadata\":{}}", responseEvent)
+        assertEquals(
+            "{\"name\":\"eventNotFound\",\"version\":1,\"id\":\"id\",\"flowId\":\"flowId\",\"payload\":{\"code\":\"NO_EVENT_HANDLER_FOUND\",\"parameters\":{\"event\":\"event:name\",\"version\":1}},\"identity\":{},\"auth\":{},\"metadata\":{}}",
+            responseEvent
+        )
     }
 
     @Test
@@ -54,7 +60,10 @@ class EventProcessorTest {
             throw RuntimeException("error")
         }
 
-        val responseEvent = MapperHolder.mapper.fromJson(eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString()), RawEvent::class.java)
+        val responseEvent = MapperHolder.mapper.fromJson(
+            eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString()),
+            RawEvent::class.java
+        )
 
         assertEquals("${event.name}:error", responseEvent.name)
         assertEquals("UNHANDLED_ERROR", responseEvent.payload!!.asJsonObject["code"].asString)
@@ -72,14 +81,18 @@ class EventProcessorTest {
             EventBuilderForTest.buildResponseEvent().copy("${requestEvent.name}:bad_request")
         }
 
-        val responseEvent = MapperHolder.mapper.fromJson(eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString()), RawEvent::class.java)
+        val responseEvent = MapperHolder.mapper.fromJson(
+            eventProcessor.processEvent(EventBuilderForTest.buildRequestEventString()),
+            RawEvent::class.java
+        )
 
         assertEquals("${event.name}:bad_request", responseEvent.name)
     }
 
     @Test
     fun testBadProtocolEventIsReturned() {
-        val responseEvent = MapperHolder.mapper.fromJson(eventProcessor.processEvent("THIS IS NOT A EVENT"), RawEvent::class.java)
+        val responseEvent =
+            MapperHolder.mapper.fromJson(eventProcessor.processEvent("THIS IS NOT A EVENT"), RawEvent::class.java)
 
         assertEquals("badProtocol", responseEvent.name)
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload!!.asJsonObject["code"].asString)
@@ -98,11 +111,15 @@ class EventProcessorTest {
             }
         """.trimIndent()
 
-        val responseEvent = MapperHolder.mapper.fromJson(eventProcessor.processEvent(eventWithoutVersion), RawEvent::class.java)
+        val responseEvent =
+            MapperHolder.mapper.fromJson(eventProcessor.processEvent(eventWithoutVersion), RawEvent::class.java)
 
         assertEquals("badProtocol", responseEvent.name)
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload!!.asJsonObject["code"].asString)
-        assertEquals("version", responseEvent.payload!!.asJsonObject["parameters"].asJsonObject["missingProperty"].asString)
+        assertEquals(
+            "version",
+            responseEvent.payload!!.asJsonObject["parameters"].asJsonObject["missingProperty"].asString
+        )
     }
 
 }

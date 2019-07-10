@@ -4,7 +4,6 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import java.lang.IllegalStateException
 
 sealed class Event {
     abstract val name: String
@@ -40,14 +39,14 @@ sealed class Event {
 }
 
 data class ResponseEvent(
-        override val name: String,
-        override val version: Int,
-        override val id: String,
-        override val flowId: String,
-        override val payload: JsonElement,
-        override val identity: JsonObject,
-        override val auth: JsonObject,
-        override val metadata: JsonObject
+    override val name: String,
+    override val version: Int,
+    override val id: String,
+    override val flowId: String,
+    override val payload: JsonElement,
+    override val identity: JsonObject,
+    override val auth: JsonObject,
+    override val metadata: JsonObject
 ) : Event() {
 
     fun isSuccess() = this.name.endsWith(":response")
@@ -62,12 +61,12 @@ data class ResponseEvent(
 }
 
 data class RequestEvent(
-        override val name: String,
-        override val version: Int,
-        override val id: String,
-        override val flowId: String,
-        override val payload: JsonElement,
-        override val identity: JsonObject,
-        override val auth: JsonObject,
-        override val metadata: JsonObject
+    override val name: String,
+    override val version: Int,
+    override val id: String,
+    override val flowId: String,
+    override val payload: JsonElement,
+    override val identity: JsonObject,
+    override val auth: JsonObject,
+    override val metadata: JsonObject
 ) : Event()

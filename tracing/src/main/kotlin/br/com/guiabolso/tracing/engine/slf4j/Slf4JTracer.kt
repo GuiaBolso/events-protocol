@@ -25,7 +25,7 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
 
     override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
         LOGGER.info("[$name] elapsedTime= $elapsedTime")
-        context.forEach{ addProperty(it.key, it.value) }
+        context.forEach { addProperty(it.key, it.value) }
     }
 
     override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {

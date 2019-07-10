@@ -69,7 +69,8 @@ class EventBuilder {
             builder.version = 1
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
-            builder.payload = EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
+            builder.payload =
+                EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
             return builder.buildResponseEvent()
         }
 
@@ -96,25 +97,25 @@ class EventBuilder {
     var metadata: Any? = null
 
     fun buildRequestEvent() = RequestEvent(
-            name = this.name ?: throw MissingEventInformationException("Missing event name."),
-            version = this.version ?: throw MissingEventInformationException("Missing event version."),
-            id = this.id ?: throw MissingEventInformationException("Missing event id."),
-            flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
-            payload = convertPayload(),
-            identity = convertToJsonObjectOrEmpty(this.identity),
-            auth = convertToJsonObjectOrEmpty(this.auth),
-            metadata = convertToJsonObjectOrEmpty(this.metadata)
+        name = this.name ?: throw MissingEventInformationException("Missing event name."),
+        version = this.version ?: throw MissingEventInformationException("Missing event version."),
+        id = this.id ?: throw MissingEventInformationException("Missing event id."),
+        flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
+        payload = convertPayload(),
+        identity = convertToJsonObjectOrEmpty(this.identity),
+        auth = convertToJsonObjectOrEmpty(this.auth),
+        metadata = convertToJsonObjectOrEmpty(this.metadata)
     )
 
     fun buildResponseEvent() = ResponseEvent(
-            name = this.name ?: throw MissingEventInformationException("Missing event name."),
-            version = this.version ?: throw MissingEventInformationException("Missing event version."),
-            id = this.id ?: throw MissingEventInformationException("Missing event id."),
-            flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
-            payload = convertPayload(),
-            identity = convertToJsonObjectOrEmpty(this.identity),
-            auth = convertToJsonObjectOrEmpty(this.auth),
-            metadata = convertToJsonObjectOrEmpty(this.metadata)
+        name = this.name ?: throw MissingEventInformationException("Missing event name."),
+        version = this.version ?: throw MissingEventInformationException("Missing event version."),
+        id = this.id ?: throw MissingEventInformationException("Missing event id."),
+        flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
+        payload = convertPayload(),
+        identity = convertToJsonObjectOrEmpty(this.identity),
+        auth = convertToJsonObjectOrEmpty(this.auth),
+        metadata = convertToJsonObjectOrEmpty(this.metadata)
     )
 
     private fun convertPayload() = when (this.payload) {

@@ -4,9 +4,9 @@ import com.timgroup.statsd.NonBlockingStatsDClient
 
 
 class DatadogStatsDTracer(
-        prefix: String,
-        host: String,
-        port: Int
+    prefix: String,
+    host: String,
+    port: Int
 ) : DatadogTracer() {
 
     private val statsDClient = NonBlockingStatsDClient(prefix, host, port)

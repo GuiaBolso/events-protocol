@@ -11,11 +11,13 @@ class TypeValidationHelperTest {
     @Test
     fun testWithCheckedJsonNullWithNullInput() {
 
-        val jsonObj = MapperHolder.mapper.fromJson("""
+        val jsonObj = MapperHolder.mapper.fromJson(
+            """
         {
             "userId": null
         }
-        """.trimIndent(), JsonObject::class.java)
+        """.trimIndent(), JsonObject::class.java
+        )
 
         val userId = jsonObj.withCheckedJsonNull("userId") {
             it.getAsJsonPrimitive("userId")
@@ -27,11 +29,13 @@ class TypeValidationHelperTest {
     @Test
     fun testWithCheckedJsonNullWithValidInput() {
 
-        val identityJsonObj = MapperHolder.mapper.fromJson("""
+        val identityJsonObj = MapperHolder.mapper.fromJson(
+            """
             {
                 "userId": 123987
             }
-        """.trimIndent(), JsonObject::class.java)
+        """.trimIndent(), JsonObject::class.java
+        )
 
         val userId = identityJsonObj.withCheckedJsonNull("userId") {
             it.getAsJsonPrimitive("userId").asLong
