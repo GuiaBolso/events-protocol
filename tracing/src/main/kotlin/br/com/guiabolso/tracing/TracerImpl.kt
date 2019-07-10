@@ -7,8 +7,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
 class TracerImpl(
-        private val tracerEngine: TracerEngine<*>,
-        private val asyncExecutor: AsyncExecutor
+    private val tracerEngine: TracerEngine<*>,
+    private val asyncExecutor: AsyncExecutor
 ) : Tracer {
 
     override fun setOperationName(name: String) {

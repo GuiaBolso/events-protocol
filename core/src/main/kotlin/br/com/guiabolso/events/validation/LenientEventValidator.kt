@@ -9,8 +9,8 @@ import com.google.gson.JsonObject
 import org.slf4j.LoggerFactory
 
 @Deprecated(
-        message = "Used only to validate events of applications that don't fully implement this protocol.",
-        replaceWith = ReplaceWith("StrictEventValidator", "br.com.guiabolso.events.validation.StrictEventValidator")
+    message = "Used only to validate events of applications that don't fully implement this protocol.",
+    replaceWith = ReplaceWith("StrictEventValidator", "br.com.guiabolso.events.validation.StrictEventValidator")
 )
 class LenientEventValidator : EventValidator {
 
@@ -22,14 +22,14 @@ class LenientEventValidator : EventValidator {
         val missingProperties = mutableListOf<String>()
 
         val responseEvent = ResponseEvent(
-                name = name,
-                version = version,
-                id = rawEvent.id.required("id"),
-                flowId = flowId,
-                payload = rawEvent.payload.getPayload(missingProperties, "payload"),
-                identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
-                auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
-                metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
+            name = name,
+            version = version,
+            id = rawEvent.id.required("id"),
+            flowId = flowId,
+            payload = rawEvent.payload.getPayload(missingProperties, "payload"),
+            identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
+            auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
+            metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
         )
 
         if (missingProperties.isNotEmpty()) {
@@ -47,14 +47,14 @@ class LenientEventValidator : EventValidator {
         val missingProperties = mutableListOf<String>()
 
         val request = RequestEvent(
-                name = name,
-                version = version,
-                id = rawEvent.id.required("id"),
-                flowId = flowId,
-                payload = rawEvent.payload.getPayload(missingProperties, "payload"),
-                identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
-                auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
-                metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
+            name = name,
+            version = version,
+            id = rawEvent.id.required("id"),
+            flowId = flowId,
+            payload = rawEvent.payload.getPayload(missingProperties, "payload"),
+            identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
+            auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
+            metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
         )
 
         if (missingProperties.isNotEmpty()) {
@@ -73,13 +73,14 @@ class LenientEventValidator : EventValidator {
         }
     }
 
-    private fun JsonElement?.getAsJsonObject(missingProperties: MutableList<String>, name: String): JsonObject = when (this) {
-        is JsonObject -> this
-        else -> {
-            missingProperties.add(name)
-            JsonObject()
+    private fun JsonElement?.getAsJsonObject(missingProperties: MutableList<String>, name: String): JsonObject =
+        when (this) {
+            is JsonObject -> this
+            else -> {
+                missingProperties.add(name)
+                JsonObject()
+            }
         }
-    }
 
     companion object {
         @Suppress("DEPRECATION")

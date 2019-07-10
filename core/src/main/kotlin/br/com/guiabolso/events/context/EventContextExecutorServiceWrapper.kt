@@ -48,15 +48,27 @@ class EventContextExecutorServiceWrapper(private val executorService: ExecutorSe
     }
 
     override fun <T : Any?> invokeAny(tasks: MutableCollection<out Callable<T>>, timeout: Long, unit: TimeUnit): T {
-        return executorService.invokeAny(tasks.map { CallableWrapper(EventContextHolder.getContext(), it) }, timeout, unit)
+        return executorService.invokeAny(
+            tasks.map { CallableWrapper(EventContextHolder.getContext(), it) },
+            timeout,
+            unit
+        )
     }
 
     override fun <T : Any?> invokeAll(tasks: MutableCollection<out Callable<T>>): MutableList<Future<T>> {
         return executorService.invokeAll(tasks.map { CallableWrapper(EventContextHolder.getContext(), it) })
     }
 
-    override fun <T : Any?> invokeAll(tasks: MutableCollection<out Callable<T>>, timeout: Long, unit: TimeUnit): MutableList<Future<T>> {
-        return executorService.invokeAll(tasks.map { CallableWrapper(EventContextHolder.getContext(), it) }, timeout, unit)
+    override fun <T : Any?> invokeAll(
+        tasks: MutableCollection<out Callable<T>>,
+        timeout: Long,
+        unit: TimeUnit
+    ): MutableList<Future<T>> {
+        return executorService.invokeAll(
+            tasks.map { CallableWrapper(EventContextHolder.getContext(), it) },
+            timeout,
+            unit
+        )
     }
 
 }

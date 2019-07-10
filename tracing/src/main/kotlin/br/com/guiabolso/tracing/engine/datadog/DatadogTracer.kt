@@ -53,7 +53,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun extractContext(): SpanBuilder {
         return tracer.buildSpan("asyncTask")
-                .asChildOf(tracer.activeSpan())
+            .asChildOf(tracer.activeSpan())
     }
 
     override fun withContext(context: Any): Closeable {

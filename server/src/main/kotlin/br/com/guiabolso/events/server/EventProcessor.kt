@@ -21,32 +21,30 @@ import br.com.guiabolso.tracing.factory.TracerFactory
 class EventProcessor
 @JvmOverloads
 constructor(
-        private val discovery: EventHandlerDiscovery,
-        private val exceptionHandlerRegistry: ExceptionHandlerRegistry,
-        private val tracer: Tracer = TracerFactory.createTracer(),
-        private val eventValidator: EventValidator = StrictEventValidator()
+    private val discovery: EventHandlerDiscovery,
+    private val exceptionHandlerRegistry: ExceptionHandlerRegistry,
+    private val tracer: Tracer = TracerFactory.createTracer(),
+    private val eventValidator: EventValidator = StrictEventValidator()
 ) {
 
     @JvmOverloads
     @Deprecated(
-            "The 'exposeExceptions' should not be used. Use 'ExceptionHandlerRegistryFactory.bypassExceptionHandler()' as exception handler instead.",
-            ReplaceWith(
-                    "EventProcessor(discovery, ExceptionHandlerRegistryFactory.bypassExceptionHandler(), eventValidator, tracer)",
-                    "br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory"
-            )
+        "The 'exposeExceptions' should not be used. Use 'ExceptionHandlerRegistryFactory.bypassExceptionHandler()' as exception handler instead.",
+        ReplaceWith(
+            "EventProcessor(discovery, ExceptionHandlerRegistryFactory.bypassExceptionHandler(), eventValidator, tracer)",
+            "br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory"
+        )
     )
     constructor(
-            discovery: EventHandlerDiscovery,
-            exceptionHandlerRegistry: ExceptionHandlerRegistry,
-            tracer: Tracer = TracerFactory.createTracer(),
-            eventValidator: EventValidator = StrictEventValidator(),
-            exposeExceptions: Boolean
+        discovery: EventHandlerDiscovery,
+        exceptionHandlerRegistry: ExceptionHandlerRegistry,
+        tracer: Tracer = TracerFactory.createTracer(),
+        eventValidator: EventValidator = StrictEventValidator(),
+        exposeExceptions: Boolean
     ) : this(discovery, configureExceptionHandler(exceptionHandlerRegistry, exposeExceptions), tracer, eventValidator)
 
     fun processEvent(rawEvent: String): String {
-        val event = parseAndValidateEvent(rawEvent)
-
-        return when (event) {
+        return when (val event = parseAndValidateEvent(rawEvent)) {
             is RequestEvent -> {
                 val handler = discovery.eventHandlerFor(event.name, event.version)
                 return if (handler == null) {
@@ -69,22 +67,26 @@ constructor(
     }
 
     private fun parseAndValidateEvent(rawEvent: String): Event =
-            try {
-                val input = MapperHolder.mapper.fromJson(rawEvent, RawEvent::class.java)
-                eventValidator.validateAsRequestEvent(input)
-            } catch (e: IllegalArgumentException) {
-                tracer.notifyError(e, false)
-                badProtocol(EventMessage(
-                        "INVALID_COMMUNICATION_PROTOCOL",
-                        mapOf("missingProperty" to e.message)
-                ))
-            } catch (e: Exception) {
-                tracer.notifyError(e, false)
-                badProtocol(EventMessage(
-                        "INVALID_COMMUNICATION_PROTOCOL",
-                        mapOf("message" to e.message)
-                ))
-            }
+        try {
+            val input = MapperHolder.mapper.fromJson(rawEvent, RawEvent::class.java)
+            eventValidator.validateAsRequestEvent(input)
+        } catch (e: IllegalArgumentException) {
+            tracer.notifyError(e, false)
+            badProtocol(
+                EventMessage(
+                    "INVALID_COMMUNICATION_PROTOCOL",
+                    mapOf("missingProperty" to e.message)
+                )
+            )
+        } catch (e: Exception) {
+            tracer.notifyError(e, false)
+            badProtocol(
+                EventMessage(
+                    "INVALID_COMMUNICATION_PROTOCOL",
+                    mapOf("message" to e.message)
+                )
+            )
+        }
 
     private fun startProcessingEvent(event: RequestEvent) {
         tracer.setOperationName("${event.name}:V${event.version}")
@@ -102,7 +104,10 @@ constructor(
 
     companion object {
 
-        private fun configureExceptionHandler(handler: ExceptionHandlerRegistry, exposeExceptions: Boolean): ExceptionHandlerRegistry {
+        private fun configureExceptionHandler(
+            handler: ExceptionHandlerRegistry,
+            exposeExceptions: Boolean
+        ): ExceptionHandlerRegistry {
             return if (exposeExceptions) {
                 bypassExceptionHandler(false)
             } else {

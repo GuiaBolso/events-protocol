@@ -33,8 +33,8 @@ object TracerFactory {
     fun createTracerWithDatadog(): Tracer {
         LOGGER.info("Using Datadog as APM tracer.")
         return TracerImpl(
-                compose(Slf4JTracer(), DatadogTracer()),
-                DefaultAsyncExecutor()
+            compose(Slf4JTracer(), DatadogTracer()),
+            DefaultAsyncExecutor()
         )
     }
 
@@ -42,14 +42,15 @@ object TracerFactory {
     fun createTracerWithDatadogStatsD(): Tracer {
         LOGGER.info("Using Datadog as APM tracer with StatsD.")
         return TracerImpl(
-                compose(
-                        Slf4JTracer(),
-                        DatadogStatsDTracer(
-                                EnvironmentUtils.getProperty("DD_SERVICE_NAME", "unknown-application"),
-                                EnvironmentUtils.getProperty("DD_AGENT_HOST", "localhost"),
-                                EnvironmentUtils.getProperty("DD_AGENT_PORT", 8125))
-                ),
-                DefaultAsyncExecutor()
+            compose(
+                Slf4JTracer(),
+                DatadogStatsDTracer(
+                    EnvironmentUtils.getProperty("DD_SERVICE_NAME", "unknown-application"),
+                    EnvironmentUtils.getProperty("DD_AGENT_HOST", "localhost"),
+                    EnvironmentUtils.getProperty("DD_AGENT_PORT", 8125)
+                )
+            ),
+            DefaultAsyncExecutor()
         )
     }
 
@@ -57,8 +58,8 @@ object TracerFactory {
     fun createTracerWithNewRelic(): Tracer {
         LOGGER.info("Using NewRelic as APM tracer.")
         return TracerImpl(
-                compose(Slf4JTracer(), NewRelicTracer()),
-                NewRelicAsyncExecutor()
+            compose(Slf4JTracer(), NewRelicTracer()),
+            NewRelicAsyncExecutor()
         )
     }
 
@@ -66,8 +67,8 @@ object TracerFactory {
     fun createTracerWithoutAnyAPM(): Tracer {
         LOGGER.info("No APM tracer detected.")
         return TracerImpl(
-                Slf4JTracer(),
-                DefaultAsyncExecutor()
+            Slf4JTracer(),
+            DefaultAsyncExecutor()
         )
     }
 

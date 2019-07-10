@@ -1,7 +1,6 @@
 package br.com.guiabolso.tracing.utils
 
 import datadog.trace.api.DDSpanTypes.HTTP_SERVER
-import datadog.trace.api.DDSpanTypes.WEB_SERVLET
 import datadog.trace.api.DDTags.ERROR_MSG
 import datadog.trace.api.DDTags.ERROR_STACK
 import datadog.trace.api.DDTags.ERROR_TYPE

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.lang.IllegalStateException
 
 class EventsTest {
 
@@ -53,7 +52,7 @@ class EventsTest {
         assertNull(buildRequestEvent().userId)
 
         val responseEvent = buildRequestEvent().copy(
-                identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+            identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
         )
         assertEquals(42L, responseEvent.userId)
     }
@@ -63,7 +62,7 @@ class EventsTest {
         assertNull(buildRequestEvent().origin)
 
         val responseEvent = buildRequestEvent().copy(
-                metadata = JsonObject().apply { this.add("origin", JsonPrimitive("batata")) }
+            metadata = JsonObject().apply { this.add("origin", JsonPrimitive("batata")) }
         )
         assertEquals("batata", responseEvent.origin)
     }

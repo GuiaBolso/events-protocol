@@ -12,9 +12,9 @@ object StatsDTags : Closeable {
     }
 
     fun getTags(): Map<String, String> =
-            tags.get()?.let { map ->
-                map.filterNot { entry -> entry.key == "prefix" }
-            } ?: emptyMap()
+        tags.get()?.let { map ->
+            map.filterNot { entry -> entry.key == "prefix" }
+        } ?: emptyMap()
 
     fun get(key: String): String? = tags.get()[key]
 

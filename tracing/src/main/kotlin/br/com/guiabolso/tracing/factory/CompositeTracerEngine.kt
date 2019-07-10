@@ -4,7 +4,7 @@ import br.com.guiabolso.tracing.engine.TracerEngine
 import java.io.Closeable
 
 class CompositeTracerEngine(
-        private var tracers: List<TracerEngine<*>>
+    private var tracers: List<TracerEngine<*>>
 ) : TracerEngine<Map<TracerEngine<*>, Any>> {
 
     override fun setOperationName(name: String) {
@@ -57,7 +57,7 @@ class CompositeTracerEngine(
         context as Map<TracerEngine<*>, Any>
 
         return CompositeTracerEngineCloseable(
-                context.map { (engine, c) -> engine.withContext(c) }.toList()
+            context.map { (engine, c) -> engine.withContext(c) }.toList()
         )
     }
 
