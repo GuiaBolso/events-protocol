@@ -64,13 +64,13 @@ class EventBuilder {
         }
 
         @JvmStatic
-        fun redirectFor(event: RequestEvent, redirectPayload: RedirectPayload): ResponseEvent {
+        fun redirectFor(requestEvent: RequestEvent, payload: RedirectPayload): ResponseEvent {
             val builder = EventBuilder()
-            builder.name = "${event.name}:redirect"
-            builder.version = event.version
-            builder.payload = redirectPayload
-            builder.id = builder.id ?: event.id
-            builder.flowId = builder.flowId ?: event.flowId
+            builder.name = "${requestEvent.name}:redirect"
+            builder.version = requestEvent.version
+            builder.payload = payload
+            builder.id = builder.id ?: requestEvent.id
+            builder.flowId = builder.flowId ?: requestEvent.flowId
 
             return builder.buildResponseEvent()
         }
