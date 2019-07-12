@@ -37,12 +37,19 @@ constructor(
                 timeout ?: defaultTimeout
             )
             val event = parseEvent(rawResponse)
-            return if (event.isSuccess()) {
-                logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
-                Response.Success(event)
-            } else {
-                logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
-                Response.Error(event, event.getErrorType())
+            return when {
+                event.isSuccess() -> {
+                    logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Success(event)
+                }
+                event.isRedirect() -> {
+                    logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Redirect(event)
+                }
+                else -> {
+                    logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Error(event, event.getErrorType())
+                }
             }
         } catch (e: TimeoutException) {
             logger.warn("Event ${requestEvent.name}:${requestEvent.version} timeout.", e)

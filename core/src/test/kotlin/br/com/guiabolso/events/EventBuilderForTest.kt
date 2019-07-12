@@ -30,6 +30,21 @@ object EventBuilderForTest {
         metadata = JsonObject()
     )
 
+    fun buildRedirectEvent() = ResponseEvent(
+        name = "event:name:redirect",
+        version = 1,
+        id = "id",
+        flowId = "flowId",
+        payload = JsonObject().apply {
+            addProperty("url", "https://www.google.com")
+            add("queryParameters", JsonObject())
+        },
+        identity = JsonObject(),
+        auth = JsonObject(),
+        metadata = JsonObject()
+    )
+
+
     fun buildRequestEventString(event: RequestEvent = buildRequestEvent()) =
         MapperHolder.mapper.toJson(event)!!
 

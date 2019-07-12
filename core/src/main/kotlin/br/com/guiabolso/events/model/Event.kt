@@ -51,7 +51,9 @@ data class ResponseEvent(
 
     fun isSuccess() = this.name.endsWith(":response")
 
-    fun isError() = !this.isSuccess()
+    fun isRedirect() = this.name.endsWith(":redirect")
+
+    fun isError() = !this.isSuccess() && !this.isRedirect()
 
     fun getErrorType(): EventErrorType {
         if (isSuccess()) throw IllegalStateException("This is not an error event.")
