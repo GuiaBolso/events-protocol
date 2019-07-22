@@ -45,7 +45,7 @@ constructor(
         try {
             val lambdaBody = MapperHolder.mapper.fromJson(payload, LambdaRequest::class.java)?.body ?: return null
             return MapperHolder.mapper.fromJson(lambdaBody, RawEvent::class.java)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             throw EventParsingException(e)
         }
     }

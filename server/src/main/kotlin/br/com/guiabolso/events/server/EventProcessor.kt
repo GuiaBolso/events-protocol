@@ -36,7 +36,7 @@ constructor(
     private fun parseEvent(payload: String?): RawEvent? {
         try {
             return MapperHolder.mapper.fromJson(payload, RawEvent::class.java)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             throw EventParsingException(e)
         }
     }

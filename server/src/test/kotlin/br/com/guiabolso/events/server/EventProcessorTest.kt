@@ -1,14 +1,12 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
-import br.com.guiabolso.events.EventBuilderForTest.buildRequestEventString
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
+import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import br.com.guiabolso.tracing.Tracer
-import com.nhaarman.mockito_kotlin.mock
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,13 +16,11 @@ class EventProcessorTest {
     private lateinit var rawEventProcessor: EventProcessor
     private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry
     private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
-    private lateinit var tracer: Tracer
 
     @BeforeEach
     fun setUp() {
         eventHandlerRegistry = SimpleEventHandlerRegistry()
         exceptionHandlerRegistry = ExceptionHandlerRegistry()
-        tracer = mock()
         rawEventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
     }
 
@@ -53,5 +49,7 @@ class EventProcessorTest {
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload!!.asJsonObject["code"].asString)
     }
 
+    private fun buildRequestEventString(event: RequestEvent = buildRequestEvent()) =
+        MapperHolder.mapper.toJson(event)!!
 
 }

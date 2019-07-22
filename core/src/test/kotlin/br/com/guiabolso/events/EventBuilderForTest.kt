@@ -1,6 +1,5 @@
 package br.com.guiabolso.events
 
-import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -55,8 +54,5 @@ object EventBuilderForTest {
         auth = JsonObject(),
         metadata = JsonObject()
     )
-
-    fun buildRequestEventString(event: RequestEvent = buildRequestEvent()) =
-        MapperHolder.mapper.toJson(event)!!
 
 }
