@@ -30,7 +30,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutName() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     null,
@@ -48,7 +48,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutVersion() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -66,7 +66,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutId() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -219,7 +219,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutName() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     null,
@@ -237,7 +237,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutVersion() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -255,7 +255,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutId() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -273,7 +273,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutFlowId() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",

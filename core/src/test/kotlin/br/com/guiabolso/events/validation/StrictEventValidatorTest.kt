@@ -29,7 +29,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutName() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     null,
@@ -47,7 +47,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutVersion() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -65,7 +65,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutId() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -83,7 +83,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutPayload() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -113,7 +113,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutIdentity() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -127,7 +127,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -145,7 +145,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutAuth() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -159,7 +159,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -177,7 +177,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutMetadata() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -191,7 +191,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -224,7 +224,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutName() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     null,
@@ -242,7 +242,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutVersion() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -260,7 +260,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutId() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -278,7 +278,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutFlowId() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -296,7 +296,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutPayload() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -326,7 +326,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutIdentity() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -340,7 +340,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -358,7 +358,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutAuth() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -372,7 +372,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -390,7 +390,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutMetadata() {
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -404,7 +404,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(EventValidationException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
