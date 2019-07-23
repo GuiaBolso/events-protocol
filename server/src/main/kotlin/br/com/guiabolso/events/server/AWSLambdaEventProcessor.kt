@@ -11,9 +11,7 @@ import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.factory.TracerFactory
-import java.io.BufferedReader
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.OutputStream
 
 class AWSLambdaEventProcessor
@@ -51,8 +49,7 @@ constructor(
     }
 
     private fun readInput(input: InputStream): String {
-        val reader = BufferedReader(InputStreamReader(input))
-        return reader.use { reader.readText() }
+        return input.bufferedReader(Charsets.UTF_8).use { it.readText() }
     }
 
     private fun writeOutput(output: OutputStream, response: String) {
