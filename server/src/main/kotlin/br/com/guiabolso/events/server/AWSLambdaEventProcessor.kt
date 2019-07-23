@@ -11,8 +11,10 @@ import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.factory.TracerFactory
+import java.io.InputStream
+import java.io.OutputStream
 
-class EventProcessor
+class AWSLambdaEventProcessor
 @JvmOverloads
 constructor(
     discovery: EventHandlerDiscovery,
@@ -23,24 +25,53 @@ constructor(
 
     private val eventProcessor = RawEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator)
 
-    fun processEvent(payload: String?): String {
-        return try {
+    fun processEvent(input: InputStream, output: OutputStream) {
+        val payload = readInput(input)
+
+        val response = try {
             val rawEvent = parseEvent(payload)
-            eventProcessor.processEvent(rawEvent).json()
+            eventProcessor.processEvent(rawEvent)
         } catch (e: EventParsingException) {
             tracer.notifyError(e, false)
-            badProtocol(e.eventMessage).json()
+            badProtocol(e.eventMessage)
         }
+
+        writeOutput(output, response.json())
     }
 
     private fun parseEvent(payload: String?): RawEvent? {
         try {
-            return MapperHolder.mapper.fromJson(payload, RawEvent::class.java)
+            val lambdaBody = MapperHolder.mapper.fromJson(payload, LambdaRequest::class.java)?.body ?: return null
+            return MapperHolder.mapper.fromJson(lambdaBody, RawEvent::class.java)
         } catch (e: Throwable) {
             throw EventParsingException(e)
         }
     }
 
-    private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
+    private fun readInput(input: InputStream): String {
+        return input.bufferedReader(Charsets.UTF_8).use { it.readText() }
+    }
+
+    private fun writeOutput(output: OutputStream, response: String) {
+        output.use { it.write(response.toByteArray()) }
+    }
+
+    private fun ResponseEvent.json() = MapperHolder.mapper.toJson(
+        LambdaResponse(
+            statusCode = 200,
+            headers = mapOf("Content-Type" to "application/json"),
+            body = MapperHolder.mapper.toJson(this)
+        )
+    )
+
+    private data class LambdaRequest(
+        val body: String?
+    )
+
+    private data class LambdaResponse(
+        val statusCode: Int,
+        val headers: Map<String, String>,
+        val body: String
+    )
 
 }

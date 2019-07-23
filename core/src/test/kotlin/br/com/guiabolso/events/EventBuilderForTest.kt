@@ -1,12 +1,23 @@
 package br.com.guiabolso.events
 
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 
 object EventBuilderForTest {
+
+    fun buildRawRequestEvent() = RawEvent(
+        name = "event:name",
+        version = 1,
+        id = "id",
+        flowId = "flowId",
+        payload = JsonPrimitive(42),
+        identity = JsonObject(),
+        auth = JsonObject(),
+        metadata = JsonObject()
+    )
 
     fun buildRequestEvent() = RequestEvent(
         name = "event:name",
@@ -43,9 +54,5 @@ object EventBuilderForTest {
         auth = JsonObject(),
         metadata = JsonObject()
     )
-
-
-    fun buildRequestEventString(event: RequestEvent = buildRequestEvent()) =
-        MapperHolder.mapper.toJson(event)!!
 
 }

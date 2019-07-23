@@ -14,22 +14,22 @@ import org.slf4j.LoggerFactory
 )
 class LenientEventValidator : EventValidator {
 
-    override fun validateAsResponseEvent(rawEvent: RawEvent): ResponseEvent {
-        val name = rawEvent.name.required("name")
-        val version = rawEvent.version.required("version")
-        val flowId = rawEvent.flowId.required("flowId")
+    override fun validateAsResponseEvent(rawEvent: RawEvent?): ResponseEvent {
+        val name = rawEvent?.name.required("name")
+        val version = rawEvent?.version.required("version")
+        val flowId = rawEvent?.flowId.required("flowId")
 
         val missingProperties = mutableListOf<String>()
 
         val responseEvent = ResponseEvent(
             name = name,
             version = version,
-            id = rawEvent.id.required("id"),
+            id = rawEvent?.id.required("id"),
             flowId = flowId,
-            payload = rawEvent.payload.getPayload(missingProperties, "payload"),
-            identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
-            auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
-            metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
+            payload = rawEvent?.payload.getPayload(missingProperties, "payload"),
+            identity = rawEvent?.identity.getAsJsonObject(missingProperties, "identity"),
+            auth = rawEvent?.auth.getAsJsonObject(missingProperties, "auth"),
+            metadata = rawEvent?.metadata.getAsJsonObject(missingProperties, "metadata")
         )
 
         if (missingProperties.isNotEmpty()) {
@@ -39,22 +39,22 @@ class LenientEventValidator : EventValidator {
         return responseEvent
     }
 
-    override fun validateAsRequestEvent(rawEvent: RawEvent): RequestEvent {
-        val name = rawEvent.name.required("name")
-        val version = rawEvent.version.required("version")
-        val flowId = rawEvent.flowId.required("flowId")
+    override fun validateAsRequestEvent(rawEvent: RawEvent?): RequestEvent {
+        val name = rawEvent?.name.required("name")
+        val version = rawEvent?.version.required("version")
+        val flowId = rawEvent?.flowId.required("flowId")
 
         val missingProperties = mutableListOf<String>()
 
         val request = RequestEvent(
             name = name,
             version = version,
-            id = rawEvent.id.required("id"),
+            id = rawEvent?.id.required("id"),
             flowId = flowId,
-            payload = rawEvent.payload.getPayload(missingProperties, "payload"),
-            identity = rawEvent.identity.getAsJsonObject(missingProperties, "identity"),
-            auth = rawEvent.auth.getAsJsonObject(missingProperties, "auth"),
-            metadata = rawEvent.metadata.getAsJsonObject(missingProperties, "metadata")
+            payload = rawEvent?.payload.getPayload(missingProperties, "payload"),
+            identity = rawEvent?.identity.getAsJsonObject(missingProperties, "identity"),
+            auth = rawEvent?.auth.getAsJsonObject(missingProperties, "auth"),
+            metadata = rawEvent?.metadata.getAsJsonObject(missingProperties, "metadata")
         )
 
         if (missingProperties.isNotEmpty()) {
