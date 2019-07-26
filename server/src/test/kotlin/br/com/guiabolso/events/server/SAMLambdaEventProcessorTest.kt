@@ -4,17 +4,20 @@ import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
+import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class AWSLambdaEventProcessorTest {
+class SAMLambdaEventProcessorTest {
 
-    private lateinit var lambdaEventProcessor: AWSLambdaEventProcessor
+    private lateinit var lambdaEventProcessor: SAMLambdaEventProcessor
     private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry
     private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
 
@@ -22,7 +25,7 @@ class AWSLambdaEventProcessorTest {
     fun setUp() {
         eventHandlerRegistry = SimpleEventHandlerRegistry()
         exceptionHandlerRegistry = ExceptionHandlerRegistry()
-        lambdaEventProcessor = AWSLambdaEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
+        lambdaEventProcessor = SAMLambdaEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
     }
 
     @Test
@@ -33,11 +36,12 @@ class AWSLambdaEventProcessorTest {
             buildResponseEvent()
         }
 
-        val input = MapperHolder.mapper.toJson(event).asStream()
+        val input = buildLambdaRequestEventString().asStream()
         val output = ByteArrayOutputStream()
         lambdaEventProcessor.processEvent(input, output)
 
-        val responseEvent = MapperHolder.mapper.fromJson(String(output.toByteArray()), RawEvent::class.java)
+        val lambdaBody = MapperHolder.mapper.fromJson(String(output.toByteArray()), JsonObject::class.java).get("body").asString
+        val responseEvent = MapperHolder.mapper.fromJson(lambdaBody, RawEvent::class.java)
 
         assertEquals("event:name:response", responseEvent.name)
         assertEquals(1, responseEvent.version)
@@ -46,16 +50,23 @@ class AWSLambdaEventProcessorTest {
 
     @Test
     fun testBadProtocolEventIsReturned() {
-        val input = "THIS IS NOT A EVENT".asStream()
+        val input = "{\"body\":\"THIS IS NOT A EVENT\"}".asStream()
         val output = ByteArrayOutputStream()
         lambdaEventProcessor.processEvent(input, output)
 
-        val responseEvent = MapperHolder.mapper.fromJson(String(output.toByteArray()), RawEvent::class.java)
+        val lambdaBody = MapperHolder.mapper.fromJson(String(output.toByteArray()), JsonObject::class.java).get("body").asString
+        val responseEvent = MapperHolder.mapper.fromJson(lambdaBody, RawEvent::class.java)
 
         assertEquals("badProtocol", responseEvent.name)
         assertEquals(1, responseEvent.version)
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload!!.asJsonObject.get("code").asString)
     }
+
+    private fun buildLambdaRequestEventString(event: RequestEvent = buildRequestEvent()) = MapperHolder.mapper.toJson(
+        JsonObject().apply {
+            add("body", JsonPrimitive(MapperHolder.mapper.toJson(event)!!))
+        }
+    )!!
 
     private fun String.asStream() = ByteArrayInputStream(this.toByteArray())
 
