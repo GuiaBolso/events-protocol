@@ -1,5 +1,6 @@
 package br.com.guiabolso.tracing
 
+import br.com.guiabolso.tracing.engine.TracerEngine
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
@@ -87,6 +88,11 @@ interface Tracer {
      * @since 2.0.0
      */
     fun notifyError(message: String, params: Map<String, String?>, expected: Boolean)
+
+    /**
+     * Returns the tracing engine of this tracer
+     */
+    fun getTracerEngine(): TracerEngine<*>
 
     /**
      * Cleans the tracer state.

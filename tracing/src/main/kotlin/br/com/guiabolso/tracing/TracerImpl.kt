@@ -11,6 +11,10 @@ class TracerImpl(
     private val asyncExecutor: AsyncExecutor
 ) : Tracer {
 
+    override fun getTracerEngine(): TracerEngine<*> {
+        return tracerEngine
+    }
+
     override fun setOperationName(name: String) {
         tracerEngine.setOperationName(name)
     }
