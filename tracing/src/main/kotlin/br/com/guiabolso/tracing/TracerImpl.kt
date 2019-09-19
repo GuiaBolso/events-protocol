@@ -31,6 +31,10 @@ class TracerImpl(
         tracerEngine.addProperty(key, value)
     }
 
+    override fun addProperty(key: String, value: List<*>) {
+        tracerEngine.addProperty(key, value)
+    }
+
     override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
         return tracerEngine.executeAndRecordTime(name, block)
     }

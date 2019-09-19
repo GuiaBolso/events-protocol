@@ -44,7 +44,7 @@ interface TracerEngine<C> {
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
-     * @since 2.0.0
+     * @since 2.6.0
      */
     fun addProperty(key: String, value: List<*>)
 
