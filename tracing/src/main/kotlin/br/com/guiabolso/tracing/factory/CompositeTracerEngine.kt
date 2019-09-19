@@ -24,8 +24,7 @@ class CompositeTracerEngine(
     }
 
     override fun addProperty(key: String, value: List<*>) {
-        val finalValue:String = value.joinToString(",")
-        addProperty(key, finalValue)
+        tracers.forEach{ it.addProperty(key, value) }
     }
 
     override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
