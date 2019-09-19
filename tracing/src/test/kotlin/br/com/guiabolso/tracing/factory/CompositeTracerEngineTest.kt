@@ -3,7 +3,7 @@ package br.com.guiabolso.tracing.factory
 import br.com.guiabolso.tracing.engine.TracerEngine
 import com.nhaarman.mockito_kotlin.*
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.anyList
 import java.io.Closeable
 
 class CompositeTracerEngineTest {
@@ -49,8 +49,8 @@ class CompositeTracerEngineTest {
         val item:List<Int> = listOf(1, 2, 3, 4, 5)
         engine.addProperty("key", item)
 
-        verify(mockEngine1, times(1)).addProperty(eq("key"), anyString())
-        verify(mockEngine2, times(1)).addProperty(eq("key"), anyString())
+        verify(mockEngine1, times(1)).addProperty(eq("key"), anyList<Int>())
+        verify(mockEngine2, times(1)).addProperty(eq("key"), anyList<Int>())
     }
 
     @Test
