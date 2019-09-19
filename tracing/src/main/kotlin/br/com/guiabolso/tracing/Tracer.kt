@@ -43,6 +43,15 @@ interface Tracer {
     fun addProperty(key: String, value: Boolean?)
 
     /**
+     * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
+     *
+     * @param key Custom parameter key.
+     * @param value Custom parameter value.
+     * @since 2.0.0
+     */
+    fun addProperty(key: String, value: List<*>)
+
+    /**
      * Run a block of code and register its execution time using the current Engine, under the received metric name.
      * The block of code receives a MutableMap context to save specific metric tags, and return an object of type T.
      *
