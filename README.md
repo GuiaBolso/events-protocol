@@ -84,7 +84,39 @@ Como usar
 
 ## Cliente
 
-```TODO```
+Para começar consumir eventos de outros serviços basta ter um objeto `EventClient` e chamar o método do mesmo, `sendEvent`, passando a URL de eventos do serviço que se deseja consumir o evento e o evento em si.
+
+Para ajudar na construção do Evento é possível utilizar a classe `EventBuild`, como demonstrado no exemplo a baixo.
+
+```kotlin
+class SomeServiceEventBroker {
+
+	private val eventBrokerUrl = "SERVICE_EVENT_URL"
+	private val client = EventClient()
+	
+	private fun sendEvent(event: RequestEvent): ResponseEvent {
+		return client.sendEvent(eventBrokerUrl, event)
+	}
+	
+	fun getSomeExample(exampleId: Int): Example {
+		val getSomeExampleEvent = EventBuilder.event {
+			id = UUID.randomUUID.toString()
+			flowId = UUID.randomUUID.toString()
+			name = "get:example"
+			version = 1
+			payload = mapOf(
+				"attributeOne" to "attributeOne",
+				"attributeTwo" to "attributeTwo"
+			)
+            identity = mapOf(
+            	"exampleId" to 123456789
+            )
+		}
+		return sendEvent().payloadAs<Example>();
+	}
+
+}
+```
 
 ## Servidor
 
