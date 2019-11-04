@@ -19,12 +19,14 @@ object DatadogUtils {
         func: () -> Unit
     ) {
         val tracer = GlobalTracer.get()!!
-        tracer.buildSpan(name).ignoreActiveSpan().startActive(true).use {
+        val span = tracer.buildSpan(name).ignoreActiveSpan().start()
+        val scope = tracer.scopeManager().activate(span)
+        scope.use {
             try {
-                it.span().setTag(SPAN_TYPE, type)
+                span.setTag(SPAN_TYPE, type)
                 func()
             } catch (e: Exception) {
-                notifyError(it.span(), e, false)
+                notifyError(span, e, false)
                 throw e
             }
         }
@@ -33,13 +35,13 @@ object DatadogUtils {
     @JvmStatic
     fun <T> traceBlock(name: String, func: () -> T): T {
         val tracer = GlobalTracer.get()!!
-
-        val scope = tracer.buildSpan(name).startActive(true)!!
+        val span = tracer.buildSpan(name).start()
+        val scope = tracer.scopeManager().activate(span)
         return scope.use { _ ->
             try {
                 func()
             } catch (e: Exception) {
-                notifyError(scope.span(), e, false)
+                notifyError(span, e, false)
                 throw e
             }
         }

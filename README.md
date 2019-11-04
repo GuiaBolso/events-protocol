@@ -18,19 +18,20 @@ repositories {
 ```
 
 
-A biblioteca é composta de 3 modulos. Server, Client e Core.
+A biblioteca é composta de 4 modulos. Server, Client, Core e Tracing.
 
 ```
- compile "br.com.guiabolso:events-client:2.6.1"
- compile "br.com.guiabolso:events-server:2.6.1"
- compile "br.com.guiabolso:events-core:2.6.1"
+ compile "br.com.guiabolso:events-client:3.0.0"
+ compile "br.com.guiabolso:events-server:3.0.0"
+ compile "br.com.guiabolso:events-core:3.0.0"
+ compile "br.com.guiabolso:tracing:3.0.0"
 ```
 Geralmente as dependências a serem importadas são:
 
 * Server: Quando é necessário tratar requisições de eventos;
 * Client: Quando é necessário realizar requisições de evento;
-* Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado.
-
+* Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado;
+* Tracing: É dependencia do Core como abstração de ferramenta de instrumentação / APM. 
 
 Motivação
 ---------------

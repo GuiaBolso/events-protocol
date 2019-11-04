@@ -62,7 +62,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     }
 
     override fun withContext(context: Any): Closeable {
-        return (context as SpanBuilder).startActive(true)
+        return tracer.scopeManager().activate((context as SpanBuilder).start())
     }
 
     override fun withContext(context: SpanBuilder, func: () -> Any) {
