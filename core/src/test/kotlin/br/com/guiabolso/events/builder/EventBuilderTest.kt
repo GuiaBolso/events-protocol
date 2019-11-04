@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.builder
 
+import br.com.guiabolso.events.builder.EventBuilder.Companion.acceptedFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.event
@@ -15,6 +16,7 @@ import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.utils.EventUtils
+import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -369,6 +371,27 @@ class EventBuilderTest {
             MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())),
             response.payload
         )
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
+    fun testCreateAcceptedResponseEvent() {
+        val event = event {
+            id = "id"
+            flowId = "flowId"
+            name = "event"
+            version = 1
+            payload = 42
+        }
+        val response = acceptedFor(event)
+
+        assertEquals("id", response.id)
+        assertEquals("flowId", response.flowId)
+        assertEquals("event:accepted", response.name)
+        assertEquals(1, response.version)
+        assertEquals(JsonNull.INSTANCE, response.payload)
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)

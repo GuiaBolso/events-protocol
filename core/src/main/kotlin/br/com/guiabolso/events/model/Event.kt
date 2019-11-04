@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.model.EventErrorType.Companion.getErrorType
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -36,6 +37,16 @@ sealed class Event {
         get() = this.metadata.withCheckedJsonNull("origin") {
             it.getAsJsonPrimitive("origin")?.asString
         }
+
+    companion object {
+        const val DEFAULT_SUCCESS_SUFFIX = "response"
+        const val REDIRECT_SUFFIX = "redirect"
+        const val ACCEPTED_SUFFIX = "accepted"
+
+        const val EVENT_NOT_FOUND_EVENT = "eventNotFound"
+        const val BAD_PROTOCOL_EVENT = "badProtocol"
+        val ERROR_EVENTS = listOf(EVENT_NOT_FOUND_EVENT, BAD_PROTOCOL_EVENT)
+    }
 }
 
 data class ResponseEvent(
@@ -49,15 +60,17 @@ data class ResponseEvent(
     override val metadata: JsonObject
 ) : Event() {
 
-    fun isSuccess() = this.name.endsWith(":response")
+    fun isSuccess() = this.name.endsWith(":$DEFAULT_SUCCESS_SUFFIX") || isRedirect() || isAccepted()
 
-    fun isRedirect() = this.name.endsWith(":redirect")
+    fun isRedirect() = this.name.endsWith(":$REDIRECT_SUFFIX")
 
-    fun isError() = !this.isSuccess() && !this.isRedirect()
+    fun isAccepted() = this.name.endsWith(":$ACCEPTED_SUFFIX")
+
+    fun isError() = !this.isSuccess() || this.name in ERROR_EVENTS
 
     fun getErrorType(): EventErrorType {
-        if (isSuccess()) throw IllegalStateException("This is not an error event.")
-        return EventErrorType.getErrorType(this.name.substringAfterLast(":"))
+        check(!isSuccess()) { "This is not an error event." }
+        return getErrorType(this.name.substringAfterLast(":"))
     }
 
 }

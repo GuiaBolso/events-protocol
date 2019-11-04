@@ -61,8 +61,9 @@ class EventClientTest {
 
         val response = eventClient.sendEvent("url", event, 1000)
 
-        assertTrue(response is Response.Redirect)
-        assertEquals(responseEvent, (response as Response.Redirect).event)
+        assertTrue(response is Response.Success)
+        response as Response.Success
+        assertEquals(responseEvent, response.event)
     }
 
     @Test

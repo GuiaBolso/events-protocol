@@ -1,8 +1,9 @@
 package br.com.guiabolso.events.model
 
-import br.com.guiabolso.events.EventBuilderForTest
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.model.EventErrorType.BadProtocol
+import br.com.guiabolso.events.model.EventErrorType.BadRequest
 import br.com.guiabolso.events.model.EventErrorType.Companion.getErrorType
+import br.com.guiabolso.events.model.EventErrorType.EventNotFound
 import br.com.guiabolso.events.model.EventErrorType.Expired
 import br.com.guiabolso.events.model.EventErrorType.Forbidden
 import br.com.guiabolso.events.model.EventErrorType.Generic
@@ -11,9 +12,7 @@ import br.com.guiabolso.events.model.EventErrorType.ResourceDenied
 import br.com.guiabolso.events.model.EventErrorType.Unauthorized
 import br.com.guiabolso.events.model.EventErrorType.Unknown
 import br.com.guiabolso.events.model.EventErrorType.UserDenied
-import com.google.gson.JsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class EventErrorTypeTest {
@@ -25,6 +24,15 @@ class EventErrorTypeTest {
 
         assertEquals(NotFound, getErrorType("notFound"))
         assertEquals("notFound", getErrorType("notFound").typeName)
+
+        assertEquals(EventNotFound, getErrorType("eventNotFound"))
+        assertEquals("eventNotFound", getErrorType("eventNotFound").typeName)
+
+        assertEquals(BadRequest, getErrorType("badRequest"))
+        assertEquals("badRequest", getErrorType("badRequest").typeName)
+
+        assertEquals(BadProtocol, getErrorType("badProtocol"))
+        assertEquals("badProtocol", getErrorType("badProtocol").typeName)
 
         assertEquals(Unauthorized, getErrorType("unauthorized"))
         assertEquals("unauthorized", getErrorType("unauthorized").typeName)
@@ -45,63 +53,4 @@ class EventErrorTypeTest {
         assertEquals("somethingElse", getErrorType("somethingElse").typeName)
     }
 
-    @Test
-    fun testJsonNullUserIdEvent() {
-        val identity = MapperHolder.mapper.fromJson(
-            """
-            {
-                "userId": null
-            }
-        """.trimIndent(), JsonObject::class.java
-        )
-
-        val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
-
-        assertNull(event.userId)
-    }
-
-    @Test
-    fun testJsonNullOriginEvent() {
-        val metadata = MapperHolder.mapper.fromJson(
-            """
-            {
-                "origin": null
-            }
-        """.trimIndent(), JsonObject::class.java
-        )
-
-        val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)
-
-        assertNull(event.origin)
-    }
-
-    @Test
-    fun testNotNullUserIdEvent() {
-        val identity = MapperHolder.mapper.fromJson(
-            """
-            {
-                "userId": 123987
-            }
-        """.trimIndent(), JsonObject::class.java
-        )
-
-        val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
-
-        assertEquals(123987L, event.userId)
-    }
-
-    @Test
-    fun testNotNullOriginEvent() {
-        val metadata = MapperHolder.mapper.fromJson(
-            """
-            {
-                "origin": "east"
-            }
-        """.trimIndent(), JsonObject::class.java
-        )
-
-        val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)
-
-        assertEquals("east", event.origin)
-    }
 }
