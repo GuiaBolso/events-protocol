@@ -23,7 +23,8 @@ class DateSerializersTest {
 
     @Test
     fun `should serialize local date time in UTC`() {
-        val date = LocalDateTime.of(2019, 11, 5, 12, 0, 0)
+        val zonedDateTime = ZonedDateTime.of(LocalDateTime.of(2019, 11, 5, 12, 0, 0), ZoneId.of("America/Sao_Paulo"))
+        val date = zonedDateTime.toLocalDateTime()
 
         val serialized = MapperHolder.mapper.toJson(LocalDateTimeTest(date))
         val deserialized = MapperHolder.mapper.fromJson(serialized, LocalDateTimeTest::class.java)
@@ -34,8 +35,8 @@ class DateSerializersTest {
 
     @Test
     fun `should serialize instant in UTC`() {
-        val date = LocalDateTime.of(2019, 11, 5, 12, 0, 0)
-        val instant = ZonedDateTime.of(date, ZoneId.systemDefault()).toInstant()
+        val zonedDateTime = ZonedDateTime.of(LocalDateTime.of(2019, 11, 5, 12, 0, 0), ZoneId.of("America/Sao_Paulo"))
+        val instant = zonedDateTime.toInstant()
 
         val serialized = MapperHolder.mapper.toJson(InstantTest(instant))
         val deserialized = MapperHolder.mapper.fromJson(serialized, InstantTest::class.java)
