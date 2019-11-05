@@ -24,7 +24,7 @@ registering one custom `EventExceptionHandler` in the `ExceptionHandlerRegistry`
 - `required` extension function for simple validations.
 - New event handler abstraction `SecureTypedEventHandler` that automatically parses the event and validates the input and `userId`.
 - New event handler abstraction `InsecureTypedEventHandler` that automatically parses the event and validates the input. 
-**(This abstraction should be avoid at all costs. Always use `SecureTypedEventHandler` when you have the `userId`)**
+**(This abstraction should be avoided at all costs. Always use `SecureTypedEventHandler` when you have the `userId`)**
 
 ### Changed
 
