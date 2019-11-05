@@ -2,7 +2,7 @@ package br.com.guiabolso.events.server.exception
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.exception.EventException
-import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.EventErrorType.Generic
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -38,7 +38,7 @@ class ExceptionHandlerRegistry {
             tracer.notifyError(e, false)
             errorFor(
                 event = event,
-                type = EventErrorType.Generic,
+                type = Generic,
                 message = EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message))
             )
         }

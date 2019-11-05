@@ -8,7 +8,7 @@ fun <T> T?.required(name: String): T {
 }
 
 fun validateInput(data: Any?, path: String = "payload") {
-    if (data == null) throw MissingRequiredParameterException("Missing required property $path.")
+    if (data == null) throw MissingRequiredParameterException(path)
 
     val klass = data::class
     if (klass.isData || klass.annotations.any { it is Validatable }) {
@@ -16,7 +16,7 @@ fun validateInput(data: Any?, path: String = "payload") {
             val currentPath = "$path.${prop.name}"
             val currentValue = prop.getter.call(data)
             if (!prop.returnType.isMarkedNullable && currentValue == null) {
-                throw MissingRequiredParameterException("Missing required property $currentPath.")
+                throw MissingRequiredParameterException(currentPath)
             }
             if (currentValue != null) {
                 validateInput(currentValue, currentPath)

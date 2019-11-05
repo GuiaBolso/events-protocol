@@ -1,9 +1,16 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
+import br.com.guiabolso.events.exception.EventException
+import br.com.guiabolso.events.model.EventErrorType.Generic
+import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.tracing.Tracer
 import com.google.gson.JsonPrimitive
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -72,14 +79,39 @@ class ExceptionHandlerRegistryTest {
     @Test
     fun testHandleDefaultError() {
         val exceptionHandlerRegistry = ExceptionHandlerRegistry()
+        val tracer = Mockito.mock(Tracer::class.java)
 
         val response = exceptionHandlerRegistry.handleException(
             RuntimeException("Some error"),
             EventBuilderForTest.buildRequestEvent(),
-            Mockito.mock(Tracer::class.java)
+            tracer
         )
 
-        assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)
+        val message = response.payloadAs<EventMessage>()
+        assertEquals("UNHANDLED_ERROR", message.code)
+        assertEquals(mapOf("message" to "Some error"), message.parameters)
+        assertEquals(Generic, response.getErrorType())
+
+        verify(tracer, times(1)).notifyError(any(), eq(false))
+    }
+
+    @Test
+    fun testHandleEventException() {
+        val exceptionHandlerRegistry = ExceptionHandlerRegistry()
+        val tracer = Mockito.mock(Tracer::class.java)
+
+        val response = exceptionHandlerRegistry.handleException(
+            EventException("CODE", mapOf("param" to 42.0), Generic, true, null),
+            EventBuilderForTest.buildRequestEvent(),
+            tracer
+        )
+
+        val message = response.payloadAs<EventMessage>()
+        assertEquals("CODE", message.code)
+        assertEquals(mapOf("param" to 42.0), message.parameters)
+        assertEquals(Generic, response.getErrorType())
+
+        verify(tracer, times(1)).notifyError(any(), eq(true))
     }
 
 }
