@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.validation
 
+import br.com.guiabolso.events.exception.MissingRequiredProtocolPropertyException
 import br.com.guiabolso.events.model.RawEvent
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -30,7 +31,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutName() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     null,
@@ -48,7 +49,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutVersion() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -66,7 +67,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutId() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -219,7 +220,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutName() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     null,
@@ -237,7 +238,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutVersion() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -255,7 +256,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutId() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -273,7 +274,7 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutFlowId() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",

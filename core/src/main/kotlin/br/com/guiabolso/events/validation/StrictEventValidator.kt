@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.validation
 
+import br.com.guiabolso.events.exception.MissingRequiredProtocolPropertyException
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -31,7 +32,7 @@ class StrictEventValidator : EventValidator {
     )
 
     private fun JsonElement?.requiredJsonObject(name: String): JsonObject {
-        if (this == null || !this.isJsonObject) throw EventValidationException(name)
+        if (this == null || !this.isJsonObject) throw MissingRequiredProtocolPropertyException(name)
         return this.asJsonObject
     }
 

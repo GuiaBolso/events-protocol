@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.validation
 
+import br.com.guiabolso.events.exception.MissingRequiredProtocolPropertyException
 import br.com.guiabolso.events.model.RawEvent
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -29,7 +30,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutName() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     null,
@@ -47,7 +48,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutVersion() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -65,7 +66,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutId() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -83,7 +84,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutPayload() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -113,7 +114,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutIdentity() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -127,7 +128,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -145,7 +146,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutAuth() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -159,7 +160,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -177,7 +178,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutMetadata() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -191,7 +192,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
                     "event",
@@ -224,7 +225,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutName() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     null,
@@ -242,7 +243,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutVersion() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -260,7 +261,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutId() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -278,7 +279,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutFlowId() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -296,7 +297,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutPayload() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -326,7 +327,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutIdentity() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -340,7 +341,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -358,7 +359,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutAuth() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -372,7 +373,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -390,7 +391,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutMetadata() {
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",
@@ -404,7 +405,7 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
+        assertThrows(MissingRequiredProtocolPropertyException::class.java) {
             validator.validateAsRequestEvent(
                 RawEvent(
                     "event",

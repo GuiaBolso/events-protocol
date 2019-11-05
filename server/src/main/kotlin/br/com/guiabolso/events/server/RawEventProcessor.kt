@@ -4,13 +4,13 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
+import br.com.guiabolso.events.exception.MissingRequiredProtocolPropertyException
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
-import br.com.guiabolso.events.validation.EventValidationException
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
@@ -51,7 +51,7 @@ constructor(
     private fun validateEvent(rawEvent: RawEvent?): Event =
         try {
             eventValidator.validateAsRequestEvent(rawEvent)
-        } catch (e: EventValidationException) {
+        } catch (e: MissingRequiredProtocolPropertyException) {
             tracer.notifyError(e, false)
             badProtocol(e.eventMessage)
         }

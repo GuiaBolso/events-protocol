@@ -4,9 +4,9 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.exception.InvalidProtocolException
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
-import br.com.guiabolso.events.server.parser.EventParsingException
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
@@ -27,7 +27,7 @@ constructor(
         return try {
             val rawEvent = parseEvent(payload)
             eventProcessor.processEvent(rawEvent).json()
-        } catch (e: EventParsingException) {
+        } catch (e: InvalidProtocolException) {
             tracer.notifyError(e, false)
             badProtocol(e.eventMessage).json()
         }
@@ -37,7 +37,7 @@ constructor(
         try {
             return MapperHolder.mapper.fromJson(payload, RawEvent::class.java)
         } catch (e: Throwable) {
-            throw EventParsingException(e)
+            throw InvalidProtocolException(e)
         }
     }
 

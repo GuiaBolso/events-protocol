@@ -10,7 +10,6 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.responseEvent
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
-import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage

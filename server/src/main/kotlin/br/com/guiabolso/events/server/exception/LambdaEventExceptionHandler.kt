@@ -4,7 +4,8 @@ import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.tracing.Tracer
 
-class LambdaEventExceptionHandler<in T : Throwable>(
+class LambdaEventExceptionHandler<T : Throwable>(
+    override val targetException: Class<T>,
     private val func: (T, RequestEvent, Tracer) -> ResponseEvent
 ) : EventExceptionHandler<T> {
 
