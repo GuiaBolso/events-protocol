@@ -28,6 +28,7 @@ registering one custom `EventExceptionHandler` in the `ExceptionHandlerRegistry`
 - Adding event sunset property to `metadata` to warn clients to stop using it.
 - Origin is now a comma+space separated list of systems, the left-most being the original client, and each successive 
 system that process the request must add its on name. E.g: `Android, Kasbah, Ryzen, Hanamura`.
+- **Adding default serializations of `LocalDate`, `LocalDateTime` and `Instant`.**
 
 ### Changed
 
