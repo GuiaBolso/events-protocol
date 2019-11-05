@@ -33,6 +33,7 @@ class EventBuilderTest {
             name = "event"
             version = 1
             payload = 42
+            origin = "test"
         }
 
         assertEquals("id", event.id)
@@ -42,16 +43,17 @@ class EventBuilderTest {
         assertEquals(JsonPrimitive(42), event.payload)
         assertEquals(JsonObject(), event.auth)
         assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertEquals(JsonObject().apply { add("origin", JsonPrimitive("test")) }, event.metadata)
     }
 
     @Test
     fun testCreateEventWithIdAndFlowIdForward() {
-        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+        val event = EventUtils.withContext(EventContext("id", "flowId", "unknown")) {
             event {
                 name = "event"
                 version = 1
                 payload = 42
+                origin = "test"
             }
         }
 
@@ -62,18 +64,19 @@ class EventBuilderTest {
         assertEquals(JsonPrimitive(42), event.payload)
         assertEquals(JsonObject(), event.auth)
         assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertEquals(JsonObject().apply { add("origin", JsonPrimitive("unknown, test")) }, event.metadata)
     }
 
     @Test
     fun testCreateEventWithIdAndFlowIdForwardOverwritten() {
-        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+        val event = EventUtils.withContext(EventContext("id", "flowId", "unknown")) {
             event {
                 name = "event"
                 id = "otherId"
                 flowId = "otherFlowId"
                 version = 1
                 payload = 42
+                origin = "test"
             }
         }
 
@@ -84,7 +87,7 @@ class EventBuilderTest {
         assertEquals(JsonPrimitive(42), event.payload)
         assertEquals(JsonObject(), event.auth)
         assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertEquals(JsonObject().apply { add("origin", JsonPrimitive("unknown, test")) }, event.metadata)
     }
 
     @Test
@@ -94,6 +97,7 @@ class EventBuilderTest {
                 name = "event"
                 version = 1
                 payload = 42
+                origin = "test"
             }
         }
     }
@@ -106,6 +110,7 @@ class EventBuilderTest {
                 flowId = "flowId"
                 version = 1
                 payload = 42
+                origin = "test"
             }
         }
     }
@@ -118,6 +123,7 @@ class EventBuilderTest {
                 flowId = "flowId"
                 name = "event"
                 payload = 42
+                origin = "test"
             }
         }
     }
@@ -129,6 +135,7 @@ class EventBuilderTest {
                 id = "id"
                 flowId = "flowId"
                 name = "event"
+                origin = "test"
             }
         }
     }
@@ -141,6 +148,7 @@ class EventBuilderTest {
             name = "event:response"
             version = 1
             payload = 84
+            origin = "test"
         }
 
         assertEquals("id", response.id)
@@ -161,6 +169,7 @@ class EventBuilderTest {
             name = "event"
             version = 1
             payload = 42
+            origin = "test"
         }
         val response = responseFor(event) {
             payload = 84
@@ -178,11 +187,12 @@ class EventBuilderTest {
 
     @Test
     fun testResponseForEventWithIdAndFlowIdForward() {
-        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+        val event = EventUtils.withContext(EventContext("id", "flowId", "unknown")) {
             event {
                 name = "event"
                 version = 1
                 payload = 42
+                origin = "test"
             }
         }
         val response = responseFor(event) {
@@ -209,6 +219,7 @@ class EventBuilderTest {
             name = "event"
             version = 1
             payload = 42
+            origin = "test"
         }
         val response = responseFor(event) {
             id = "otherId"
@@ -233,6 +244,7 @@ class EventBuilderTest {
                 name = "event"
                 version = 1
                 payload = 42
+                origin = "test"
             }
             responseFor(event) {
                 id = null
@@ -249,6 +261,7 @@ class EventBuilderTest {
                 name = "event"
                 version = 1
                 payload = 42
+                origin = "test"
             }
             responseFor(event) {
                 name = null
@@ -264,6 +277,7 @@ class EventBuilderTest {
                 name = "event"
                 version = 1
                 payload = 42
+                origin = "test"
             }
             responseFor(event) {
                 version = null
@@ -279,6 +293,7 @@ class EventBuilderTest {
                 name = "event"
                 version = 1
                 payload = 42
+                origin = "test"
             }
             responseFor(event) {
             }
@@ -293,6 +308,7 @@ class EventBuilderTest {
             name = "event"
             version = 1
             payload = 42
+            origin = "test"
         }
         val response = errorFor(event, EventErrorType.Generic, EventMessage("code", emptyMap()))
 
@@ -314,6 +330,7 @@ class EventBuilderTest {
             name = "event"
             version = 1
             payload = 42
+            origin = "test"
         }
 
         val redirectURL = "https://www.google.com.br"
@@ -338,6 +355,7 @@ class EventBuilderTest {
             name = "event"
             version = 1
             payload = 42
+            origin = "test"
         }
         val response = eventNotFound(event)
 
@@ -383,6 +401,7 @@ class EventBuilderTest {
             name = "event"
             version = 1
             payload = 42
+            origin = "test"
         }
         val response = acceptedFor(event)
 

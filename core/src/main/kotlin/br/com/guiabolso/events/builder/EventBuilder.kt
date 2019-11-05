@@ -8,6 +8,7 @@ import br.com.guiabolso.events.model.Event.Companion.EVENT_NOT_FOUND_EVENT
 import br.com.guiabolso.events.model.Event.Companion.REDIRECT_SUFFIX
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.EventSunset
 import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -138,6 +139,8 @@ class EventBuilder {
     var identity: Any? = null
     var auth: Any? = null
     var metadata: Any? = null
+    var origin: String? = null
+    var sunset: EventSunset? = null
 
     fun buildRequestEvent() = RequestEvent(
         name = this.name ?: throw MissingEventInformationException("Missing event name."),
@@ -147,7 +150,7 @@ class EventBuilder {
         payload = convertPayload(),
         identity = convertToJsonObjectOrEmpty(this.identity),
         auth = convertToJsonObjectOrEmpty(this.auth),
-        metadata = convertToJsonObjectOrEmpty(this.metadata)
+        metadata = createdRequestMetadata()
     )
 
     fun buildResponseEvent() = ResponseEvent(
@@ -158,7 +161,7 @@ class EventBuilder {
         payload = convertPayload(),
         identity = convertToJsonObjectOrEmpty(this.identity),
         auth = convertToJsonObjectOrEmpty(this.auth),
-        metadata = convertToJsonObjectOrEmpty(this.metadata)
+        metadata = createdResponseMetadata()
     )
 
     private fun convertPayload() = when (this.payload) {
@@ -170,6 +173,22 @@ class EventBuilder {
         null -> JsonObject()
         JsonNull.INSTANCE -> JsonObject()
         else -> MapperHolder.mapper.toJsonTree(value).asJsonObject
+    }
+
+    private fun createdRequestMetadata(): JsonObject {
+        origin ?: throw MissingEventInformationException("origin")
+        val metadata = convertToJsonObjectOrEmpty(this.metadata)
+        val currentChain = if (EventUtils.origin != null) "${EventUtils.origin}, $origin" else origin
+        metadata.addProperty("origin", currentChain)
+        return metadata
+    }
+
+    private fun createdResponseMetadata(): JsonObject {
+        val metadata = convertToJsonObjectOrEmpty(this.metadata)
+        if (sunset != null) {
+            metadata.add("sunset", MapperHolder.mapper.toJsonTree(sunset))
+        }
+        return metadata
     }
 
 }

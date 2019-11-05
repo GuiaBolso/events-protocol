@@ -33,7 +33,7 @@ constructor(
                     eventNotFound(event)
                 } else {
                     try {
-                        EventContextHolder.setContext(EventContext(event.id, event.flowId))
+                        EventContextHolder.setContext(EventContext(event.id, event.flowId, event.origin ?: "unknown"))
                         startProcessingEvent(event)
                         handler.handle(event)
                     } catch (e: Exception) {

@@ -7,9 +7,7 @@ import br.com.guiabolso.events.model.RequestEvent;
 import br.com.guiabolso.events.model.ResponseEvent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventsJavaUsabilityTest {
 
@@ -66,6 +64,7 @@ public class EventsJavaUsabilityTest {
         builder.setName(name);
         builder.setVersion(1);
         builder.setPayload(42);
+        builder.setOrigin("test");
         return builder.buildRequestEvent();
     }
 
