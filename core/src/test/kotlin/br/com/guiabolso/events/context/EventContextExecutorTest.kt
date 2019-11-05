@@ -12,24 +12,24 @@ class EventContextExecutorTest {
     fun testContextForward() {
         val executor = EventContextExecutorServiceWrapper(Executors.newSingleThreadExecutor())
 
-        val ret0 =
-            executor.submit(Callable<Pair<String?, String?>> { EventContextHolder.getContext()?.id to EventContextHolder.getContext()?.flowId })
-        assertNull(ret0.get().first)
-        assertNull(ret0.get().second)
+        val ret0 = executor.submit(Callable<EventContext> { EventContextHolder.getContext() })
+        assertNull(ret0.get()?.id)
+        assertNull(ret0.get()?.flowId)
+        assertNull(ret0.get()?.origin)
 
-        EventContextHolder.setContext(EventContext("id", "flowId"))
+        EventContextHolder.setContext(EventContext("id", "flowId", "unknown"))
 
-        val ret1 =
-            executor.submit(Callable<Pair<String?, String?>> { EventContextHolder.getContext()?.id to EventContextHolder.getContext()?.flowId })
-        assertEquals("id", ret1.get().first)
-        assertEquals("flowId", ret1.get().second)
+        val ret1 = executor.submit(Callable<EventContext> { EventContextHolder.getContext() })
+        assertEquals("id", ret1.get().id)
+        assertEquals("flowId", ret1.get().flowId)
+        assertEquals("unknown", ret1.get().origin)
 
         EventContextHolder.clean()
 
-        val ret2 =
-            executor.submit(Callable<Pair<String?, String?>> { EventContextHolder.getContext()?.id to EventContextHolder.getContext()?.flowId })
-        assertNull(ret2.get().first)
-        assertNull(ret2.get().second)
+        val ret2 = executor.submit(Callable<EventContext> { EventContextHolder.getContext() })
+        assertNull(ret2.get()?.id)
+        assertNull(ret2.get()?.flowId)
+        assertNull(ret2.get()?.origin)
 
         executor.shutdown()
     }

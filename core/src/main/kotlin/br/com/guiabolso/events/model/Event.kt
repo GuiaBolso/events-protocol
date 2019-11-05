@@ -73,6 +73,14 @@ data class ResponseEvent(
         return getErrorType(this.name.substringAfterLast(":"))
     }
 
+    val sunset: EventSunset?
+        get() = this.metadata.withCheckedJsonNull("sunset") {
+            MapperHolder.mapper.fromJson(it.getAsJsonObject("sunset"), EventSunset::class.java)
+        }
+
+    val sunsetScheduled: Boolean
+        get() = sunset != null
+
 }
 
 data class RequestEvent(

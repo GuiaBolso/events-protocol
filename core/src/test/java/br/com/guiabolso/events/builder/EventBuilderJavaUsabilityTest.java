@@ -17,6 +17,8 @@ public class EventBuilderJavaUsabilityTest {
         builder.setFlowId("flowId");
         builder.setVersion(1);
         builder.setPayload(42);
+        builder.setOrigin("test");
+
         RequestEvent event = builder.buildRequestEvent();
 
         EventBuilder responseBuilder = EventBuilder.javaResponseFor(event);
@@ -43,6 +45,7 @@ public class EventBuilderJavaUsabilityTest {
         builder.setFlowId("flowId");
         builder.setVersion(1);
         builder.setPayload(42);
+        builder.setOrigin("test");
 
         ResponseEvent response = EventBuilder.eventNotFound(builder.buildRequestEvent());
 

@@ -12,6 +12,7 @@ import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import org.slf4j.LoggerFactory
+import java.time.LocalDateTime
 
 class EventClient
 @JvmOverloads
@@ -20,10 +21,6 @@ constructor(
     private val eventValidator: EventValidator = StrictEventValidator(),
     private val defaultTimeout: Int = 60000
 ) {
-
-    companion object {
-        private val logger = LoggerFactory.getLogger(EventClient::class.java)!!
-    }
 
     @JvmOverloads
     fun sendEvent(url: String, requestEvent: RequestEvent, timeout: Int? = null): Response {
@@ -36,23 +33,24 @@ constructor(
                 Charsets.UTF_8,
                 timeout ?: defaultTimeout
             )
-            val event = parseEvent(rawResponse)
+            val responseEvent = parseEvent(rawResponse)
+            checkForSunsetData(requestEvent, responseEvent)
             return when {
-                event.isRedirect() -> {
+                responseEvent.isRedirect() -> {
                     logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Success(event)
+                    Response.Success(responseEvent)
                 }
-                event.isAccepted() -> {
+                responseEvent.isAccepted() -> {
                     logger.debug("Received accepted event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Success(event)
+                    Response.Success(responseEvent)
                 }
-                event.isSuccess() -> {
+                responseEvent.isSuccess() -> {
                     logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Success(event)
+                    Response.Success(responseEvent)
                 }
                 else -> {
                     logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Error(event, event.getErrorType())
+                    Response.Error(responseEvent, responseEvent.getErrorType())
                 }
             }
         } catch (e: TimeoutException) {
@@ -74,6 +72,21 @@ constructor(
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)
         }
+    }
+
+    private fun checkForSunsetData(requestEvent: RequestEvent, responseEvent: ResponseEvent) {
+        val sunset = responseEvent.sunset
+        if (sunset != null) {
+            if (sunset.date >= LocalDateTime.now()) {
+                logger.warn("The event ${requestEvent.name}:V${requestEvent.version} has a sunset scheduled to ${sunset.date}. Description: ${sunset.description}")
+            } else {
+                logger.error("The event ${requestEvent.name}:V${requestEvent.version} is not supported anymore and should be replaced. Description: ${sunset.description}")
+            }
+        }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(EventClient::class.java)!!
     }
 
 }

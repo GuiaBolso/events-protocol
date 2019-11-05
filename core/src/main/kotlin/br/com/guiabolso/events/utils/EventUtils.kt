@@ -14,6 +14,10 @@ object EventUtils {
         get() = EventContextHolder.getContext()?.flowId
 
     @JvmStatic
+    val origin: String?
+        get() = EventContextHolder.getContext()?.origin
+
+    @JvmStatic
     fun <T> withContext(context: EventContext, func: () -> T): T {
         try {
             EventContextHolder.setContext(context)

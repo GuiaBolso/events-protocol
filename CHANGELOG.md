@@ -25,6 +25,9 @@ registering one custom `EventExceptionHandler` in the `ExceptionHandlerRegistry`
 - New event handler abstraction `SecureTypedEventHandler` that automatically parses the event and validates the input and `userId`.
 - New event handler abstraction `InsecureTypedEventHandler` that automatically parses the event and validates the input. 
 **(This abstraction should be avoid at all costs. Always use `SecureTypedEventHandler` when you have the `userId`)**
+- Adding event sunset property to `metadata` to warn clients to stop using it.
+- Origin is now a comma+space separated list of systems, the left-most being the original client, and each successive 
+system that process the request must add its on name. E.g: `Android, Kasbah, Ryzen, Hanamura`.
 
 ### Changed
 
@@ -32,6 +35,7 @@ registering one custom `EventExceptionHandler` in the `ExceptionHandlerRegistry`
 - Updating Kotlin version from `1.3.41` to `1.3.50`.
 - Updating OpenTracing version from `0.31.0` to `0.33.0`. **(Incompatible API changes)**
 - Updating DatadogOT version from `0.30.0` to `0.36.0`. **(Incompatible API changes)**
+- **`metadata`.`origin` is a required property to create a request event.**
 
 ### Removed
 
