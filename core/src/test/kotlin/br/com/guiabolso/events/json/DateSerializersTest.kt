@@ -6,6 +6,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 class DateSerializersTest {
@@ -24,7 +25,7 @@ class DateSerializersTest {
     @Test
     fun `should serialize local date time in UTC`() {
         val zonedDateTime = ZonedDateTime.of(LocalDateTime.of(2019, 11, 5, 12, 0, 0), ZoneId.of("America/Sao_Paulo"))
-        val date = zonedDateTime.withZoneSameLocal(ZoneId.systemDefault()).toLocalDateTime()
+        val date = LocalDateTime.ofInstant(zonedDateTime.toInstant(), ZoneOffset.UTC)
 
         val serialized = MapperHolder.mapper.toJson(LocalDateTimeTest(date))
         val deserialized = MapperHolder.mapper.fromJson(serialized, LocalDateTimeTest::class.java)
