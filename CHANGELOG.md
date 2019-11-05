@@ -24,7 +24,7 @@ registering one custom `EventExceptionHandler` in the `ExceptionHandlerRegistry`
 - `required` extension function for simple validations.
 - New event handler abstraction `SecureTypedEventHandler` that automatically parses the event and validates the input and `userId`.
 - New event handler abstraction `InsecureTypedEventHandler` that automatically parses the event and validates the input. 
-**(This abstraction should be avoid at all costs. Always use `SecureTypedEventHandler` when you have the `userId`)**
+**(This abstraction should be avoided at all costs. Always use `SecureTypedEventHandler` when you have the `userId`)**
 - Adding event sunset property to `metadata` to warn clients to stop using it.
 - Origin is now a comma+space separated list of systems, the left-most being the original client, and each successive 
 system that process the request must add its on name. E.g: `Android, Kasbah, Ryzen, Hanamura`.

@@ -17,7 +17,7 @@ buildscript {
 
 allprojects {
     ext {
-        publish_version = '3.0.0'
+        publish_version = '3.0.0-RC'
     }
 }
 

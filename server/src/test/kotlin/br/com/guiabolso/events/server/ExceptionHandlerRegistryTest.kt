@@ -9,7 +9,6 @@ import br.com.guiabolso.tracing.Tracer
 import com.google.gson.JsonPrimitive
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -92,7 +91,7 @@ class ExceptionHandlerRegistryTest {
         assertEquals(mapOf("message" to "Some error"), message.parameters)
         assertEquals(Generic, response.getErrorType())
 
-        verify(tracer, times(1)).notifyError(any(), eq(false))
+        verify(tracer).notifyError(any(), eq(false))
     }
 
     @Test
@@ -111,7 +110,7 @@ class ExceptionHandlerRegistryTest {
         assertEquals(mapOf("param" to 42.0), message.parameters)
         assertEquals(Generic, response.getErrorType())
 
-        verify(tracer, times(1)).notifyError(any(), eq(true))
+        verify(tracer).notifyError(any(), eq(true))
     }
 
 }
