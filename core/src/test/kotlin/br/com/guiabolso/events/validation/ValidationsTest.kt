@@ -78,7 +78,6 @@ class ValidationsTest {
         } else INSTANCE)
     }
 
-
     data class Person(
         val name: String,
         val birthDate: YetAnotherDate,
