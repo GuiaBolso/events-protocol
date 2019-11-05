@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-
 object LocalDateTimeSerializer : JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
 
     override fun serialize(src: LocalDateTime, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
@@ -20,8 +19,7 @@ object LocalDateTimeSerializer : JsonSerializer<LocalDateTime>, JsonDeserializer
     }
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LocalDateTime {
-        val instant = Instant.parse(json.asString)
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+        return LocalDateTime.ofInstant(Instant.parse(json.asString), ZoneId.systemDefault())
     }
 
 }

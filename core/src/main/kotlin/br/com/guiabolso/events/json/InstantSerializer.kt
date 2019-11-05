@@ -9,7 +9,6 @@ import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 import java.time.Instant
 
-
 object InstantSerializer : JsonSerializer<Instant>, JsonDeserializer<Instant> {
 
     override fun serialize(src: Instant, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
