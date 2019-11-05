@@ -7,8 +7,6 @@ sealed class Response {
 
     data class Success(val event: ResponseEvent) : Response()
 
-    data class Redirect(val event: ResponseEvent) : Response()
-
     data class Error(val event: ResponseEvent, val errorType: EventErrorType) : Response()
 
     data class FailedDependency(val exception: Exception, val response: String? = null) : Response()
@@ -16,8 +14,6 @@ sealed class Response {
     data class Timeout(val exception: Exception) : Response()
 
     fun isSuccess() = this is Success
-
-    fun isRedirect() = this is Redirect
 
     fun isError() = this is Error
 

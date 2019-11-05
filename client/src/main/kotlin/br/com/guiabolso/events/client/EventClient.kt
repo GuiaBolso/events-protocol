@@ -38,13 +38,17 @@ constructor(
             )
             val event = parseEvent(rawResponse)
             return when {
+                event.isRedirect() -> {
+                    logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Success(event)
+                }
+                event.isAccepted() -> {
+                    logger.debug("Received accepted event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Success(event)
+                }
                 event.isSuccess() -> {
                     logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
                     Response.Success(event)
-                }
-                event.isRedirect() -> {
-                    logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Redirect(event)
                 }
                 else -> {
                     logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")

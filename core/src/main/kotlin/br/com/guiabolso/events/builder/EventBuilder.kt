@@ -2,6 +2,11 @@ package br.com.guiabolso.events.builder
 
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.model.Event.Companion.ACCEPTED_SUFFIX
+import br.com.guiabolso.events.model.Event.Companion.BAD_PROTOCOL_EVENT
+import br.com.guiabolso.events.model.Event.Companion.DEFAULT_SUCCESS_SUFFIX
+import br.com.guiabolso.events.model.Event.Companion.EVENT_NOT_FOUND_EVENT
+import br.com.guiabolso.events.model.Event.Companion.REDIRECT_SUFFIX
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
@@ -19,21 +24,27 @@ class EventBuilder {
         @JvmStatic
         fun event(operations: EventBuilder.() -> Unit): RequestEvent {
             val builder = EventBuilder()
+
             builder.operations()
+
             return builder.buildRequestEvent()
         }
 
         @JvmStatic
         fun responseEvent(operations: EventBuilder.() -> Unit): ResponseEvent {
             val builder = EventBuilder()
+
             builder.operations()
+
             return builder.buildResponseEvent()
         }
 
         @JvmStatic
         fun responseFor(event: RequestEvent, operations: EventBuilder.() -> Unit): ResponseEvent {
             val builder = javaResponseFor(event)
+
             builder.operations()
+
             return builder.buildResponseEvent()
         }
 
@@ -41,13 +52,26 @@ class EventBuilder {
         fun javaResponseFor(event: RequestEvent): EventBuilder {
             val builder = EventBuilder()
 
-            builder.name = "${event.name}:response"
+            builder.name = "${event.name}:$DEFAULT_SUCCESS_SUFFIX"
             builder.version = event.version
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
 
             return builder
         }
+
+        @JvmStatic
+        fun acceptedFor(event: RequestEvent): ResponseEvent {
+            val builder = EventBuilder()
+
+            builder.name = "${event.name}:$ACCEPTED_SUFFIX"
+            builder.version = event.version
+            builder.id = builder.id ?: event.id
+            builder.flowId = builder.flowId ?: event.flowId
+
+            return builder.buildResponseEvent()
+        }
+
 
         @JvmStatic
         fun errorFor(event: RequestEvent, type: EventErrorType, message: EventMessage): ResponseEvent {
@@ -66,7 +90,8 @@ class EventBuilder {
         @JvmStatic
         fun redirectFor(requestEvent: RequestEvent, payload: RedirectPayload): ResponseEvent {
             val builder = EventBuilder()
-            builder.name = "${requestEvent.name}:redirect"
+
+            builder.name = "${requestEvent.name}:$REDIRECT_SUFFIX"
             builder.version = requestEvent.version
             builder.payload = payload
             builder.id = builder.id ?: requestEvent.id
@@ -78,23 +103,29 @@ class EventBuilder {
         @JvmStatic
         fun eventNotFound(event: RequestEvent): ResponseEvent {
             val builder = EventBuilder()
-            builder.name = "eventNotFound"
+
+            builder.name = EVENT_NOT_FOUND_EVENT
             builder.version = 1
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
-            builder.payload =
-                EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
+            builder.payload = EventMessage(
+                "NO_EVENT_HANDLER_FOUND",
+                mapOf("event" to event.name, "version" to event.version)
+            )
+
             return builder.buildResponseEvent()
         }
 
         @JvmStatic
         fun badProtocol(message: EventMessage): ResponseEvent {
             val builder = EventBuilder()
-            builder.name = "badProtocol"
+
+            builder.name = BAD_PROTOCOL_EVENT
             builder.version = 1
             builder.id = UUID.randomUUID().toString()
             builder.flowId = UUID.randomUUID().toString()
             builder.payload = message
+
             return builder.buildResponseEvent()
         }
 
