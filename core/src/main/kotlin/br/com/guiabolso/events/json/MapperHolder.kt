@@ -9,9 +9,9 @@ object MapperHolder {
 
     @JvmField
     var mapper = GsonBuilder()
-        .registerTypeHierarchyAdapter(LocalDate::class.java, LocalDateSerializer)
-        .registerTypeHierarchyAdapter(LocalDateTime::class.java, LocalDateTimeSerializer)
-        .registerTypeHierarchyAdapter(Instant::class.java, InstantSerializer)
+        .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer)
+        .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer)
+        .registerTypeAdapter(Instant::class.java, InstantSerializer)
         .serializeNulls()
         .create()!!
 
