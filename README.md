@@ -31,7 +31,7 @@ Geralmente as dependências a serem importadas são:
 * Server: Quando é necessário tratar requisições de eventos;
 * Client: Quando é necessário realizar requisições de evento;
 * Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado;
-* Tracing: É dependencia do Core como abstração de ferramenta de instrumentação / APM. 
+* Tracing: É dependência do Core como abstração de ferramenta de instrumentação / APM. 
 
 Motivação
 ---------------

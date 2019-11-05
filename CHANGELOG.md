@@ -15,6 +15,16 @@ respectively.
 ### Added
 
 - New standard event response for async executions.
+- `EventException` as an abstraction of expected exceptions to be handled in the `ExceptionHandlerRegistry`.
+- `EventException` is properly handled by the `ExceptionHandlerRegistry` out of the box. This behavior can be overwritten
+registering one custom `EventExceptionHandler` in the `ExceptionHandlerRegistry`.
+- Automatic nullable checks for `data classes` or classes annotated with `@Validatable`. **(Supported only in Kotlin classes)**
+    - This validations checks if the object properties that are defined as not nullable have indeed some value
+    avoiding NPE. E.g.: after serializing some Json to `data class` with a java library.
+- `required` extension function for simple validations.
+- New event handler abstraction `SecureTypedEventHandler` that automatically parses the event and validates the input and `userId`.
+- New event handler abstraction `InsecureTypedEventHandler` that automatically parses the event and validates the input. 
+**(This abstraction should be avoided at all costs. Always use `SecureTypedEventHandler` when you have the `userId`)**
 
 ### Changed
 
@@ -26,3 +36,4 @@ respectively.
 ### Removed
 
 - Removing client pointless response `Response.Redirect`. Redirect are now treated as `Response.Success`.
+- Removed `BypassedException` and `bypassExceptionHandler`. The same behavior can be accomplished with a custom `EventExceptionHandler`. 

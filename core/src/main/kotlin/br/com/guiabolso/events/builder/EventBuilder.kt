@@ -1,6 +1,5 @@
 package br.com.guiabolso.events.builder
 
-import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.Event.Companion.ACCEPTED_SUFFIX
 import br.com.guiabolso.events.model.Event.Companion.BAD_PROTOCOL_EVENT
