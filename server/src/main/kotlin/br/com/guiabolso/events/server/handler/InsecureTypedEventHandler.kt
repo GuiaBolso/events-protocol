@@ -11,13 +11,16 @@ abstract class InsecureTypedEventHandler<IN : Any, OUT : Any> : EventHandler {
     abstract val inputType: KClass<IN>
     abstract val outputType: KClass<OUT>
 
+
     override fun handle(event: RequestEvent): ResponseEvent {
         val payload = event.payloadAs(inputType.java)
 
-        validateInput(payload)
+        if (inputType != Unit::class)
+            validateInput(payload, "payload")
 
         return responseFor(event) {
-            this.payload = handle(payload)
+            @Suppress("UNCHECKED_CAST")
+            this.payload = if (inputType != Unit::class) handle(payload) else handle(Unit as IN)
         }
     }
 

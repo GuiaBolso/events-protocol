@@ -13,13 +13,15 @@ abstract class SecureTypedEventHandler<IN : Any, OUT : Any> : EventHandler {
     abstract val outputType: KClass<OUT>
 
     override fun handle(event: RequestEvent): ResponseEvent {
-        val userId = event.userId.required("userId")
+        val userId = event.userId.required("identity.userId")
         val payload = event.payloadAs(inputType.java)
 
-        validateInput(payload)
+        if (inputType != Unit::class)
+            validateInput(payload, "payload")
 
         return responseFor(event) {
-            this.payload = handle(userId, payload)
+            @Suppress("UNCHECKED_CAST")
+            this.payload = if (inputType != Unit::class) handle(userId, payload) else handle(userId, Unit as IN)
         }
     }
 
