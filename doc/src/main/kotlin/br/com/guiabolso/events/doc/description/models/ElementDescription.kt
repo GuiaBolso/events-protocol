@@ -60,6 +60,13 @@ data class ObjectDescription(
     val properties: List<ElementDescription>
 ) : ElementDescription(name, type, nullable, description)
 
+data class ObjectReferenceDescription(
+    override val name: String,
+    override val type: String,
+    override val nullable: Boolean,
+    override val description: String?
+) : ElementDescription(name, type, nullable, description)
+
 data class ArrayDescription(
     override val name: String,
     override val nullable: Boolean,

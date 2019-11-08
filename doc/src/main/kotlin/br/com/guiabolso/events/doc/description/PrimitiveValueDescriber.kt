@@ -40,7 +40,7 @@ object PrimitiveValueDescriber {
             isJsonValue(property) ->
                 JsonDescription(name, nullable, description, getJsonExample(property))
             isValue(property) ->
-                StringDescription(name, nullable, description, property.toKClass().simpleName ?: "anonymous object")
+                StringDescription(name, nullable, description, property.toKClass().qualifiedName ?: "anonymous object")
             property.returnType.classifier == Any::class ->
                 StringDescription(name, nullable, description, "Any valid json type")
             else -> throw IllegalArgumentException()
