@@ -3,6 +3,7 @@ package br.com.guiabolso.events.doc.description
 import br.com.guiabolso.events.doc.description.PrimitiveValueDescriber.describe
 import br.com.guiabolso.events.doc.description.PrimitiveValueDescriber.isPrimitiveValue
 import br.com.guiabolso.events.doc.description.annotations.DocBooleanElement
+import br.com.guiabolso.events.doc.description.annotations.DocDescription
 import br.com.guiabolso.events.doc.description.annotations.DocJsonElement
 import br.com.guiabolso.events.doc.description.annotations.DocNaturalNumberElement
 import br.com.guiabolso.events.doc.description.annotations.DocStringElement
@@ -48,17 +49,17 @@ class PrimitiveValueDescriberTest {
     fun `should correctly generate examples to properties correctly`() {
         val properties = SomeVO::class.memberProperties.map { it.name to it }.toMap()
 
-        assertEquals(StringDescription("name", "José"), describe(properties["name"]!!))
-        assertEquals(StringDescription("lastName", "String"), describe(properties["lastName"]!!))
-        assertEquals(BooleanDescription("enabled", true), describe(properties["enabled"]!!))
-        assertEquals(BooleanDescription("deleted", false), describe(properties["deleted"]!!))
-        assertEquals(NaturalNumberDescription("age", 0), describe(properties["age"]!!))
-        assertEquals(RealNumberDescription("height", 0.0), describe(properties["height"]!!))
+        assertEquals(StringDescription("name", false, null, "José"), describe(properties["name"]!!))
+        assertEquals(StringDescription("lastName", false, null, "String"), describe(properties["lastName"]!!))
+        assertEquals(BooleanDescription("enabled", false, null, true), describe(properties["enabled"]!!))
+        assertEquals(BooleanDescription("deleted", false, null, false), describe(properties["deleted"]!!))
+        assertEquals(NaturalNumberDescription("age", false, null, 0), describe(properties["age"]!!))
+        assertEquals(RealNumberDescription("height", true, null, 0.0), describe(properties["height"]!!))
         val json = JsonObject().apply { addProperty("potato", "please") }
-        assertEquals(JsonDescription("otherVO", json), describe(properties["otherVO"]!!))
-        assertEquals(NaturalNumberDescription("timestamp", 1573198597), describe(properties["timestamp"]!!))
-        assertEquals(StringDescription("date2", "LocalDateTime"), describe(properties["date2"]!!))
-        assertEquals(StringDescription("anything", "Any valid json type"), describe(properties["anything"]!!))
+        assertEquals(JsonDescription("otherVO", false, null, json), describe(properties["otherVO"]!!))
+        assertEquals(NaturalNumberDescription("timestamp", false, "Date in timestamp", 1573198597), describe(properties["timestamp"]!!))
+        assertEquals(StringDescription("date2", true, null, "LocalDateTime"), describe(properties["date2"]!!))
+        assertEquals(StringDescription("anything", false, null, "Any valid json type"), describe(properties["anything"]!!))
     }
 
 
@@ -71,13 +72,14 @@ class PrimitiveValueDescriberTest {
         @DocBooleanElement(false)
         val deleted: Boolean,
         val age: Int,
-        val height: Double,
+        val height: Double?,
         val otherVO: OtherVO,
+        @DocDescription("Date in timestamp")
         @DocNaturalNumberElement(1573198597)
         val timestamp: LocalDateTime,
         val date: LocalDateTime,
         @DocValueElement
-        val date2: LocalDateTime,
+        val date2: LocalDateTime?,
         val map: Map<String, Any>,
         val list: List<String>,
         val array: Array<String>,
