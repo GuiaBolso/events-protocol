@@ -8,6 +8,7 @@ import br.com.guiabolso.events.doc.description.models.KPropertyVisitorContext
 import br.com.guiabolso.events.doc.description.models.KPropertyWrapper
 import br.com.guiabolso.events.doc.description.models.NaturalNumberDescription
 import br.com.guiabolso.events.doc.description.models.RealNumberDescription
+import br.com.guiabolso.events.doc.description.models.StringDescription
 import br.com.guiabolso.events.doc.utils.findAnnotationOnPropertyOrClass
 import br.com.guiabolso.events.doc.utils.toKClass
 import kotlin.reflect.KProperty
@@ -27,7 +28,7 @@ class ArrayValueVisitor(
             classifier.isSubclassOf(LongArray::class) -> true
             classifier.isSubclassOf(FloatArray::class) -> true
             classifier.isSubclassOf(DoubleArray::class) -> true
-            classifier.isSubclassOf(Array<Any>::class) -> true
+            classifier.java.isArray -> true
             classifier.isSubclassOf(Collection::class) -> true
             else -> false
         }
@@ -47,13 +48,17 @@ class ArrayValueVisitor(
             classifier.isSubclassOf(BooleanArray::class) ->
                 BooleanDescription("argument", false, null, true)
             classifier.isSubclassOf(ByteArray::class) || classifier.isSubclassOf(ShortArray::class)
-                || classifier.isSubclassOf(IntArray::class) || classifier.isSubclassOf(LongArray::class) ->
+                    || classifier.isSubclassOf(IntArray::class) || classifier.isSubclassOf(LongArray::class) ->
                 NaturalNumberDescription("argument", false, null, 0)
             classifier.isSubclassOf(FloatArray::class) || classifier.isSubclassOf(DoubleArray::class) ->
                 RealNumberDescription("argument", false, null, 0.0)
             else -> {
-                val argumentType = property.returnType.arguments.first().type!!
-                delegate.visit(context, KPropertyWrapper<Any>("argument", argumentType))
+                val argumentType = property.returnType.arguments.firstOrNull()?.type
+                if (argumentType != null) {
+                    delegate.visit(context, KPropertyWrapper<Any>("argument", argumentType))
+                } else {
+                    StringDescription("argument", false, null, property.toKClass().identity())
+                }
             }
         }
     }

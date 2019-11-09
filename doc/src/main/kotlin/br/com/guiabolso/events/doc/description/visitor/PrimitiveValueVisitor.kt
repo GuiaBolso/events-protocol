@@ -26,6 +26,7 @@ import kotlin.reflect.full.isSubclassOf
 class PrimitiveValueVisitor : KPropertyVisitor<PrimitiveElementDescription<*>> {
 
     private val buildInTypes = listOf(
+        Regex("^com\\.google\\.gson\\..*$"),
         Regex("^java\\.time\\..*$"),
         Regex("^java\\.lang\\..*$"),
         Regex("^kotlin.Any$")
@@ -66,26 +67,26 @@ class PrimitiveValueVisitor : KPropertyVisitor<PrimitiveElementDescription<*>> {
     private fun isBoolean(property: KProperty<*>): Boolean {
         val classifier = property.toKClass()
         return classifier == Boolean::class ||
-            property.hasAnnotationOnPropertyOrClass(DocBooleanElement::class)
+                property.hasAnnotationOnPropertyOrClass(DocBooleanElement::class)
     }
 
     private fun isString(property: KProperty<*>): Boolean {
         val classifier = property.toKClass()
         return classifier == String::class ||
-            property.hasAnnotationOnPropertyOrClass(DocStringElement::class)
+                property.hasAnnotationOnPropertyOrClass(DocStringElement::class)
     }
 
     private fun isNaturalNumber(property: KProperty<*>): Boolean {
         val classifier = property.toKClass()
         return classifier.isSubclassOf(Number::class) ||
-            property.hasAnnotationOnPropertyOrClass(DocNaturalNumberElement::class)
+                property.hasAnnotationOnPropertyOrClass(DocNaturalNumberElement::class)
     }
 
     private fun isRealNumber(property: KProperty<*>): Boolean {
         val classifier = property.toKClass()
         return classifier.isSubclassOf(Float::class) ||
-            classifier.isSubclassOf(Double::class) ||
-            property.hasAnnotationOnPropertyOrClass(DocRealNumberElement::class)
+                classifier.isSubclassOf(Double::class) ||
+                property.hasAnnotationOnPropertyOrClass(DocRealNumberElement::class)
     }
 
     private fun isJsonValue(property: KProperty<*>): Boolean {
