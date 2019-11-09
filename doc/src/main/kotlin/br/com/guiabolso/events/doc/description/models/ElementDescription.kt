@@ -52,12 +52,11 @@ data class JsonDescription(
     override val example: JsonElement
 ) : PrimitiveElementDescription<JsonElement>(name, "Json", nullable, description, example)
 
-data class ObjectDescription(
+sealed class BaseObjectReferenceDescription(
     override val name: String,
     override val type: String,
     override val nullable: Boolean,
-    override val description: String?,
-    val properties: List<ElementDescription>
+    override val description: String?
 ) : ElementDescription(name, type, nullable, description)
 
 data class ObjectReferenceDescription(
@@ -65,19 +64,26 @@ data class ObjectReferenceDescription(
     override val type: String,
     override val nullable: Boolean,
     override val description: String?
-) : ElementDescription(name, type, nullable, description)
+) : BaseObjectReferenceDescription(name, type, nullable, description)
+
+data class ObjectDescription(
+    override val name: String,
+    override val type: String,
+    override val nullable: Boolean,
+    override val description: String?,
+    val properties: List<ElementDescription>
+) : BaseObjectReferenceDescription(name, type, nullable, description)
 
 data class ArrayDescription(
     override val name: String,
     override val nullable: Boolean,
     override val description: String?,
-    val classifier: ElementDescription
+    val argument: ElementDescription
 ) : ElementDescription(name, "Array", nullable, description)
 
 data class MapDescription(
     override val name: String,
     override val nullable: Boolean,
     override val description: String?,
-    val keyClassifier: StringDescription,
-    val valueClassifier: ElementDescription
+    val valueArgument: ElementDescription
 ) : ElementDescription(name, "Map", nullable, description)
