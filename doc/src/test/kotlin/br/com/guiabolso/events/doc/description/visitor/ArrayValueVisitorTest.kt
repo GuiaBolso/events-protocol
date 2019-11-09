@@ -17,7 +17,7 @@ import kotlin.reflect.full.memberProperties
 class ArrayValueVisitorTest {
 
     @Test
-    fun `should correctly classify properties as arrays correctly`() {
+    fun `should correctly classify properties as array correctly`() {
         val delegate = mock(KPropertyVisitor::class.java)
         val visitor = ArrayValueVisitor(CompositeKPropertyVisitor().apply { register(delegate) })
         val properties = SomeVO::class.memberProperties.map { it.name to it }.toMap()
