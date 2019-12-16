@@ -3,6 +3,7 @@ package br.com.guiabolso.events.utils
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.model.EventErrorType
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -116,6 +117,28 @@ class EventsTest {
 
         assertEquals("someString", vo2.a)
         assertEquals(60L, vo2.b)
+    }
+
+    @Test
+    fun testCanParseJsonArrays() {
+        val request = buildRequestEvent().copy(payload = JsonArray().apply {
+            this.add(JsonObject().apply {
+                this.add("a", JsonPrimitive("someString"))
+                this.add("b", JsonPrimitive(60))
+            })
+            this.add(JsonObject().apply {
+                this.add("a", JsonPrimitive("someOtherString"))
+                this.add("b", JsonPrimitive(120))
+            })
+        })
+
+        val voList: List<VO> = request.payloadAs()
+
+        assertEquals("someString", voList[0].a)
+        assertEquals(60L, voList[0].b)
+
+        assertEquals("someOtherString", voList[1].a)
+        assertEquals(120L, voList[1].b)
     }
 
     private data class VO(val a: String? = null, val b: Long? = null)

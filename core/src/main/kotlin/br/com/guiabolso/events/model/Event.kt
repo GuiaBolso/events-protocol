@@ -4,6 +4,8 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
+import java.lang.IllegalStateException
 
 sealed class Event {
     abstract val name: String
@@ -15,17 +17,17 @@ sealed class Event {
     abstract val auth: JsonObject
     abstract val metadata: JsonObject
 
-    fun <T> payloadAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.payload, clazz)
+    fun <T> payloadAs(clazz: Class<T>): T = this.payload.convertTo(clazz)
 
-    inline fun <reified T> payloadAs(): T = MapperHolder.mapper.fromJson(this.payload, T::class.java)
+    inline fun <reified T> payloadAs(): T = this.payload.convertTo()
 
-    fun <T> identityAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.identity, clazz)
+    fun <T> identityAs(clazz: Class<T>): T = this.identity.convertTo(clazz)
 
-    inline fun <reified T> identityAs(): T = MapperHolder.mapper.fromJson(this.identity, T::class.java)
+    inline fun <reified T> identityAs(): T = this.identity.convertTo()
 
-    fun <T> authAs(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this.auth, clazz)
+    fun <T> authAs(clazz: Class<T>): T = this.auth.convertTo(clazz)
 
-    inline fun <reified T> authAs(): T = MapperHolder.mapper.fromJson(this.auth, T::class.java)
+    inline fun <reified T> authAs(): T = this.auth.convertTo()
 
     val userId: Long?
         get() = this.identity.withCheckedJsonNull("userId") {
@@ -36,6 +38,10 @@ sealed class Event {
         get() = this.metadata.withCheckedJsonNull("origin") {
             it.getAsJsonPrimitive("origin")?.asString
         }
+
+    inline fun <reified T> JsonElement.convertTo(): T = MapperHolder.mapper.fromJson(this, object: TypeToken<T>(){}.type)
+
+    private fun <T> JsonElement.convertTo(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this, clazz)
 }
 
 data class ResponseEvent(
