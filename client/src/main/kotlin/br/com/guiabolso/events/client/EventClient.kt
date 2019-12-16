@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory
 class EventClient
 @JvmOverloads
 constructor(
-        private val httpClient: HttpClientAdapter = FuelHttpClient(),
-        private val eventValidator: EventValidator = StrictEventValidator(),
-        private val defaultTimeout: Int = 60000
+    private val httpClient: HttpClientAdapter = FuelHttpClient(),
+    private val eventValidator: EventValidator = StrictEventValidator(),
+    private val defaultTimeout: Int = 60000
 ) {
 
     companion object {
@@ -30,19 +30,26 @@ constructor(
         try {
             logger.debug("Sending event ${requestEvent.name}:${requestEvent.version} to $url with timeout $timeout.")
             val rawResponse = httpClient.post(
-                    url,
-                    mapOf("Content-Type" to "application/json"),
-                    MapperHolder.mapper.toJson(requestEvent),
-                    Charsets.UTF_8,
-                    timeout ?: defaultTimeout
+                url,
+                mapOf("Content-Type" to "application/json"),
+                MapperHolder.mapper.toJson(requestEvent),
+                Charsets.UTF_8,
+                timeout ?: defaultTimeout
             )
             val event = parseEvent(rawResponse)
-            return if (event.isSuccess()) {
-                logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
-                Response.Success(event)
-            } else {
-                logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
-                Response.Error(event, event.getErrorType())
+            return when {
+                event.isSuccess() -> {
+                    logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Success(event)
+                }
+                event.isRedirect() -> {
+                    logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Redirect(event)
+                }
+                else -> {
+                    logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
+                    Response.Error(event, event.getErrorType())
+                }
             }
         } catch (e: TimeoutException) {
             logger.warn("Event ${requestEvent.name}:${requestEvent.version} timeout.", e)

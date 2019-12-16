@@ -29,6 +29,11 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         if (value != null) tracer.activeSpan()?.setTag(key, value)
     }
 
+    override fun addProperty(key: String, value: List<*>) {
+        val finalValue:String = value.joinToString(",")
+        addProperty(key, finalValue)
+    }
+
     override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
         throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
     }
@@ -53,7 +58,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun extractContext(): SpanBuilder {
         return tracer.buildSpan("asyncTask")
-                .asChildOf(tracer.activeSpan())
+            .asChildOf(tracer.activeSpan())
     }
 
     override fun withContext(context: Any): Closeable {

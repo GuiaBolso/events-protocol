@@ -6,7 +6,7 @@ object MapperHolder {
 
     @JvmField
     var mapper = GsonBuilder()
-            .serializeNulls()
-            .create()!!
+        .serializeNulls()
+        .create()!!
 
 }

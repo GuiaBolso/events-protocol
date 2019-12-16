@@ -1,9 +1,10 @@
 dependencies {
-    compile project(":core")
+    api project(":core")
 
-    compile 'com.github.kittinunf.fuel:fuel:1.10.0'
+    implementation group: 'com.github.kittinunf.fuel', name: 'fuel', version: '1.10.0'
+    implementation group: 'com.github.kittinunf.result', name: 'result', version: '2.1.0'
 
-    testCompile project(':core').sourceSets.test.output
+    testImplementation project(':core').sourceSets.test.output
 }
 
 

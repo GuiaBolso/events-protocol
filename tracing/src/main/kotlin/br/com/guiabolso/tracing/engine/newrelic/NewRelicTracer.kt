@@ -26,6 +26,11 @@ class NewRelicTracer : TracerEngine<Token> {
         addCustomParameter(key, value.toString())
     }
 
+    override fun addProperty(key: String, value: List<*>) {
+        val finalValue:String = value.joinToString(",")
+        addProperty(key, finalValue)
+    }
+
     override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
         recordResponseTimeMetric(name, elapsedTime)
         context.forEach { addProperty(it.key, it.value) }

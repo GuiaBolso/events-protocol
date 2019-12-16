@@ -4,7 +4,7 @@ import br.com.guiabolso.tracing.engine.TracerEngine
 import java.io.Closeable
 
 class CompositeTracerEngine(
-        private var tracers: List<TracerEngine<*>>
+    private var tracers: List<TracerEngine<*>>
 ) : TracerEngine<Map<TracerEngine<*>, Any>> {
 
     override fun setOperationName(name: String) {
@@ -21,6 +21,10 @@ class CompositeTracerEngine(
 
     override fun addProperty(key: String, value: Boolean?) {
         tracers.forEach { it.addProperty(key, value) }
+    }
+
+    override fun addProperty(key: String, value: List<*>) {
+        tracers.forEach{ it.addProperty(key, value) }
     }
 
     override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
@@ -57,7 +61,7 @@ class CompositeTracerEngine(
         context as Map<TracerEngine<*>, Any>
 
         return CompositeTracerEngineCloseable(
-                context.map { (engine, c) -> engine.withContext(c) }.toList()
+            context.map { (engine, c) -> engine.withContext(c) }.toList()
         )
     }
 

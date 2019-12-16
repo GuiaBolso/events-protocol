@@ -1,5 +1,6 @@
 package br.com.guiabolso.tracing
 
+import br.com.guiabolso.tracing.engine.TracerEngine
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
@@ -40,6 +41,15 @@ interface Tracer {
      * @since 2.0.0
      */
     fun addProperty(key: String, value: Boolean?)
+
+    /**
+     * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
+     *
+     * @param key Custom parameter key.
+     * @param value Custom parameter value.
+     * @since 2.6.1
+     */
+    fun addProperty(key: String, value: List<*>)
 
     /**
      * Run a block of code and register its execution time using the current Engine, under the received metric name.
@@ -87,6 +97,11 @@ interface Tracer {
      * @since 2.0.0
      */
     fun notifyError(message: String, params: Map<String, String?>, expected: Boolean)
+
+    /**
+     * Returns the tracing engine of this tracer
+     */
+    fun getTracerEngine(): TracerEngine<*>
 
     /**
      * Cleans the tracer state.

@@ -30,22 +30,55 @@ class LenientEventValidatorTest {
 
     @Test
     fun testResponseValidationWithoutName() {
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsResponseEvent(RawEvent(null, 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject()))
+        assertThrows(EventValidationException::class.java) {
+            validator.validateAsResponseEvent(
+                RawEvent(
+                    null,
+                    1,
+                    "id",
+                    "flow",
+                    JsonPrimitive(42),
+                    JsonObject(),
+                    JsonObject(),
+                    JsonObject()
+                )
+            )
         }
     }
 
     @Test
     fun testResponseValidationWithoutVersion() {
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsResponseEvent(RawEvent("event", null, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject()))
+        assertThrows(EventValidationException::class.java) {
+            validator.validateAsResponseEvent(
+                RawEvent(
+                    "event",
+                    null,
+                    "id",
+                    "flow",
+                    JsonPrimitive(42),
+                    JsonObject(),
+                    JsonObject(),
+                    JsonObject()
+                )
+            )
         }
     }
 
     @Test
     fun testResponseValidationWithoutId() {
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsResponseEvent(RawEvent("event", 1, null, "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject()))
+        assertThrows(EventValidationException::class.java) {
+            validator.validateAsResponseEvent(
+                RawEvent(
+                    "event",
+                    1,
+                    null,
+                    "flow",
+                    JsonPrimitive(42),
+                    JsonObject(),
+                    JsonObject(),
+                    JsonObject()
+                )
+            )
         }
     }
 
@@ -186,29 +219,73 @@ class LenientEventValidatorTest {
 
     @Test
     fun testRequestValidationWithoutName() {
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsRequestEvent(RawEvent(null, 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject()))
+        assertThrows(EventValidationException::class.java) {
+            validator.validateAsRequestEvent(
+                RawEvent(
+                    null,
+                    1,
+                    "id",
+                    "flow",
+                    JsonPrimitive(42),
+                    JsonObject(),
+                    JsonObject(),
+                    JsonObject()
+                )
+            )
         }
     }
 
     @Test
     fun testRequestValidationWithoutVersion() {
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsRequestEvent(RawEvent("event", null, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject()))
+        assertThrows(EventValidationException::class.java) {
+            validator.validateAsRequestEvent(
+                RawEvent(
+                    "event",
+                    null,
+                    "id",
+                    "flow",
+                    JsonPrimitive(42),
+                    JsonObject(),
+                    JsonObject(),
+                    JsonObject()
+                )
+            )
         }
     }
 
     @Test
     fun testRequestValidationWithoutId() {
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsRequestEvent(RawEvent("event", 1, null, "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject()))
+        assertThrows(EventValidationException::class.java) {
+            validator.validateAsRequestEvent(
+                RawEvent(
+                    "event",
+                    1,
+                    null,
+                    "flow",
+                    JsonPrimitive(42),
+                    JsonObject(),
+                    JsonObject(),
+                    JsonObject()
+                )
+            )
         }
     }
 
     @Test
     fun testRequestValidationWithoutFlowId() {
-        assertThrows(IllegalArgumentException::class.java) {
-            validator.validateAsRequestEvent(RawEvent("event", 1, "id", null, JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject()))
+        assertThrows(EventValidationException::class.java) {
+            validator.validateAsRequestEvent(
+                RawEvent(
+                    "event",
+                    1,
+                    "id",
+                    null,
+                    JsonPrimitive(42),
+                    JsonObject(),
+                    JsonObject(),
+                    JsonObject()
+                )
+            )
         }
     }
 

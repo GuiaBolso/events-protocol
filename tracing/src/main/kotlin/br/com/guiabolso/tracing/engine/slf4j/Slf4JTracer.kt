@@ -23,9 +23,16 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         MDC.put(key, value?.toString())
     }
 
+    override fun addProperty(key: String, value: List<*>){
+        val finalValue:String = value.joinToString(",", "[", "]"){
+            "\"${it.toString()}\""
+        }
+        addProperty(key, finalValue)
+    }
+
     override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
         LOGGER.info("[$name] elapsedTime= $elapsedTime")
-        context.forEach{ addProperty(it.key, it.value) }
+        context.forEach { addProperty(it.key, it.value) }
     }
 
     override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {

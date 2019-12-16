@@ -25,18 +25,44 @@ class EventClientTest {
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent()
 
-        whenever(httpClient.post(
+        whenever(
+            httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
                 MapperHolder.mapper.toJson(event),
                 Charsets.UTF_8,
-                1000)
+                1000
+            )
         ).thenReturn(MapperHolder.mapper.toJson(responseEvent))
 
         val response = eventClient.sendEvent("url", event, 1000)
 
         assertTrue(response is Response.Success)
         assertEquals(responseEvent, (response as Response.Success).event)
+    }
+
+    @Test
+    fun testRedirectResponse() {
+        val httpClient = mock(HttpClientAdapter::class.java)
+        val eventClient = EventClient(httpClient)
+
+        val event = EventBuilderForTest.buildRequestEvent()
+        val responseEvent = EventBuilderForTest.buildRedirectEvent()
+
+        whenever(
+            httpClient.post(
+                "url",
+                mapOf("Content-Type" to "application/json"),
+                MapperHolder.mapper.toJson(event),
+                Charsets.UTF_8,
+                1000
+            )
+        ).thenReturn(MapperHolder.mapper.toJson(responseEvent))
+
+        val response = eventClient.sendEvent("url", event, 1000)
+
+        assertTrue(response is Response.Redirect)
+        assertEquals(responseEvent, (response as Response.Redirect).event)
     }
 
     @Test
@@ -47,12 +73,14 @@ class EventClientTest {
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent().copy(name = "${event.name}:error")
 
-        whenever(httpClient.post(
+        whenever(
+            httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
                 MapperHolder.mapper.toJson(event),
                 Charsets.UTF_8,
-                1000)
+                1000
+            )
         ).thenReturn(MapperHolder.mapper.toJson(responseEvent))
 
         val response = eventClient.sendEvent("url", event, 1000)
@@ -69,12 +97,14 @@ class EventClientTest {
 
         val event = EventBuilderForTest.buildRequestEvent()
 
-        whenever(httpClient.post(
+        whenever(
+            httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
                 MapperHolder.mapper.toJson(event),
                 Charsets.UTF_8,
-                1000)
+                1000
+            )
         ).thenThrow(TimeoutException::class.java)
 
         val response = eventClient.sendEvent("url", event, 1000)
@@ -90,12 +120,14 @@ class EventClientTest {
 
         val event = EventBuilderForTest.buildRequestEvent()
 
-        whenever(httpClient.post(
+        whenever(
+            httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
                 MapperHolder.mapper.toJson(event),
                 Charsets.UTF_8,
-                1000)
+                1000
+            )
         ).thenReturn("something")
 
         val response = eventClient.sendEvent("url", event, 1000)
@@ -112,12 +144,14 @@ class EventClientTest {
 
         val event = EventBuilderForTest.buildRequestEvent()
 
-        whenever(httpClient.post(
+        whenever(
+            httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
                 MapperHolder.mapper.toJson(event),
                 Charsets.UTF_8,
-                1000)
+                1000
+            )
         ).thenThrow(FailedDependencyException::class.java)
 
         val response = eventClient.sendEvent("url", event, 1000)

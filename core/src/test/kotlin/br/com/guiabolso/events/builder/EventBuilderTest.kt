@@ -4,6 +4,7 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.event
 import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
+import br.com.guiabolso.events.builder.EventBuilder.Companion.redirectFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseEvent
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
@@ -12,10 +13,13 @@ import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.utils.EventUtils
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class EventBuilderTest {
@@ -302,6 +306,30 @@ class EventBuilderTest {
     }
 
     @Test
+    fun `test create redirect event`() {
+        val event = event {
+            id = "id"
+            flowId = "flowId"
+            name = "event"
+            version = 1
+            payload = 42
+        }
+
+        val redirectURL = "https://www.google.com.br"
+        val redirectPayload = RedirectPayload(url = redirectURL)
+        val response = redirectFor(event, redirectPayload)
+
+        assertEquals("id", response.id)
+        assertEquals("flowId", response.flowId)
+        assertEquals("event:redirect", response.name)
+        assertEquals(1, response.version)
+        assertEquals(redirectURL, response.payload.asJsonObject.get("url").asString)
+        assertEquals(JsonObject(), response.auth)
+        assertEquals(JsonObject(), response.identity)
+        assertEquals(JsonObject(), response.metadata)
+    }
+
+    @Test
     fun testCreateEventNotFoundResponseEvent() {
         val event = event {
             id = "id"
@@ -316,7 +344,14 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("eventNotFound", response.name)
         assertEquals(1, response.version)
-        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))), response.payload)
+        assertEquals(
+            MapperHolder.mapper.toJsonTree(
+                EventMessage(
+                    "NO_EVENT_HANDLER_FOUND",
+                    mapOf("event" to event.name, "version" to event.version)
+                )
+            ), response.payload
+        )
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)
@@ -330,7 +365,10 @@ class EventBuilderTest {
         assertNotNull(response.flowId)
         assertEquals("badProtocol", response.name)
         assertEquals(1, response.version)
-        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())), response.payload)
+        assertEquals(
+            MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())),
+            response.payload
+        )
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)

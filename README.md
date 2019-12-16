@@ -21,9 +21,9 @@ repositories {
 A biblioteca é composta de 3 modulos. Server, Client e Core.
 
 ```
- compile "br.com.guiabolso:events-client:2.1.4"
- compile "br.com.guiabolso:events-server:2.1.4"
- compile "br.com.guiabolso:events-core:2.1.4"
+ compile "br.com.guiabolso:events-client:2.6.1"
+ compile "br.com.guiabolso:events-server:2.6.1"
+ compile "br.com.guiabolso:events-core:2.6.1"
 ```
 Geralmente as dependências a serem importadas são:
 
@@ -54,7 +54,7 @@ Toda informação é transmitida utilizando um JSON padronizado com o seguinte f
 Qualquer comunicação entre sistemas é considerado um evento.
 
 #### Exemplo:
-```javascript
+```json
 {
 	"name": "some event",
 	"version": 42,
@@ -70,7 +70,7 @@ Qualquer comunicação entre sistemas é considerado um evento.
 	},
 	"auth": {
 		"token": "fk20f2p9o2v2l923"
-	}
+	},
 	"metadata": {
 		"origin": "Documentation",
 		"originId": "RFC-GB 0001",
@@ -132,7 +132,7 @@ Campos fixos no evento:
 
 #### Exemplo:
 
-```javascript
+```json
 {
 	"name": "some event:response",
 	"version": 1,
@@ -159,7 +159,7 @@ Campos fixos no evento:
 
 #### Exemplo:
 
-```javascript
+```json
 {
 	"name": "some:event:error",
 	"version": 1,
@@ -190,7 +190,7 @@ Indica que o request foi feito ao servidor de maneira incorreta. Provavelmente c
 
 #### Exemplo:
 
-```javascript
+```json
 {
 	"name": "some:event:bad_request",
 	"version": 1,
@@ -215,7 +215,7 @@ Indica que o cliente não está autorizado acessar aquela API no servidor. Prova
 
 #### Exemplo:
 
-```javascript
+```json
 {
 	"name": "some:event:unauthorized",
 	"version": 1,
@@ -239,7 +239,7 @@ Indica que o servidor não encontrou o recurso solicitado pelo cliente.
 
 #### Exemplo:
 
-```javascript
+```json
 {
 	"name": "some:event:not_found",
 	"version": 1,
@@ -263,7 +263,7 @@ Indica que o servidor impede o acesso a um recurso devido ser proibido por algum
 
 #### Exemplo:
 
-```javascript
+```json
 {
 	"name": "some:event:forbidden",
 	"version": 1,
@@ -287,15 +287,15 @@ Tipo padronizado para indicar que não foi possível responder com sucesso pois 
 
 #### Exemplo:
 
-```javascript
+```json
 {
 	"name": "some:event:failed_dependency",
 	"version": 1,
 	"id": "d8cab3c2-b15b-439b-ae5b-c8a96c61d637",
 	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
 	"payload": {
-		"code": "UNKNOWN_ERROR"
-		"message": "Anubis returned an error",
+		"code": "UNKNOWN_ERROR",
+		"message": "Anubis returned an error"
 	},
 	"metadata": {
 		"origin": "Ryzen",

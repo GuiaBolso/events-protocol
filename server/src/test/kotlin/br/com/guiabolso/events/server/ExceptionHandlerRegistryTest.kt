@@ -22,9 +22,9 @@ class ExceptionHandlerRegistryTest {
         }
 
         val response = exceptionHandlerRegistry.handleException(
-                RuntimeException("Some error"),
-                EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(Tracer::class.java)
+            RuntimeException("Some error"),
+            EventBuilderForTest.buildRequestEvent(),
+            Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("Some error", response.payload.asString)
@@ -43,9 +43,9 @@ class ExceptionHandlerRegistryTest {
         }
 
         val response = exceptionHandlerRegistry.handleException(
-                RuntimeException("Some error"),
-                EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(Tracer::class.java)
+            RuntimeException("Some error"),
+            EventBuilderForTest.buildRequestEvent(),
+            Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("Exception", response.payload.asString)
@@ -64,9 +64,9 @@ class ExceptionHandlerRegistryTest {
         }
 
         val response = exceptionHandlerRegistry.handleException(
-                RuntimeException("Some error"),
-                EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(Tracer::class.java)
+            RuntimeException("Some error"),
+            EventBuilderForTest.buildRequestEvent(),
+            Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("RuntimeException", response.payload.asString)
@@ -78,9 +78,9 @@ class ExceptionHandlerRegistryTest {
         val exceptionHandlerRegistry = exceptionHandler()
 
         val response = exceptionHandlerRegistry.handleException(
-                RuntimeException("Some error"),
-                EventBuilderForTest.buildRequestEvent(),
-                Mockito.mock(Tracer::class.java)
+            RuntimeException("Some error"),
+            EventBuilderForTest.buildRequestEvent(),
+            Mockito.mock(Tracer::class.java)
         )
 
         assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)

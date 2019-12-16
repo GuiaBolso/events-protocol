@@ -1,25 +1,30 @@
+buildscript {
+    ext.open_tracing = '0.31.0'
+    ext.dd_trace = '0.30.0'
+}
+
 dependencies {
     //NewRelic
     compileOnly group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
 
     //Datadog
-    compileOnly group: 'io.opentracing', name: 'opentracing-api', version: "0.31.0"
-    compileOnly group: 'io.opentracing', name: 'opentracing-util', version: "0.31.0"
-    compileOnly group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.26.0'
-    compileOnly group: 'com.datadoghq', name: 'dd-trace-api', version: '0.26.0'
-    compileOnly group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.7'
+    compileOnly group: 'io.opentracing', name: 'opentracing-api', version: open_tracing
+    compileOnly group: 'io.opentracing', name: 'opentracing-util', version: open_tracing
+    compileOnly group: 'com.datadoghq', name: 'dd-trace-ot', version: dd_trace
+    compileOnly group: 'com.datadoghq', name: 'dd-trace-api', version: dd_trace
+    compileOnly group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.8'
 
     compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
 
     //To run NewRelic examples
-    testCompile group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
+    testImplementation group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
     //To run Datadog examples
-    testCompile group: 'io.opentracing', name: 'opentracing-api', version: "0.32.0"
-    testCompile group: 'io.opentracing', name: 'opentracing-util', version: "0.32.0"
-    testCompile group: 'com.datadoghq', name: 'dd-trace-ot', version: '0.26.0'
-    testCompile group: 'com.datadoghq', name: 'dd-trace-api', version: '0.26.0'
+    testImplementation group: 'io.opentracing', name: 'opentracing-api', version: open_tracing
+    testImplementation group: 'io.opentracing', name: 'opentracing-util', version: open_tracing
+    testImplementation group: 'com.datadoghq', name: 'dd-trace-ot', version: dd_trace
+    testImplementation group: 'com.datadoghq', name: 'dd-trace-api', version: dd_trace
 
-    testCompile group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
+    testImplementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
 }
 
 apply plugin: 'com.novoda.bintray-release'

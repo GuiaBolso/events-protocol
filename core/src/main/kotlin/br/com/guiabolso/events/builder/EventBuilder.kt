@@ -4,6 +4,7 @@ import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
+import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.utils.EventUtils
@@ -63,13 +64,26 @@ class EventBuilder {
         }
 
         @JvmStatic
+        fun redirectFor(requestEvent: RequestEvent, payload: RedirectPayload): ResponseEvent {
+            val builder = EventBuilder()
+            builder.name = "${requestEvent.name}:redirect"
+            builder.version = requestEvent.version
+            builder.payload = payload
+            builder.id = builder.id ?: requestEvent.id
+            builder.flowId = builder.flowId ?: requestEvent.flowId
+
+            return builder.buildResponseEvent()
+        }
+
+        @JvmStatic
         fun eventNotFound(event: RequestEvent): ResponseEvent {
             val builder = EventBuilder()
             builder.name = "eventNotFound"
             builder.version = 1
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
-            builder.payload = EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
+            builder.payload =
+                EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
             return builder.buildResponseEvent()
         }
 
@@ -96,25 +110,25 @@ class EventBuilder {
     var metadata: Any? = null
 
     fun buildRequestEvent() = RequestEvent(
-            name = this.name ?: throw MissingEventInformationException("Missing event name."),
-            version = this.version ?: throw MissingEventInformationException("Missing event version."),
-            id = this.id ?: throw MissingEventInformationException("Missing event id."),
-            flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
-            payload = convertPayload(),
-            identity = convertToJsonObjectOrEmpty(this.identity),
-            auth = convertToJsonObjectOrEmpty(this.auth),
-            metadata = convertToJsonObjectOrEmpty(this.metadata)
+        name = this.name ?: throw MissingEventInformationException("Missing event name."),
+        version = this.version ?: throw MissingEventInformationException("Missing event version."),
+        id = this.id ?: throw MissingEventInformationException("Missing event id."),
+        flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
+        payload = convertPayload(),
+        identity = convertToJsonObjectOrEmpty(this.identity),
+        auth = convertToJsonObjectOrEmpty(this.auth),
+        metadata = convertToJsonObjectOrEmpty(this.metadata)
     )
 
     fun buildResponseEvent() = ResponseEvent(
-            name = this.name ?: throw MissingEventInformationException("Missing event name."),
-            version = this.version ?: throw MissingEventInformationException("Missing event version."),
-            id = this.id ?: throw MissingEventInformationException("Missing event id."),
-            flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
-            payload = convertPayload(),
-            identity = convertToJsonObjectOrEmpty(this.identity),
-            auth = convertToJsonObjectOrEmpty(this.auth),
-            metadata = convertToJsonObjectOrEmpty(this.metadata)
+        name = this.name ?: throw MissingEventInformationException("Missing event name."),
+        version = this.version ?: throw MissingEventInformationException("Missing event version."),
+        id = this.id ?: throw MissingEventInformationException("Missing event id."),
+        flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
+        payload = convertPayload(),
+        identity = convertToJsonObjectOrEmpty(this.identity),
+        auth = convertToJsonObjectOrEmpty(this.auth),
+        metadata = convertToJsonObjectOrEmpty(this.metadata)
     )
 
     private fun convertPayload() = when (this.payload) {

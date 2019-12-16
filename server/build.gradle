@@ -1,8 +1,8 @@
 dependencies {
-    compile project(":core")
-    compile project(":tracing")
+    api project(":core")
+    api project(":tracing")
 
-    testCompile project(':core').sourceSets.test.output
+    testImplementation project(':core').sourceSets.test.output
 }
 
 

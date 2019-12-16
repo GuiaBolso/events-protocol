@@ -40,6 +40,15 @@ interface TracerEngine<C> {
     fun addProperty(key: String, value: Boolean?)
 
     /**
+     * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
+     *
+     * @param key Custom parameter key.
+     * @param value Custom parameter value.
+     * @since 2.6.0
+     */
+    fun addProperty(key: String, value: List<*>)
+
+    /**
      * Register an execution time using the current Engine, under the received metric name. The metric will be
      * registered with any tags that come within the context Map
      *

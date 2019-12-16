@@ -7,9 +7,13 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
 class TracerImpl(
-        private val tracerEngine: TracerEngine<*>,
-        private val asyncExecutor: AsyncExecutor
+    private val tracerEngine: TracerEngine<*>,
+    private val asyncExecutor: AsyncExecutor
 ) : Tracer {
+
+    override fun getTracerEngine(): TracerEngine<*> {
+        return tracerEngine
+    }
 
     override fun setOperationName(name: String) {
         tracerEngine.setOperationName(name)
@@ -24,6 +28,10 @@ class TracerImpl(
     }
 
     override fun addProperty(key: String, value: Boolean?) {
+        tracerEngine.addProperty(key, value)
+    }
+
+    override fun addProperty(key: String, value: List<*>) {
         tracerEngine.addProperty(key, value)
     }
 

@@ -4,8 +4,11 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+<<<<<<< HEAD
 import com.google.gson.reflect.TypeToken
 import java.lang.IllegalStateException
+=======
+>>>>>>> b9e8fc51b5816e87735b18d19119619771e38944
 
 sealed class Event {
     abstract val name: String
@@ -45,19 +48,21 @@ sealed class Event {
 }
 
 data class ResponseEvent(
-        override val name: String,
-        override val version: Int,
-        override val id: String,
-        override val flowId: String,
-        override val payload: JsonElement,
-        override val identity: JsonObject,
-        override val auth: JsonObject,
-        override val metadata: JsonObject
+    override val name: String,
+    override val version: Int,
+    override val id: String,
+    override val flowId: String,
+    override val payload: JsonElement,
+    override val identity: JsonObject,
+    override val auth: JsonObject,
+    override val metadata: JsonObject
 ) : Event() {
 
     fun isSuccess() = this.name.endsWith(":response")
 
-    fun isError() = !this.isSuccess()
+    fun isRedirect() = this.name.endsWith(":redirect")
+
+    fun isError() = !this.isSuccess() && !this.isRedirect()
 
     fun getErrorType(): EventErrorType {
         if (isSuccess()) throw IllegalStateException("This is not an error event.")
@@ -67,12 +72,12 @@ data class ResponseEvent(
 }
 
 data class RequestEvent(
-        override val name: String,
-        override val version: Int,
-        override val id: String,
-        override val flowId: String,
-        override val payload: JsonElement,
-        override val identity: JsonObject,
-        override val auth: JsonObject,
-        override val metadata: JsonObject
+    override val name: String,
+    override val version: Int,
+    override val id: String,
+    override val flowId: String,
+    override val payload: JsonElement,
+    override val identity: JsonObject,
+    override val auth: JsonObject,
+    override val metadata: JsonObject
 ) : Event()
