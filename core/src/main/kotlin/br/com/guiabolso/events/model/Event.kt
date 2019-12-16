@@ -4,11 +4,8 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-<<<<<<< HEAD
 import com.google.gson.reflect.TypeToken
 import java.lang.IllegalStateException
-=======
->>>>>>> b9e8fc51b5816e87735b18d19119619771e38944
 
 sealed class Event {
     abstract val name: String
