@@ -30,7 +30,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     }
 
     override fun addProperty(key: String, value: List<*>) {
-        val finalValue:String = value.joinToString(",")
+        val finalValue: String = value.joinToString(",")
         addProperty(key, finalValue)
     }
 
@@ -62,7 +62,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     }
 
     override fun withContext(context: Any): Closeable {
-        return (context as SpanBuilder).startActive(true)
+        return tracer.activateSpan((context as SpanBuilder).start())
     }
 
     override fun withContext(context: SpanBuilder, func: () -> Any) {
