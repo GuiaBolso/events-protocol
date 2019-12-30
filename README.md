@@ -86,7 +86,7 @@ Como usar
 
 Para começar consumir eventos de outros serviços basta ter um objeto `EventClient` e chamar o método do mesmo, `sendEvent`, passando a URL de eventos do serviço que se deseja consumir o evento e o evento em si.
 
-Para ajudar na construção do Evento é possível utilizar a classe `EventBuild`, como demonstrado no exemplo a baixo.
+Para ajudar na construção do Evento é possível utilizar a classe `EventBuilder`, como demonstrado no exemplo a baixo.
 
 ```kotlin
 class SomeServiceEventBroker {
