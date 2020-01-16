@@ -37,7 +37,46 @@ auth        =   chaves de autenticação
 
 Identificador do evento, identificação com o domínio, o recurso e a ação que foi tomada sobre esse recurso
 
-Cabe ao nome também trazer a natureza do evento, no caso de uma resposta `response`, no caso de um erro, o seu código de identificação
+Cabe ao nome também trazer a natureza do event
+
+No caso de uma resposta de sucesso, será sufixados `response`, no caso de um erro, o código de identificação
+
+#### notação
+
+O nome possui uma notação específica, que traduz o domínio, o recurso e a ação que gerou o evento
+
+Para garantir a universalidade, a notação é separada por `:` e as identificações serão em letras minúsculas apenas e underscores
+
+```
+[a-z_]+[a-z]:[a-z_]+[a-z]:[a-z_]+[a-z](:[a-z]+[a-z])*
+```
+
+Exemplo:
+
+```
+user:name:set
+```
+
+#### sufixos
+
+Os sufixos são utilizados nas respostas à um evento
+
+Todo evento deve ser respondido
+
+Os sufixos podem ser de sucesso ou falha
+
+##### sucesso
+
+- `response`: utilizado em caso de completude da requisição
+
+##### falha
+
+- `error`: erro genérico de origem no servidor
+- `bad_request`: erro de natureza do requisitante
+- `unauthorized`: `auth` sem capacidade de transcrição ou gerador de permissão
+- `not_found`: evento indisponível no servidor
+- `forbidden`: `identity` proibido de acessar recurso
+- `failed_dependency`: falha por dependência não devolver resposta esperada
 
 ### version
 
