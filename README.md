@@ -61,8 +61,6 @@ user:name:set
 
 Os sufixos são utilizados nas respostas à um evento
 
-Todo evento deve ser respondido
-
 Os sufixos podem ser de sucesso ou falha
 
 ##### sucesso
