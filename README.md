@@ -1,343 +1,131 @@
-Events Protocol
-=================
+# Protocolo de eventos
 
-[![Build Status](https://travis-ci.org/GuiaBolso/events-protocol.svg?branch=master)](https://travis-ci.org/GuiaBolso/events-protocol)
-[ ![Download](https://api.bintray.com/packages/gb-opensource/maven/Events-Core/images/download.svg) ](https://bintray.com/gb-opensource/maven/Events-Core/_latestVersion)
+O protocolo de eventos é um esquema de abstração sobre a camada de transporte, garantindo rastreabilidade.
 
+Essa abstração se baseia em um conjunto de convenções entre Ids e pacotes de metadados e autenticação que ajudam no rastreio e manutenção de sistemas distribuídos.
 
-Dependencias
----------------
+## O problema
 
-Para utilizar as dependências é necessário habilitar o repositório do jcenter no gradle:
+Quando trabalhamos com sistemas distribuídos, ao utilizarmos a implementação padrão do REST acabamos amarrados ao protocolo HTTP, mas não é uma realidade fazer a comunicação somente via HTTP. Há disponíveis protocolos de fila, socket, troca de arquivos.
+
+Ao fazer uma requisição, facilmente perdemos rastreio do ponto em que algo se perdeu.
+
+## A proposta
+
+Criar um esquema que garanta a troca de chaves, o registro de metadatos e o encapsulamento do payload, garantindo o histórico da chamada e a intenção do evento.
+
+Ao invés de representar um estado, representar um evento gerado por um terminal. Esse evento vai ser transformado e acompanhado em todo seu ciclo de vida.
+
+## O protocolo
+
+O protocolo é construído em propriedades, que podem ser traduzidas em
 
 ```
-repositories {
-    mavenCentral()
-    jcenter()  <---------
-}
+name        =   identificador do evento
+version     =   versao única do payload evento
+
+flowId      =   identificador do fluxo, do início ao fim
+id          =   identificador da sessão do terminal
+
+payload     =   conteúdo do pacote do evento
+metadata    =   dados informativos sobre o evento
+identity    =   identidade do terminal
+auth        =   chaves de autenticação
 ```
 
+### name
 
-A biblioteca é composta de 3 modulos. Server, Client e Core.
+Identificador do evento, identificação com o domínio, o recurso e a ação que foi tomada sobre esse recurso
+
+Cabe ao nome também trazer a natureza do event
+
+No caso de uma resposta de sucesso, será sufixados `response`, no caso de um erro, o código de identificação
+
+#### notação
+
+O nome possui uma notação específica, que traduz o domínio, o recurso e a ação que gerou o evento
+
+Para garantir a universalidade, a notação é separada por `:` e as identificações serão em letras minúsculas apenas e underscores
 
 ```
- compile "br.com.guiabolso:events-client:2.6.1"
- compile "br.com.guiabolso:events-server:2.6.1"
- compile "br.com.guiabolso:events-core:2.6.1"
-```
-Geralmente as dependências a serem importadas são:
-
-* Server: Quando é necessário tratar requisições de eventos;
-* Client: Quando é necessário realizar requisições de evento;
-* Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado.
-
-
-Motivação
----------------
-**Padronizar a comunicação entre as aplicações do GuiaBolso.** Atualmente cada aplicação é livre para definir seus padrões de request/response e protocolo: Thrift, REST, "JSON over HTTP", etc. O que torna difícil trafegar dados padronizados (trackingID, por exemplo) entre as aplicações.
-
-Essa proposta visa definir um padrão de comunicação único que permita:
-
- * Identificação única dos requests
- * Transações com requests/responses assíncronos ou síncronos
- * Envio de dados que devem passar por toda a stack (trackingID, por exemplo)
- * Versionamento de API
- * identificação de um usuário
- * campos relacionados a autenticação do usuário.
- * Metadados de transações (origin, timestamp, etc)
-
-Arquitetura
-----------------
-
-### Evento
-Toda informação é transmitida utilizando um JSON padronizado com o seguinte formato.
-Qualquer comunicação entre sistemas é considerado um evento.
-
-#### Exemplo:
-```json
-{
-	"name": "some event",
-	"version": 42,
-	"id": "2465a86f-3857-423e-af86-41f67880172f",
-	"flowId": "d00a5c99-ea0e-4b39-bfdc-bf1028a9c95f",
-	"payload": {
-		"data1": "fsadfsdf",
-		"an_int64": 65484548474984654,
-		"some_float": 1864.4568
-	},
-	"identity": {
-		"userId": 99999999
-	},
-	"auth": {
-		"token": "fk20f2p9o2v2l923"
-	},
-	"metadata": {
-		"origin": "Documentation",
-		"originId": "RFC-GB 0001",
-		"timestamp": 1482162952
-	}
-}
+[a-z_]+[a-z]:[a-z_]+[a-z]:[a-z_]+[a-z](:[a-z]+[a-z])*
 ```
 
-Como usar
-------------------
+Exemplo:
 
-## Cliente
-
-Para começar consumir eventos de outros serviços basta ter um objeto `EventClient` e chamar o método do mesmo, `sendEvent`, passando a URL de eventos do serviço que se deseja consumir o evento e o evento em si.
-
-Para ajudar na construção do Evento é possível utilizar a classe `EventBuilder`, como demonstrado no exemplo a baixo.
-
-```kotlin
-class SomeServiceEventBroker {
-
-	private val eventBrokerUrl = "SERVICE_EVENT_URL"
-	private val client = EventClient()
-	
-	private fun sendEvent(event: RequestEvent): ResponseEvent {
-		return client.sendEvent(eventBrokerUrl, event)
-	}
-	
-	fun getSomeExample(exampleId: Int): Example {
-		val getSomeExampleEvent = EventBuilder.event {
-			id = UUID.randomUUID.toString()
-			flowId = UUID.randomUUID.toString()
-			name = "get:example"
-			version = 1
-			payload = mapOf(
-				"attributeOne" to "attributeOne",
-				"attributeTwo" to "attributeTwo"
-			)
-            identity = mapOf(
-            	"exampleId" to 123456789
-            )
-		}
-		return sendEvent().payloadAs<Example>();
-	}
-
-}
+```
+user:name:set
 ```
 
-## Servidor
+#### sufixos
 
-O protocolo foi desenhado para ser facilmente acoplado em qualquer estrutura para receber requisições: sockets, chamadas HTTP. Para tanto, dois tipos de objetos precisam ser cadastrados na sua aplicação para que tudo funcione.
+Os sufixos são utilizados nas respostas à um evento
 
-### ```EventHandlerDiscovery```
+Os sufixos podem ser de sucesso ou falha
 
-É o responsável por avaliar se, dado o nome e versão de um evento, o sistema é capaz de fazer o tratamento do mesmo. A implementação padrão da interface é ```SimpleEventHandlerRegistry``` que cadastra uma série de ```EventHandler```'s (ou lambdas) para fazer o tratamento de um determinado evento pelo seu nome e versão. Em ambos os casos, um ```RequestEvent``` é recebido e um ```ResponseEvent``` é gerado baseado na requisição e a resposta do processamento realizado (se necessário).
+##### sucesso
 
-#### Exemplo:
-```groovy
-simpleEventHandlerRegistry.add("say:hello", 13, (EventHandler) { RequestEvent event ->
-	def firstname = event.payload.asJsonObject.get("firstname").asString
-	def lastname = event.payload.asJsonObject.get("lastname").asString
-	def eventBuilder = EventBuilder.javaResponseFor(event)
-	eventBuilder.payload = helloService.to(firstname, lastname)
-	eventBuilder.buildResponseEvent()
-})
-```
+- `response`: utilizado em caso de completude da requisição
 
-### ```EventProcessor```
+##### falha
 
-Responsável por efetivamente processar os eventos. O evento nessa classe é representado por uma ```String``` que é traduzido para um objeto no modelo do protocolo de eventos e avaliado para garantir se há ou não suporte para que seja tratado. Um ```EventHandlerDiscovery``` que avalia qual o processador para um dado evento deve ser passado como parâmetro para esse objeto. É nele ainda que os tratamentos de erro e avaliação de métricas podem ser sobrescritos.
+- `error`: erro genérico de origem no servidor
+- `bad_request`: erro de natureza do requisitante
+- `unauthorized`: `auth` sem capacidade de transcrição ou gerador de permissão
+- `not_found`: evento indisponível no servidor
+- `forbidden`: `identity` proibido de acessar recurso
+- `failed_dependency`: falha por dependência não devolver resposta esperada
 
-#### Exemplo:
-```groovy
-post("/events", { request, response ->
-	eventProcessor.processEvent(req.body())
-})
-```
+### version
 
-Nota: no caso de chamadas via HTTP, recomenda-se que se crie uma única rota para tratamento de eventos (vide exemplo) para que todos os eventos sejam processados de maneira igual. Quem define a rota do evento nesse caso é o ```EventProcessor```.
+Versão única do payload do evento, garantindo a compatibilidade dos clientes e servidores envolvidos naquele ciclo
 
-Tipos padrão de resposta
-------------------
+A versão também pode ser utilizada para identificar aquele evento como `beta`, `alpha` ou `test`
 
-O protocolo de eventos se baseia na seguinte premissa. O cliente envia um evento para ser processado pelo servidor. O servidor devolve um outro evento como resposta ao cliente. Para isso existem tipos padrão de resposta.
+### flowId
 
-### Response
-Tem o objetivo de definir o padrão das mensagens de sucesso da plataforma.
-Campos fixos no evento:
+Identificador do fluxo, do início ao fim. Este identificador deve ser uma chave que garanta a unicidade do fluxo
 
-* **name:** some:event:response
-* **version:** 1
+Um fluxo é o conjunto de eventos que começa no terminal, as chamadas para os próximos servidores e clientes, até a resposta retornar ao terminal
 
-#### Exemplo:
+### id
 
-```json
-{
-	"name": "some event:response",
-	"version": 1,
-	"id": "e577b9d8-5b39-4aa6-bd74-418ec2f74174",
-	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
-	"payload": {
-		"someData": "this is the server response",
-		"someOtherData": 42
-	},
-	"metadata": {
-		"origin": "Lion",
-		"timestamp": 1282162952
-	}
-}
-```
+Identificador da sessão do terminal, que deve encapsular um conjunto de eventos em um período de interação em um terminal
 
+### payload
 
-### Erro genérico:
-Tem o objetivo de definir o padrão do payload das mensagens de erro genéricos da plataforma.
-Campos fixos no evento:
+Conteúdo do pacote do evento, sendo crucial para o sucesso ou falha daquele evento
 
-* **name:** some:event:error
-* **version:** 1
+### metadata
 
-#### Exemplo:
+Dados informativos sobre o evento, não podendo interferir no sucesso ou falha daquele evento
 
-```json
-{
-	"name": "some:event:error",
-	"version": 1,
-	"id": "e577b9d8-5b39-4aa6-bd74-418ec2f74174",
-	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
-	"payload": {
-		"code": "INVALID_EMAIL",
-		"parameters": {
-			"email": "wrong@gbmail.com"
-		}
-	},
-	"metadata": {
-		"origin": "Midgard",
-		"timestamp": 1282162952
-	}
-}
-```
+### identity
 
-### Erros contextualizados:
+Identidade do terminal, contendo dados que possam identifica unicamente o terminal
 
-Tem o objetivo de definir o padrão do payload das mensagens de erros que carregam um contexto dentro da plataforma.
+Não deve ser preenchida concomitantemente com `auth`
 
-Esses erros podem ser:
+### auth
 
-### Bad Request:
+Chaves de autenticação, tokens como `JWT`, cifradas e assinadas
 
-Indica que o request foi feito ao servidor de maneira incorreta. Provavelmente com algum parametro do request faltando ou e formato incorreto.  
+Não deve ser preenchida concomitantemente com `identity`
 
-#### Exemplo:
+Não deve conter identificadore abertos
 
-```json
-{
-	"name": "some:event:bad_request",
-	"version": 1,
-	"id": "e577b9d8-5b39-4aa6-bd74-418ec2f74174",
-	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
-	"payload": {
-		"code": "MISSING_FIELDS",
-		"parameters": {
-			"fields": ["cpf", "phone"]
-		}
-	},
-	"metadata": {
-		"origin": "Midgard",
-		"timestamp": 1282162952
-	}
-}
-```
+# Licença
 
-### Unauthorized:
+Copyright @ 2016 Guiabolso
 
-Indica que o cliente não está autorizado acessar aquela API no servidor. Provavelmente o cliente não está autenticado e precisa passar pelo processo de login.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-#### Exemplo:
+    http://www.apache.org/licenses/LICENSE-2.0
 
-```json
-{
-	"name": "some:event:unauthorized",
-	"version": 1,
-	"id": "e577b9d8-5b39-4aa6-bd74-418ec2f74174",
-	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
-	"payload": {
-		"code": "MISSING_TOKENS",
-		"parameters": {
-		}
-	},
-	"metadata": {
-		"origin": "Midgard",
-		"timestamp": 1282162952
-	}
-}
-```
-
-### Not Found:
-
-Indica que o servidor não encontrou o recurso solicitado pelo cliente.
-
-#### Exemplo:
-
-```json
-{
-	"name": "some:event:not_found",
-	"version": 1,
-	"id": "e577b9d8-5b39-4aa6-bd74-418ec2f74174",
-	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
-	"payload": {
-		"code": "NO_OFFERS",
-		"parameters": {
-		}
-	},
-	"metadata": {
-		"origin": "Midgard",
-		"timestamp": 1282162952
-	}
-}
-```
-
-### Forbidden:
-
-Indica que o servidor impede o acesso a um recurso devido ser proibido por algum motivo. 
-
-#### Exemplo:
-
-```json
-{
-	"name": "some:event:forbidden",
-	"version": 1,
-	"id": "e577b9d8-5b39-4aa6-bd74-418ec2f74174",
-	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
-	"payload": {
-		"code": "NOT_ALLOWED",
-		"parameters": {
-		}
-	},
-	"metadata": {
-		"origin": "Midgard",
-		"timestamp": 1282162952
-	}
-}
-```
-
-### Failed Dependency:
-
-Tipo padronizado para indicar que não foi possível responder com sucesso pois algum worker/dependência não respondeu corretamente (base de dados não são consideradas dependências/workers).
-
-#### Exemplo:
-
-```json
-{
-	"name": "some:event:failed_dependency",
-	"version": 1,
-	"id": "d8cab3c2-b15b-439b-ae5b-c8a96c61d637",
-	"flowId": "49689dcf-80c4-45a6-9f82-61a240e49a5c",
-	"payload": {
-		"code": "UNKNOWN_ERROR",
-		"message": "Anubis returned an error"
-	},
-	"metadata": {
-		"origin": "Ryzen",
-		"timestamp": 1482165952
-	}
-}
-```
-
-
-Referências
------------
-* **JSON RPC:** [http://www.jsonrpc.org/specification#examples](http://www.jsonrpc.org/specification#examples)
-* **Slack RealTime Messaging API:** [https://api.slack.com/rtm](https://api.slack.com/rtm)
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
