@@ -60,7 +60,7 @@ constructor(
         tracer.setOperationName("${event.name}:V${event.version}")
         tracer.addProperty("EventID", event.id)
         tracer.addProperty("FlowID", event.flowId)
-        tracer.addProperty("UserID", event.userId?.toString() ?: "unknown")
+        tracer.addProperty("UserID", event.userIdAsString ?: "unknown")
         tracer.addProperty("Origin", event.origin ?: "unknown")
     }
 
