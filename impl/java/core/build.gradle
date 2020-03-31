@@ -11,6 +11,7 @@ publish {
     desc = 'Core classes for event-protocol'
     groupId = 'br.com.guiabolso'
     licences = ['APACHE-2.0']
+    userOrg = 'gb-opensource'
     publishVersion = parent.ext.publish_version
     uploadName = 'Events-Core'
     website = 'https://github.com/GuiaBolso/events-protocol'
