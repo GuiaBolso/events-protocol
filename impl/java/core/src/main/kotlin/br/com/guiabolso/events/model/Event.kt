@@ -34,6 +34,11 @@ sealed class Event {
             it.getAsJsonPrimitive("userId")?.asLong
         }
 
+    val userIdAsString: String?
+        get() = this.identity.withCheckedJsonNull("userId") {
+            it.getAsJsonPrimitive("userId")?.asString
+        }
+
     val origin: String?
         get() = this.metadata.withCheckedJsonNull("origin") {
             it.getAsJsonPrimitive("origin")?.asString
