@@ -49,6 +49,28 @@ class EventsTest {
     }
 
     @Test
+    fun testGetUserIdAsStringFromIdentityWhenItIsNull() {
+        val event = buildRequestEvent()
+        assertNull(event.userIdAsString)
+    }
+
+    @Test
+    fun testGetUserIdAsStringFromIdentityWhenItIsNumber() {
+        val event = buildRequestEvent().copy(
+            identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+        )
+        assertEquals("42", event.userIdAsString)
+    }
+
+    @Test
+    fun testGetUserIdAsStringFromIdentityWhenItIsString() {
+        val event = buildRequestEvent().copy(
+            identity = JsonObject().apply { this.add("userId", JsonPrimitive("42")) }
+        )
+        assertEquals("42", event.userIdAsString)
+    }
+
+    @Test
     fun testGetUserIdFromIdentity() {
         assertNull(buildRequestEvent().userId)
 
