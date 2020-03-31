@@ -1,6 +1,6 @@
 buildscript {
     ext.open_tracing = '0.32.0'
-    ext.dd_trace = '0.40.0'
+    ext.dd_trace = '0.47.0'
 }
 
 dependencies {
