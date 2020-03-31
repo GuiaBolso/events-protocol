@@ -5,7 +5,7 @@ import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.http.FuelHttpClient
 import br.com.guiabolso.events.client.model.Response
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -26,13 +26,19 @@ constructor(
     }
 
     @JvmOverloads
-    fun sendEvent(url: String, requestEvent: RequestEvent, timeout: Int? = null): Response {
+    fun sendEvent(
+        url: String,
+        requestEvent: RequestEvent,
+        headers: Map<String, String> = emptyMap(),
+        timeout: Int? = null
+    ): Response {
+        val customHeaders = HashMap(headers).apply { this["Content-Type"] = "application/json" }
         try {
             logger.debug("Sending event ${requestEvent.name}:${requestEvent.version} to $url with timeout $timeout.")
             val rawResponse = httpClient.post(
                 url,
-                mapOf("Content-Type" to "application/json"),
-                MapperHolder.mapper.toJson(requestEvent),
+                customHeaders,
+                mapper.toJson(requestEvent),
                 Charsets.UTF_8,
                 timeout ?: defaultTimeout
             )
@@ -65,7 +71,7 @@ constructor(
 
     private fun parseEvent(rawResponse: String): ResponseEvent {
         try {
-            val rawEvent = MapperHolder.mapper.fromJson(rawResponse, RawEvent::class.java)
+            val rawEvent = mapper.fromJson(rawResponse, RawEvent::class.java)
             return eventValidator.validateAsResponseEvent(rawEvent)
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)
