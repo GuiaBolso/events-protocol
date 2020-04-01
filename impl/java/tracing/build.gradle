@@ -27,12 +27,11 @@ dependencies {
     testImplementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
 }
 
-apply plugin: 'com.novoda.bintray-release'
-
 publish {
     artifactId = 'tracing'
     autoPublish = true
     desc = 'Tracing library'
+    userOrg = 'gb-opensource'
     groupId = 'br.com.guiabolso'
     licences = ['APACHE-2.0']
     publishVersion = parent.ext.publish_version

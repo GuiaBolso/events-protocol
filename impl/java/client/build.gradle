@@ -7,14 +7,12 @@ dependencies {
     testImplementation project(':core').sourceSets.test.output
 }
 
-
-apply plugin: 'com.novoda.bintray-release'
-
 publish {
     artifactId = 'events-client'
     autoPublish = true
     desc = 'Client helpers for event-protocol'
     groupId = 'br.com.guiabolso'
+    userOrg = 'gb-opensource'
     licences = ['APACHE-2.0']
     publishVersion = parent.ext.publish_version
     uploadName = 'Events-Client'
