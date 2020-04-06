@@ -4,8 +4,6 @@ import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.exception.FailedDependencyException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.getAs
