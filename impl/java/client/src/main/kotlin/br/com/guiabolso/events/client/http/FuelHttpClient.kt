@@ -6,6 +6,7 @@ import br.com.guiabolso.events.client.exception.TimeoutException
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Method
+import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.getAs
 import java.net.SocketTimeoutException
@@ -20,15 +21,12 @@ class FuelHttpClient : HttpClientAdapter {
         charset: Charset,
         timeout: Int
     ): String {
-        val request = FuelManager.instance.request(Method.POST, url)
-
-        headers.forEach { (k, v) -> request.header(k to v) }
-
-        request.body(payload, charset)
-        request.timeout(timeout)
-        request.timeoutRead(timeout)
-
-        val (_, _, result) = request.responseString()
+        val (_, _, result) = url.httpPost()
+                .header(headers)
+                .body(payload,charset)
+                .timeout(timeout)
+                .timeoutRead(timeout)
+                .responseString()
 
         when (result) {
             is Result.Success -> {
