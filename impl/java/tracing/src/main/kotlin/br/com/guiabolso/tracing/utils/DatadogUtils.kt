@@ -27,6 +27,8 @@ object DatadogUtils {
             } catch (e: Exception) {
                 notifyError(span, e, false)
                 throw e
+            } finally {
+                span.finish()
             }
         }
     }
@@ -43,6 +45,8 @@ object DatadogUtils {
             } catch (e: Exception) {
                 notifyError(span, e, false)
                 throw e
+            } finally {
+                span.finish()
             }
         }
     }
