@@ -1,6 +1,6 @@
 buildscript {
     ext.open_tracing = '0.32.0'
-    ext.dd_trace = '0.47.0'
+    ext.dd_trace = '0.49.0'
 }
 
 dependencies {
@@ -12,7 +12,7 @@ dependencies {
     compileOnly group: 'io.opentracing', name: 'opentracing-util', version: open_tracing
     compileOnly group: 'com.datadoghq', name: 'dd-trace-ot', version: dd_trace
     compileOnly group: 'com.datadoghq', name: 'dd-trace-api', version: dd_trace
-    compileOnly group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.8'
+    compileOnly group: 'com.datadoghq', name: 'java-dogstatsd-client', version: '2.9.0'
 
     compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
 
