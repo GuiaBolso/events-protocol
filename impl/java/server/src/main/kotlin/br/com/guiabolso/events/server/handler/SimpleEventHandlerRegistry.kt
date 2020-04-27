@@ -6,10 +6,6 @@ import org.slf4j.LoggerFactory
 
 class SimpleEventHandlerRegistry : EventHandlerRegistry {
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(SimpleEventHandlerRegistry::class.java)
-    }
-
     private val handlers = mutableMapOf<Pair<String, Int>, EventHandler>()
 
     override fun add(handler: EventHandler) {
@@ -23,4 +19,7 @@ class SimpleEventHandlerRegistry : EventHandlerRegistry {
 
     override fun eventHandlerFor(eventName: String, eventVersion: Int) = handlers[eventName to eventVersion]
 
+    companion object {
+        private val logger = LoggerFactory.getLogger(SimpleEventHandlerRegistry::class.java)
+    }
 }
