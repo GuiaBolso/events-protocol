@@ -18,18 +18,20 @@ repositories {
 ```
 
 
-A biblioteca é composta de 3 modulos. Server, Client e Core.
+A biblioteca é composta de 4 modulos. Server, Client, Core e Test.
 
 ```
  compile "br.com.guiabolso:events-client:2.6.1"
  compile "br.com.guiabolso:events-server:2.6.1"
  compile "br.com.guiabolso:events-core:2.6.1"
+ testCompile "br.com.guiabolso:events-test:2.6.1"
 ```
 Geralmente as dependências a serem importadas são:
 
 * Server: Quando é necessário tratar requisições de eventos;
 * Client: Quando é necessário realizar requisições de evento;
 * Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado.
+* Test: Quando você for escrever testes específicos para validação dos eventos. Mais informação na [documentação de testes](doc/test.md)
 
 
 Motivação
