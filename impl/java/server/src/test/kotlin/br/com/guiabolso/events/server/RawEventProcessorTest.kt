@@ -5,21 +5,14 @@ import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class RawEventProcessorTest {
 
-    private lateinit var rawEventProcessor: RawEventProcessor
-    private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry
-    private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
+    private val eventHandlerRegistry = SimpleEventHandlerRegistry()
+    private val exceptionHandlerRegistry = ExceptionHandlerRegistry()
+    private val rawEventProcessor = RawEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
 
-    @BeforeEach
-    fun setUp() {
-        eventHandlerRegistry = SimpleEventHandlerRegistry()
-        exceptionHandlerRegistry = ExceptionHandlerRegistry()
-        rawEventProcessor = RawEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
-    }
 
     @Test
     fun testCanProcessEvent() {
