@@ -48,3 +48,7 @@ Todo matcher possui sua versão negativa.
 | response.shouldBeRedirect() | Verifica que esta resposta foi um redirect |
 | response.shouldBeError() | Verifica que esta resposta foi um erro |
 | response.shouldHaveErrorType(errorType) | Verifica que esta reposta possui error type _errorType_ |
+
+| Converting Event Handlers | |
+| ------- | ----- |
+| handler.shouldConvert(requestEvent) | Verifica que o event handler consegue executar o método `convert` sem nenhum problema. | 
