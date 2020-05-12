@@ -86,5 +86,4 @@ class LenientEventValidator : EventValidator {
         @Suppress("DEPRECATION")
         private val logger = LoggerFactory.getLogger(LenientEventValidator::class.java)
     }
-
 }

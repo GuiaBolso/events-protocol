@@ -10,5 +10,4 @@ class LambdaEventHandler(
 ) : EventHandler {
 
     override fun handle(event: RequestEvent) = func(event)
-
 }

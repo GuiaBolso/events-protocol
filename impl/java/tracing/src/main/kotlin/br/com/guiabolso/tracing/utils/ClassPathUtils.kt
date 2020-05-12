@@ -18,5 +18,4 @@ object ClassPathUtils {
     } catch (_: ClassNotFoundException) {
         false
     }
-
 }

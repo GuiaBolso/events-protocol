@@ -2,7 +2,6 @@ package br.com.guiabolso.tracing.engine.datadog
 
 import com.timgroup.statsd.NonBlockingStatsDClient
 
-
 class DatadogStatsDTracer(
     prefix: String,
     host: String,
@@ -26,5 +25,4 @@ class DatadogStatsDTracer(
             recordExecutionTime(name, elapsedTime, context)
         }
     }
-
 }

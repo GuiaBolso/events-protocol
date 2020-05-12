@@ -8,12 +8,12 @@ import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 
 class EventHandlerMatchersTests : FunSpec({
-    
+
     test("should convert") {
         MyHandler.shouldConvert(createEvent("success"))
         shouldThrowAny { MyHandler.shouldConvert(createEvent("error")) }
     }
-    
+
     test("should not convert") {
         MyHandler.shouldNotConvert(createEvent("error"))
         shouldThrowAny { MyHandler.shouldNotConvert(createEvent("success")) }
@@ -39,7 +39,7 @@ object MyHandler : ConvertingEventHandler<String> {
         return str
     }
 
-    override fun handle(input: RequestEvent, converted: String): ResponseEvent { 
+    override fun handle(input: RequestEvent, converted: String): ResponseEvent {
         throw NotImplementedError()
     }
 }

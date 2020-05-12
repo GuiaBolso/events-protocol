@@ -42,5 +42,4 @@ class ExceptionHandlerRegistry {
     private fun handlerFor(e: Throwable): EventExceptionHandler<Throwable>? {
         return handlers[handlers.keys.firstOrNull { it.isAssignableFrom(e.javaClass) }]
     }
-
 }

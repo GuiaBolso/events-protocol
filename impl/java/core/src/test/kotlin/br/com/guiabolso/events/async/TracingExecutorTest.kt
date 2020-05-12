@@ -6,10 +6,10 @@ import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.engine.TracerEngine
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class TracingExecutorTest {
 
@@ -44,5 +44,4 @@ class TracingExecutorTest {
 
         executor.shutdown()
     }
-
 }

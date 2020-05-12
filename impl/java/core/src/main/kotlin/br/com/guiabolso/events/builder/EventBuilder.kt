@@ -97,7 +97,6 @@ class EventBuilder {
             builder.payload = message
             return builder.buildResponseEvent()
         }
-
     }
 
     var name: String? = null
@@ -141,6 +140,4 @@ class EventBuilder {
         JsonNull.INSTANCE -> JsonObject()
         else -> MapperHolder.mapper.toJsonTree(value).asJsonObject
     }
-
 }
-

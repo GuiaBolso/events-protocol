@@ -8,11 +8,11 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 class ResponseEventsMatchersTests : FunSpec({
-   
+
     val successResponse = EventBuilder.responseFor(event) { }
     val redirectResponse = EventBuilder.redirectFor(event, RedirectPayload("a"))
     val errorResponse = EventBuilder.errorFor(event, EventErrorType.BadRequest, EventMessage("code", emptyMap()))
-    
+
     test("Should be success") {
         successResponse.shouldBeSuccess()
         redirectResponse.shouldNotBeSuccess()
@@ -42,7 +42,7 @@ class ResponseEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { errorResponse.shouldBeRedirect() }
         shouldThrow<AssertionError> { successResponse.shouldBeRedirect() }
     }
-    
+
     test("Should have error type") {
         errorResponse shouldHaveErrorType EventErrorType.BadRequest
         errorResponse shouldNotHaveErrorType EventErrorType.Expired
@@ -50,7 +50,6 @@ class ResponseEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { errorResponse shouldNotHaveErrorType EventErrorType.BadRequest }
         shouldThrow<AssertionError> { errorResponse shouldHaveErrorType EventErrorType.Expired }
     }
-    
 })
 
 private val event = EventBuilder.event {

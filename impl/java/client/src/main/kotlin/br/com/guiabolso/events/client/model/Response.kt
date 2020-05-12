@@ -29,5 +29,4 @@ sealed class Response {
         if (clazz.isAssignableFrom(this::class.java)) return clazz.cast(this)
         throw IllegalStateException("Invalid response type. This response is ${this.javaClass.simpleName} instead of ${clazz.simpleName}.")
     }
-
 }

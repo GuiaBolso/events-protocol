@@ -13,13 +13,13 @@ import org.junit.jupiter.api.Test
 class SimpleEventHandlerRegistryTest {
 
     @Test
-    fun `test can add multiple events (collection)`(){
+    fun `test can add multiple events (collection)`() {
         val eventHandlerDiscovery = SimpleEventHandlerRegistry()
-        
+
         val handlers = listOf(Handler1, Handler2)
-        
+
         eventHandlerDiscovery.addAll(handlers)
-        
+
         val handler1 = eventHandlerDiscovery.eventHandlerFor(Handler1.eventName, Handler1.eventVersion)
         val handler2 = eventHandlerDiscovery.eventHandlerFor(Handler2.eventName, Handler2.eventVersion)
         assertEquals(handler1, Handler1)
@@ -27,7 +27,7 @@ class SimpleEventHandlerRegistryTest {
     }
 
     @Test
-    fun `test can add multiple events (vararg)`(){
+    fun `test can add multiple events (vararg)`() {
         val eventHandlerDiscovery = SimpleEventHandlerRegistry()
 
         val handlers = listOf(Handler1, Handler2)
@@ -39,7 +39,7 @@ class SimpleEventHandlerRegistryTest {
         assertEquals(handler1, Handler1)
         assertEquals(handler2, Handler2)
     }
-    
+
     @Test
     fun testCanHandleEvent() {
         val eventHandlerDiscovery = SimpleEventHandlerRegistry()
@@ -54,7 +54,6 @@ class SimpleEventHandlerRegistryTest {
         assertEquals(EventBuilderForTest.buildResponseEvent(), responseEvent)
     }
 
-
     @Test
     fun testReturnsNullWhenEventNotFound() {
         val eventHandlerDiscovery = SimpleEventHandlerRegistry()
@@ -67,7 +66,7 @@ class SimpleEventHandlerRegistryTest {
 
 private object Handler1 : EventHandler {
     var handles = 0
-    
+
     override val eventName = "Dummy1"
     override val eventVersion = 1
 
@@ -84,7 +83,6 @@ private object Handler2 : EventHandler {
 
     override fun handle(event: RequestEvent): ResponseEvent {
         handles++
-        return EventBuilder.responseFor(event) {  }
+        return EventBuilder.responseFor(event) { }
     }
 }
-

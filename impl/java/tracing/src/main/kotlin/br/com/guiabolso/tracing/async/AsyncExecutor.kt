@@ -24,5 +24,4 @@ interface AsyncExecutor {
      * @since 2.0.0
      */
     fun <T> executeAsync(engine: TracerEngine<*>, executor: ExecutorService, task: Callable<T>): Future<T>
-
 }

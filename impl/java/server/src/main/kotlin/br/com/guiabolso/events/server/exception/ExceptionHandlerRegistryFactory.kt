@@ -19,6 +19,4 @@ object ExceptionHandlerRegistryFactory {
 
         return handler
     }
-
 }
-

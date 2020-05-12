@@ -34,5 +34,4 @@ class StrictEventValidator : EventValidator {
         if (this == null || !this.isJsonObject) throw EventValidationException(name)
         return this.asJsonObject
     }
-
 }

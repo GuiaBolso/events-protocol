@@ -9,5 +9,4 @@ class LambdaEventExceptionHandler<in T : Throwable>(
 ) : EventExceptionHandler<T> {
 
     override fun handleException(exception: T, event: RequestEvent, tracer: Tracer) = func(exception, event, tracer)
-
 }

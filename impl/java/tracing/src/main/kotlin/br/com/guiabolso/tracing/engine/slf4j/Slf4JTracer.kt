@@ -1,9 +1,9 @@
 package br.com.guiabolso.tracing.engine.slf4j
 
 import br.com.guiabolso.tracing.engine.TracerEngine
+import java.io.Closeable
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
-import java.io.Closeable
 
 class Slf4JTracer : TracerEngine<Map<String, String?>> {
 
@@ -23,9 +23,9 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         MDC.put(key, value?.toString())
     }
 
-    override fun addProperty(key: String, value: List<*>){
-        val finalValue:String = value.joinToString(",", "[", "]"){
-            "\"${it.toString()}\""
+    override fun addProperty(key: String, value: List<*>) {
+        val finalValue: String = value.joinToString(",", "[", "]") {
+            "\"${it}\""
         }
         addProperty(key, finalValue)
     }
@@ -86,5 +86,4 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         @JvmStatic
         private val LOGGER = LoggerFactory.getLogger(Slf4JTracer::class.java)
     }
-
 }

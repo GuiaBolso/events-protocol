@@ -24,5 +24,4 @@ object StatsDTags : Closeable {
     override fun close() {
         if (this.get("prefix") == "") tags.remove()
     }
-
 }

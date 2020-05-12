@@ -77,5 +77,4 @@ constructor(
             throw BadProtocolException(rawResponse, e)
         }
     }
-
 }

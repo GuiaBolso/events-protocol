@@ -8,7 +8,6 @@ import io.opentracing.Tracer.SpanBuilder
 import io.opentracing.util.GlobalTracer
 import java.io.Closeable
 
-
 open class DatadogTracer : TracerEngine<SpanBuilder> {
     private val tracer: Tracer
         get() = GlobalTracer.get()
@@ -75,5 +74,4 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     }
 
     override fun clear() {}
-
 }

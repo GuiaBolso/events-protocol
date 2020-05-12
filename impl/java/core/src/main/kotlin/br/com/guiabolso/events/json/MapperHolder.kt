@@ -8,5 +8,4 @@ object MapperHolder {
     var mapper = GsonBuilder()
         .serializeNulls()
         .create()!!
-
 }

@@ -12,5 +12,4 @@ object ExceptionUtils {
         throwable.printStackTrace(pw)
         return sw.buffer.toString()
     }
-
 }

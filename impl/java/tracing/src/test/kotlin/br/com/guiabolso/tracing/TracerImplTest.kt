@@ -5,9 +5,9 @@ import br.com.guiabolso.tracing.engine.TracerEngine
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
-import org.junit.jupiter.api.Test
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
+import org.junit.jupiter.api.Test
 
 class TracerImplTest {
 
@@ -81,5 +81,4 @@ class TracerImplTest {
 
         verify(mockTracer, times(1)).clear()
     }
-
 }

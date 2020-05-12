@@ -7,5 +7,4 @@ import br.com.guiabolso.tracing.Tracer
 interface EventExceptionHandler<in T : Throwable> {
 
     fun handleException(exception: T, event: RequestEvent, tracer: Tracer): ResponseEvent
-
 }

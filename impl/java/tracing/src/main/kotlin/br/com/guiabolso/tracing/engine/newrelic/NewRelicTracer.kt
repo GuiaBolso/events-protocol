@@ -27,7 +27,7 @@ class NewRelicTracer : TracerEngine<Token> {
     }
 
     override fun addProperty(key: String, value: List<*>) {
-        val finalValue:String = value.joinToString(",")
+        val finalValue: String = value.joinToString(",")
         addProperty(key, finalValue)
     }
 
@@ -67,5 +67,4 @@ class NewRelicTracer : TracerEngine<Token> {
     }
 
     override fun clear() {}
-
 }

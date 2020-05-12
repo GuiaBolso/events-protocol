@@ -5,7 +5,6 @@ import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
-import java.lang.IllegalStateException
 
 sealed class Event {
     abstract val name: String
@@ -44,7 +43,7 @@ sealed class Event {
             it.getAsJsonPrimitive("origin")?.asString
         }
 
-    inline fun <reified T> JsonElement.convertTo(): T = MapperHolder.mapper.fromJson(this, object: TypeToken<T>(){}.type)
+    inline fun <reified T> JsonElement.convertTo(): T = MapperHolder.mapper.fromJson(this, object : TypeToken<T>() {}.type)
 
     private fun <T> JsonElement.convertTo(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this, clazz)
 }
@@ -70,7 +69,6 @@ data class ResponseEvent(
         if (isSuccess()) throw IllegalStateException("This is not an error event.")
         return EventErrorType.getErrorType(this.name.substringAfterLast(":"))
     }
-
 }
 
 data class RequestEvent(

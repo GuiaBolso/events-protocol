@@ -8,5 +8,4 @@ class EventValidationException(propertyName: String) : RuntimeException() {
         "INVALID_COMMUNICATION_PROTOCOL",
         mapOf("missingProperty" to propertyName)
     )
-
 }

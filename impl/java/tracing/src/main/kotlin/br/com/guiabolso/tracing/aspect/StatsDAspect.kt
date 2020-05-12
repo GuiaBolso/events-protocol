@@ -27,5 +27,4 @@ class StatsDAspect(private val tracer: Tracer) {
             }
         }
     }
-
 }

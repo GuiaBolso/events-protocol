@@ -5,11 +5,11 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import java.io.Closeable
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class DefaultAsyncExecutorTest {
 
@@ -56,5 +56,4 @@ class DefaultAsyncExecutorTest {
         verify(tracer, times(1)).withContext("context")
         verify(closeable, times(1)).close()
     }
-
 }

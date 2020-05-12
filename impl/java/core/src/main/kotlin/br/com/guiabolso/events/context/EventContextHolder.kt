@@ -16,6 +16,4 @@ object EventContextHolder {
     fun clean() {
         holder.remove()
     }
-
 }
-

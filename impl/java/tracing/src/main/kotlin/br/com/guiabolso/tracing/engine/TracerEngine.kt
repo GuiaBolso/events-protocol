@@ -108,5 +108,4 @@ interface TracerEngine<C> {
      * Cleans the tracer state.
      */
     fun clear()
-
 }
