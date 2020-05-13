@@ -23,7 +23,7 @@ buildscript {
 
 allprojects {
     ext {
-        publish_version = '2.9.0'
+        publish_version = '2.10.0'
     }
     tasks.whenTaskAdded {
         if (name == "generateSourcesJarForMavenPublication") {
