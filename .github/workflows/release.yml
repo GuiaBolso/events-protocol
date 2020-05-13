@@ -3,7 +3,7 @@ name: Release
 on: 
   release:
     types:
-      - created
+      - published
 
 jobs:
   release:
@@ -16,7 +16,9 @@ jobs:
           java-version: 1.8
       - name: Release
         shell: bash
-        with:
+        env:
           bintray_user: ${{ secrets.BintrayUser }}
           bintray_key: ${{ secrets.BintrayKey }}
-        run: BINTRAY_USER="$bintray_user" BINTRAY_KEY="$bintray_key" impl/java/upload-bintray.sh
+        run: |
+          cd impl/java
+          ./upload-bintray.sh
