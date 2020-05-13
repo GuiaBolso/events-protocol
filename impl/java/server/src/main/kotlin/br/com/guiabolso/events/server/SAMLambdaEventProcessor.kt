@@ -11,9 +11,9 @@ import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.factory.TracerFactory
-import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.io.OutputStream
+import org.slf4j.LoggerFactory
 
 /**
  *  Used for running with AWS SAM because its input and expected output is different than the real AWS Lambda
@@ -82,5 +82,4 @@ constructor(
     companion object {
         private val logger = LoggerFactory.getLogger(SAMLambdaEventProcessor::class.java)
     }
-
 }

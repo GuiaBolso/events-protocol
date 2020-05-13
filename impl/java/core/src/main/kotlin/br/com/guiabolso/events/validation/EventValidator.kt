@@ -14,5 +14,4 @@ interface EventValidator {
         null -> throw EventValidationException(name)
         else -> this
     }
-
 }

@@ -9,11 +9,11 @@ import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 
 class SAMLambdaEventProcessorTest {
 
@@ -69,5 +69,4 @@ class SAMLambdaEventProcessorTest {
     )!!
 
     private fun String.asStream() = ByteArrayInputStream(this.toByteArray())
-
 }

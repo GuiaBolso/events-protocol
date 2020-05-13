@@ -1,10 +1,14 @@
 package br.com.guiabolso.tracing.factory
 
 import br.com.guiabolso.tracing.engine.TracerEngine
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.times
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
+import java.io.Closeable
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyList
-import java.io.Closeable
 
 class CompositeTracerEngineTest {
 
@@ -46,7 +50,7 @@ class CompositeTracerEngineTest {
 
     @Test
     fun `should delegate addProperty as String for List`() {
-        val item:List<Int> = listOf(1, 2, 3, 4, 5)
+        val item: List<Int> = listOf(1, 2, 3, 4, 5)
         engine.addProperty("key", item)
 
         verify(mockEngine1, times(1)).addProperty(eq("key"), anyList<Int>())
@@ -110,7 +114,6 @@ class CompositeTracerEngineTest {
         whenever(mockEngine2.withContext("context")).thenReturn(closeable2)
 
         engine.withContext(engine.extractContext()) {
-
         }
 
         verify(mockEngine1, times(1)).withContext("context")
@@ -126,5 +129,4 @@ class CompositeTracerEngineTest {
         verify(mockEngine1, times(1)).clear()
         verify(mockEngine2, times(1)).clear()
     }
-
 }

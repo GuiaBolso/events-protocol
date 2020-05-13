@@ -373,5 +373,4 @@ class EventBuilderTest {
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)
     }
-
 }

@@ -8,5 +8,4 @@ interface HttpClientAdapter {
 
     @Throws(TimeoutException::class, FailedDependencyException::class)
     fun post(url: String, headers: Map<String, String>, payload: String, charset: Charset, timeout: Int): String
-
 }

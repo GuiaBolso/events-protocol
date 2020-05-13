@@ -67,5 +67,4 @@ constructor(
     private fun eventProcessFinished() {
         tracer.clear()
     }
-
 }

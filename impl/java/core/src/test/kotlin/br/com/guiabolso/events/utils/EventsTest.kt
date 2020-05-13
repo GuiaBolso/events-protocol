@@ -164,5 +164,4 @@ class EventsTest {
     }
 
     private data class VO(val a: String? = null, val b: Long? = null)
-
 }

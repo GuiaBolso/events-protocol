@@ -107,5 +107,4 @@ interface Tracer {
      * Cleans the tracer state.
      */
     fun clear()
-
 }

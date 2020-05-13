@@ -42,5 +42,4 @@ constructor(
     }
 
     private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
-
 }

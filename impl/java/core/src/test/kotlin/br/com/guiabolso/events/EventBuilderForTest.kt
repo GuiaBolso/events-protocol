@@ -54,5 +54,4 @@ object EventBuilderForTest {
         auth = JsonObject(),
         metadata = JsonObject()
     )
-
 }

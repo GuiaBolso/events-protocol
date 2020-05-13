@@ -74,5 +74,4 @@ object TracerFactory {
 
     @JvmStatic
     private fun compose(vararg tracers: TracerEngine<*>) = CompositeTracerEngine(tracers.toList())
-
 }

@@ -7,8 +7,8 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 class GeneralEventsMatchersTests : FunSpec({
-    
-    val event = EventBuilder.event { 
+
+    val event = EventBuilder.event {
         name = "a:b"
         version = 3
         id = "id"
@@ -18,15 +18,15 @@ class GeneralEventsMatchersTests : FunSpec({
         auth = complexMap
         metadata = complexMap
     }
-    
+
     test("should have name") {
         event shouldHaveName "a:b"
         event shouldNotHaveName "poop"
-        
+
         shouldThrow<AssertionError> { event shouldHaveName "x" }
         shouldThrow<AssertionError> { event shouldNotHaveName "a:b" }
     }
-    
+
     test("Should have version") {
         event shouldHaveVersion 3
         event shouldNotHaveVersion 4
@@ -50,18 +50,18 @@ class GeneralEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { event shouldHaveFlowId "poop" }
         shouldThrow<AssertionError> { event shouldNotHaveFlowId "flowId" }
     }
-    
+
     test("Should have payload") {
         event.shouldContainPayload("a", "b")
         event.shouldNotContainPayload("a", "c")
         shouldThrow<AssertionError> { event.shouldNotContainPayload("a", "b") }
         shouldThrow<AssertionError> { event.shouldContainPayload("a", "c") }
-        
+
         event.shouldContainPayload("c.a", "b")
         event.shouldNotContainPayload("c.a", "d")
         shouldThrow<AssertionError> { event.shouldNotContainPayload("c.a", "b") }
         shouldThrow<AssertionError> { event.shouldContainPayload("c.a", "d") }
-        
+
         event shouldHavePayload complexMap
         event shouldNotHavePayload mapOf("a" to "b")
         event shouldNotHavePayload emptyMap()
@@ -130,10 +130,10 @@ class GeneralEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { event shouldHaveMetadata mapOf("a" to "b") }
         shouldThrow<AssertionError> { event shouldHaveMetadata emptyMap() }
     }
-    
+
     test("Should have userId") {
         val eventWithUserId = event.copy(identity = mapOf("userId" to 42).toJsonObject())
-        
+
         eventWithUserId shouldHaveUserId 42
         eventWithUserId shouldNotHaveUserId 43
 
@@ -150,8 +150,7 @@ class GeneralEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { eventWithOrigin shouldNotHaveOrigin "foo" }
         shouldThrow<AssertionError> { eventWithOrigin shouldHaveOrigin "bar" }
     }
-    
-}) 
+})
 
 private val complexMap = mapOf(
     "a" to "b",

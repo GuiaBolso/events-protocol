@@ -15,5 +15,4 @@ class CallableWrapper<T>(
             EventContextHolder.clean()
         }
     }
-
 }

@@ -1,7 +1,7 @@
 package br.com.guiabolso.tracing.factory
 
-import org.slf4j.LoggerFactory
 import java.io.Closeable
+import org.slf4j.LoggerFactory
 
 data class CompositeTracerEngineCloseable(val context: List<Closeable>) : Closeable {
     override fun close() {

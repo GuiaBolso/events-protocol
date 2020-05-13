@@ -22,7 +22,7 @@ class NewRelicAsyncExecutor : AsyncExecutor {
         }))
     }
 
-    //This is required to NewRelic works
+    // This is required to NewRelic works
     @Trace(async = true)
     private fun <T> asyncTask(engine: TracerEngine<*>, context: Any, task: () -> T): T {
         return engine.withContext(context).use {
@@ -30,12 +30,11 @@ class NewRelicAsyncExecutor : AsyncExecutor {
         }
     }
 
-    //This is required to NewRelic works
+    // This is required to NewRelic works
     @Trace(async = true)
     private fun <T> asyncTask(engine: TracerEngine<*>, context: Any, task: Callable<T>): T {
         return engine.withContext(context).use {
             task.call()
         }
     }
-
 }

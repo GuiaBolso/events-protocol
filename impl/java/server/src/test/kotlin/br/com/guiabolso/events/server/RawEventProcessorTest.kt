@@ -13,7 +13,6 @@ class RawEventProcessorTest {
     private val exceptionHandlerRegistry = ExceptionHandlerRegistry()
     private val rawEventProcessor = RawEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
 
-
     @Test
     fun testCanProcessEvent() {
         val event = buildRawRequestEvent()
@@ -91,5 +90,4 @@ class RawEventProcessorTest {
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload.asJsonObject["code"].asString)
         assertEquals("version", responseEvent.payload.asJsonObject["parameters"].asJsonObject["missingProperty"].asString)
     }
-
 }

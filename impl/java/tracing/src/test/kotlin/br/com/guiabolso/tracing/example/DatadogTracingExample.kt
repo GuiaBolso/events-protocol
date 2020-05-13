@@ -4,9 +4,9 @@ import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
 import br.com.guiabolso.tracing.factory.TracerFactory
 import br.com.guiabolso.tracing.utils.DatadogUtils
 import datadog.trace.api.Trace
-import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit.SECONDS
+import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger(DatadogTracer::class.java)
 
@@ -20,7 +20,7 @@ fun main(vararg args: String) {
     val tracer = TracerFactory.createTracerWithDatadog()
     val executor = Executors.newFixedThreadPool(2)
 
-    //You don't need to use DatadogUtils.traceAsNewOperation when using servlet, its automatic.
+    // You don't need to use DatadogUtils.traceAsNewOperation when using servlet, its automatic.
     DatadogUtils.traceAsNewOperation("simpleOperation") {
         tracer.addProperty("oneTag", "someValue1")
         someWork()
@@ -36,8 +36,8 @@ fun main(vararg args: String) {
         try {
             someWorkWithError()
         } catch (e: Exception) {
-            //Fallback
-            //In this scenario only the child span will be marked as error
+            // Fallback
+            // In this scenario only the child span will be marked as error
         }
     }
 
@@ -72,7 +72,7 @@ fun main(vararg args: String) {
     executor.awaitTermination(10, SECONDS)
 }
 
-//If you want to change the name of this method span set 'operationName'.
+// If you want to change the name of this method span set 'operationName'.
 // Remember that unlike NewRelic's metrics '/' should not be used.
 @Trace
 private fun someWork() {

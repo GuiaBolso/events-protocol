@@ -72,7 +72,6 @@ class ExceptionHandlerRegistryTest {
         assertEquals("RuntimeException", response.payload.asString)
     }
 
-
     @Test
     fun testHandleDefaultError() {
         val exceptionHandlerRegistry = exceptionHandler()
@@ -114,5 +113,4 @@ class ExceptionHandlerRegistryTest {
 
         assertEquals(cause, exception)
     }
-
 }

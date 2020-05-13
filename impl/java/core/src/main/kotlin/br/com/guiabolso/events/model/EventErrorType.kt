@@ -26,5 +26,4 @@ sealed class EventErrorType(open val typeName: String) {
     object ResourceDenied : EventErrorType("resourceDenied")
     object Expired : EventErrorType("expired")
     data class Unknown(override val typeName: String) : EventErrorType(typeName)
-
 }

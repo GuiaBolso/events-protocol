@@ -51,5 +51,4 @@ class EventProcessorTest {
 
     private fun buildRequestEventString(event: RequestEvent = buildRequestEvent()) =
         MapperHolder.mapper.toJson(event)!!
-
 }

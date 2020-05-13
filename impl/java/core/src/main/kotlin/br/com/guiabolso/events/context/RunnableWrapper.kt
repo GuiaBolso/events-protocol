@@ -13,5 +13,4 @@ class RunnableWrapper(
             EventContextHolder.clean()
         }
     }
-
 }

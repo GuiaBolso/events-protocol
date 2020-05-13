@@ -195,5 +195,4 @@ class EventClientTest {
         assertNull((response as Response.FailedDependency).response)
         assertTrue(response.exception is FailedDependencyException)
     }
-
 }

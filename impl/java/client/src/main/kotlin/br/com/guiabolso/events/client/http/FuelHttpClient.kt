@@ -21,7 +21,7 @@ class FuelHttpClient : HttpClientAdapter {
     ): String {
         val (_, _, result) = url.httpPost()
                 .header(headers)
-                .body(payload,charset)
+                .body(payload, charset)
                 .timeout(timeout)
                 .timeoutRead(timeout)
                 .responseString()
@@ -40,5 +40,4 @@ class FuelHttpClient : HttpClientAdapter {
             }
         }
     }
-
 }

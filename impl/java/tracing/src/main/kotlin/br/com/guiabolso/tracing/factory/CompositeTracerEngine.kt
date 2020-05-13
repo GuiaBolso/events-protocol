@@ -24,7 +24,7 @@ class CompositeTracerEngine(
     }
 
     override fun addProperty(key: String, value: List<*>) {
-        tracers.forEach{ it.addProperty(key, value) }
+        tracers.forEach { it.addProperty(key, value) }
     }
 
     override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
@@ -72,6 +72,4 @@ class CompositeTracerEngine(
     override fun clear() {
         tracers.forEach { it.clear() }
     }
-
 }
-
