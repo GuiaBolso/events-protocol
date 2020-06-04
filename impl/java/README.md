@@ -1,9 +1,9 @@
 Events Protocol
 =================
 
-[![Build Status](https://travis-ci.org/GuiaBolso/events-protocol.svg?branch=master)](https://travis-ci.org/GuiaBolso/events-protocol)
-[ ![Download](https://api.bintray.com/packages/gb-opensource/maven/Events-Core/images/download.svg) ](https://bintray.com/gb-opensource/maven/Events-Core/_latestVersion)
 
+[![Build Status](https://github.com/GuiaBolso/events-protocol/workflows/build/badge.svg?branch=master)](https://github.com/GuiaBolso/events-protocol/actions)
+[![Download](https://api.bintray.com/packages/gb-opensource/maven/Events-Core/images/download.svg) ](https://bintray.com/gb-opensource/maven/Events-Core/_latestVersion)
 
 Dependencias
 ---------------
