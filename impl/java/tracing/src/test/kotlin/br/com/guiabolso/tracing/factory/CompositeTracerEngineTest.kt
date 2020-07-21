@@ -34,7 +34,7 @@ class CompositeTracerEngineTest {
 
     @Test
     fun `should delegate addRootProperty for string`() {
-        engine.addProperty("key", "value")
+        engine.addRootProperty("key", "value")
 
         verify(mockEngine1, times(1)).addRootProperty("key", "value")
         verify(mockEngine2, times(1)).addRootProperty("key", "value")
@@ -50,7 +50,7 @@ class CompositeTracerEngineTest {
 
     @Test
     fun `should delegate addRootProperty for number`() {
-        engine.addProperty("key", 10)
+        engine.addRootProperty("key", 10)
 
         verify(mockEngine1, times(1)).addRootProperty("key", 10)
         verify(mockEngine2, times(1)).addRootProperty("key", 10)
@@ -66,7 +66,7 @@ class CompositeTracerEngineTest {
 
     @Test
     fun `should delegate addRootProperty for boolean`() {
-        engine.addProperty("key", true)
+        engine.addRootProperty("key", true)
 
         verify(mockEngine1, times(1)).addRootProperty("key", true)
         verify(mockEngine2, times(1)).addRootProperty("key", true)
