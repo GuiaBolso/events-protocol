@@ -15,12 +15,24 @@ class CompositeTracerEngine(
         tracers.forEach { it.addProperty(key, value) }
     }
 
+    override fun addRootProperty(key: String, value: String?) {
+        tracers.forEach { it.addRootProperty(key, value) }
+    }
+
     override fun addProperty(key: String, value: Number?) {
         tracers.forEach { it.addProperty(key, value) }
     }
 
+    override fun addRootProperty(key: String, value: Number?) {
+        tracers.forEach { it.addRootProperty(key, value) }
+    }
+
     override fun addProperty(key: String, value: Boolean?) {
         tracers.forEach { it.addProperty(key, value) }
+    }
+
+    override fun addRootProperty(key: String, value: Boolean?) {
+        tracers.forEach { it.addRootProperty(key, value) }
     }
 
     override fun addProperty(key: String, value: List<*>) {

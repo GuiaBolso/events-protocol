@@ -15,11 +15,23 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         MDC.put(key, value)
     }
 
+    override fun addRootProperty(key: String, value: String?) {
+        MDC.put(key, value)
+    }
+
     override fun addProperty(key: String, value: Number?) {
         addProperty(key, value?.toString())
     }
 
+    override fun addRootProperty(key: String, value: Number?) {
+        addProperty(key, value?.toString())
+    }
+
     override fun addProperty(key: String, value: Boolean?) {
+        MDC.put(key, value?.toString())
+    }
+
+    override fun addRootProperty(key: String, value: Boolean?) {
         MDC.put(key, value?.toString())
     }
 
