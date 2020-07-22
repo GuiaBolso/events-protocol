@@ -22,12 +22,17 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     }
 
     override fun addRootProperty(key: String, value: String?) {
-        tracer.activeSpan()?.let {
-            val span = (it as MutableSpan)
-            val rootSpan = span.localRootSpan
-            rootSpan?.run {
-                this.setTag(key, value)
-            } ?: span.setTag(key, value)
+        tracer.activeSpan()?.let { span ->
+            when {
+                MutableSpan::class.java.isAssignableFrom(span::class.java) -> {
+                    val mutableSpan = (span as MutableSpan)
+                    val rootSpan = mutableSpan.localRootSpan
+                    rootSpan?.run {
+                        this.setTag(key, value) as Any
+                    }
+                }
+                else -> span.setTag(key, value)
+            }
         }
     }
 
@@ -36,12 +41,17 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     }
 
     override fun addRootProperty(key: String, value: Number?) {
-        tracer.activeSpan()?.let {
-            val span = (it as MutableSpan)
-            val rootSpan = span.localRootSpan
-            rootSpan?.run {
-                this.setTag(key, value)
-            } ?: span.setTag(key, value)
+        tracer.activeSpan()?.let { span ->
+            when {
+                MutableSpan::class.java.isAssignableFrom(span::class.java) -> {
+                    val mutableSpan = (span as MutableSpan)
+                    val rootSpan = mutableSpan.localRootSpan
+                    rootSpan?.run {
+                        this.setTag(key, value) as Any
+                    }
+                }
+                else -> span.setTag(key, value)
+            }
         }
     }
 
@@ -51,12 +61,17 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun addRootProperty(key: String, value: Boolean?) {
         if (value != null) {
-            tracer.activeSpan()?.let {
-                val span = (it as MutableSpan)
-                val rootSpan = span.localRootSpan
-                rootSpan?.run {
-                    this.setTag(key, value)
-                } ?: span.setTag(key, value)
+            tracer.activeSpan()?.let { span ->
+                when {
+                    MutableSpan::class.java.isAssignableFrom(span::class.java) -> {
+                        val mutableSpan = (span as MutableSpan)
+                        val rootSpan = mutableSpan.localRootSpan
+                        rootSpan?.run {
+                            this.setTag(key, value) as Any
+                        }
+                    }
+                    else -> span.setTag(key, value)
+                }
             }
         }
     }
