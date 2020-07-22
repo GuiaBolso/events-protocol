@@ -96,9 +96,23 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         }
     }
 
+    fun notifyRootError(exception: Throwable, expected: Boolean) {
+        tracer.activeSpan()?.let { span ->
+            if (span is MutableSpan) (span as MutableSpan).localRootSpan.isError = true
+            DatadogUtils.notifyError(span, exception, expected)
+        }
+    }
+
     override fun notifyError(message: String, params: Map<String, String?>, expected: Boolean) {
         val span = tracer.activeSpan()
         if (span != null) {
+            DatadogUtils.notifyError(span, message, params, expected)
+        }
+    }
+
+    fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
+        tracer.activeSpan()?.let { span ->
+            if (span is MutableSpan) (span as MutableSpan).localRootSpan.isError = true
             DatadogUtils.notifyError(span, message, params, expected)
         }
     }
