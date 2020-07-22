@@ -17,6 +17,7 @@ class NewRelicTracer : TracerEngine<Token> {
     override fun addProperty(key: String, value: String?) {
         addCustomParameter(key, value)
     }
+
     override fun addProperty(key: String, value: Number?) {
         addCustomParameter(key, value)
     }
