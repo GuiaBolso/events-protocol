@@ -22,7 +22,7 @@ fun main(vararg args: String) {
 
     // You don't need to use DatadogUtils.traceAsNewOperation when using servlet, its automatic.
     DatadogUtils.traceAsNewOperation("simpleOperation") {
-        tracer.addProperty("OneTag", "someValue1")
+        tracer.addProperty("oneTag", "someValue1")
         someWork()
     }
 

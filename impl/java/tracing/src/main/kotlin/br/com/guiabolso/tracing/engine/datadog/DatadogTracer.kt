@@ -23,8 +23,8 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun addRootProperty(key: String, value: String?) {
         tracer.activeSpan()?.let { span ->
-            when {
-                MutableSpan::class.java.isAssignableFrom(span::class.java) -> {
+            when (span) {
+                is MutableSpan -> {
                     val mutableSpan = (span as MutableSpan)
                     val rootSpan = mutableSpan.localRootSpan
                     rootSpan?.run {
@@ -42,8 +42,8 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun addRootProperty(key: String, value: Number?) {
         tracer.activeSpan()?.let { span ->
-            when {
-                MutableSpan::class.java.isAssignableFrom(span::class.java) -> {
+            when (span) {
+                is MutableSpan -> {
                     val mutableSpan = (span as MutableSpan)
                     val rootSpan = mutableSpan.localRootSpan
                     rootSpan?.run {
@@ -62,8 +62,8 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     override fun addRootProperty(key: String, value: Boolean?) {
         if (value != null) {
             tracer.activeSpan()?.let { span ->
-                when {
-                    MutableSpan::class.java.isAssignableFrom(span::class.java) -> {
+                when (span) {
+                    is MutableSpan -> {
                         val mutableSpan = (span as MutableSpan)
                         val rootSpan = mutableSpan.localRootSpan
                         rootSpan?.run {

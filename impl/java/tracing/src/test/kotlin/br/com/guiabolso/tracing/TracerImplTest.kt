@@ -53,9 +53,9 @@ class TracerImplTest {
 
     @Test
     fun `should delegate addProperty for boolean`() {
-        tracer.addRootProperty("key", true)
+        tracer.addProperty("key", true)
 
-        verify(mockTracer, times(1)).addRootProperty("key", true)
+        verify(mockTracer, times(1)).addProperty("key", true)
     }
 
     @Test
