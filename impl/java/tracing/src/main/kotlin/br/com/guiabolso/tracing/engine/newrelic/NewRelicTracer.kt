@@ -18,11 +18,23 @@ class NewRelicTracer : TracerEngine<Token> {
         addCustomParameter(key, value)
     }
 
+    override fun addRootProperty(key: String, value: String?) {
+        addCustomParameter(key, value)
+    }
+
     override fun addProperty(key: String, value: Number?) {
         addCustomParameter(key, value)
     }
 
+    override fun addRootProperty(key: String, value: Number?) {
+        addCustomParameter(key, value)
+    }
+
     override fun addProperty(key: String, value: Boolean?) {
+        addCustomParameter(key, value.toString())
+    }
+
+    override fun addRootProperty(key: String, value: Boolean?) {
         addCustomParameter(key, value.toString())
     }
 
@@ -52,6 +64,14 @@ class NewRelicTracer : TracerEngine<Token> {
     }
 
     override fun notifyError(message: String, params: Map<String, String?>, expected: Boolean) {
+        noticeError(message, params, expected)
+    }
+
+    override fun notifyRootError(exception: Throwable, expected: Boolean) {
+        noticeError(exception, expected)
+    }
+
+    override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
         noticeError(message, params, expected)
     }
 

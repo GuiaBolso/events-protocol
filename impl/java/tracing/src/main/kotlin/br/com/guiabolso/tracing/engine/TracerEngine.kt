@@ -22,6 +22,15 @@ interface TracerEngine<C> {
     fun addProperty(key: String, value: String?)
 
     /**
+     * Add a key/value pair to the local root span at the current traced operation. These should be reported in errors and tracings.
+     *
+     * @param key Custom parameter key.
+     * @param value Custom parameter value.
+     * @since 2.0.0
+     */
+    fun addRootProperty(key: String, value: String?)
+
+    /**
      * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
      *
      * @param key Custom parameter key.
@@ -31,6 +40,15 @@ interface TracerEngine<C> {
     fun addProperty(key: String, value: Number?)
 
     /**
+     * Add a key/value pair to the local root span at the current traced operation. These should be reported in errors and tracings.
+     *
+     * @param key Custom parameter key.
+     * @param value Custom parameter value.
+     * @since 2.0.0
+     */
+    fun addRootProperty(key: String, value: Number?)
+
+    /**
      * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
      *
      * @param key Custom parameter key.
@@ -38,6 +56,15 @@ interface TracerEngine<C> {
      * @since 2.0.0
      */
     fun addProperty(key: String, value: Boolean?)
+
+    /**
+     * Add a key/value pair to the local root span at the current traced operation. These should be reported in errors and tracings.
+     *
+     * @param key Custom parameter key.
+     * @param value Custom parameter value.
+     * @since 2.0.0
+     */
+    fun addRootProperty(key: String, value: Boolean?)
 
     /**
      * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
@@ -79,6 +106,15 @@ interface TracerEngine<C> {
     fun notifyError(exception: Throwable, expected: Boolean)
 
     /**
+     * Notice an error and report it to the tracer at the root span.
+     *
+     * @param exception The exception to be reported.
+     * @param expected true if this error is expected, false otherwise.
+     * @since 2.0.0
+     */
+    fun notifyRootError(exception: Throwable, expected: Boolean)
+
+    /**
      * Notice an error and report it to the tracer.
      *
      * @param message Error message.
@@ -87,6 +123,16 @@ interface TracerEngine<C> {
      * @since 2.0.0
      */
     fun notifyError(message: String, params: Map<String, String?>, expected: Boolean)
+
+    /**
+     * Notice an error and report it to the tracer at the root span.
+     *
+     * @param message Error message.
+     * @param params Custom parameters to include in the traced error. May be null.
+     * @param expected true if this error is expected, false otherwise.
+     * @since 2.0.0
+     */
+    fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean)
 
     /**
      * Extract the current trace context

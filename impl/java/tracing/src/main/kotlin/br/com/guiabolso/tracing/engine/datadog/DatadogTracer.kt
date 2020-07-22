@@ -21,7 +21,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         tracer.activeSpan()?.setTag(key, value)
     }
 
-    fun addRootProperty(key: String, value: String?) {
+    override fun addRootProperty(key: String, value: String?) {
         tracer.activeSpan()?.let { span ->
             when (span) {
                 is MutableSpan -> {
@@ -40,7 +40,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         tracer.activeSpan()?.setTag(key, value)
     }
 
-    fun addRootProperty(key: String, value: Number?) {
+    override fun addRootProperty(key: String, value: Number?) {
         tracer.activeSpan()?.let { span ->
             when (span) {
                 is MutableSpan -> {
@@ -59,7 +59,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         if (value != null) tracer.activeSpan()?.setTag(key, value)
     }
 
-    fun addRootProperty(key: String, value: Boolean?) {
+    override fun addRootProperty(key: String, value: Boolean?) {
         if (value != null) {
             tracer.activeSpan()?.let { span ->
                 when (span) {
@@ -96,7 +96,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         }
     }
 
-    fun notifyRootError(exception: Throwable, expected: Boolean) {
+    override fun notifyRootError(exception: Throwable, expected: Boolean) {
         tracer.activeSpan()?.let { span ->
             if (span is MutableSpan) (span as MutableSpan).localRootSpan.isError = true
             DatadogUtils.notifyError(span, exception, expected)
@@ -110,7 +110,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         }
     }
 
-    fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
+    override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
         tracer.activeSpan()?.let { span ->
             if (span is MutableSpan) (span as MutableSpan).localRootSpan.isError = true
             DatadogUtils.notifyError(span, message, params, expected)

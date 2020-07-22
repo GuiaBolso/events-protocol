@@ -15,11 +15,23 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         MDC.put(key, value)
     }
 
+    override fun addRootProperty(key: String, value: String?) {
+        MDC.put(key, value)
+    }
+
     override fun addProperty(key: String, value: Number?) {
         addProperty(key, value?.toString())
     }
 
+    override fun addRootProperty(key: String, value: Number?) {
+        addProperty(key, value?.toString())
+    }
+
     override fun addProperty(key: String, value: Boolean?) {
+        MDC.put(key, value?.toString())
+    }
+
+    override fun addRootProperty(key: String, value: Boolean?) {
         MDC.put(key, value?.toString())
     }
 
@@ -60,6 +72,14 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         } else {
             LOGGER.error("$message\t{}", toString(params))
         }
+    }
+
+    override fun notifyRootError(exception: Throwable, expected: Boolean) {
+        notifyError(exception, expected)
+    }
+
+    override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
+        notifyError(message, params, expected)
     }
 
     override fun extractContext(): Map<String, String?> = MDC.getCopyOfContextMap() ?: emptyMap()
