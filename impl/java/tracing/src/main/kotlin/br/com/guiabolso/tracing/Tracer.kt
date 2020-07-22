@@ -25,15 +25,6 @@ interface Tracer {
     fun addProperty(key: String, value: String?)
 
     /**
-     * Add a key/value pair to the local root span at the current traced operation. These should be reported in errors and tracings.
-     *
-     * @param key Custom parameter key.
-     * @param value Custom parameter value.
-     * @since 2.0.0
-     */
-    fun addRootProperty(key: String, value: String?)
-
-    /**
      * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
      *
      * @param key Custom parameter key.
@@ -43,15 +34,6 @@ interface Tracer {
     fun addProperty(key: String, value: Number?)
 
     /**
-     * Add a key/value pair to the local root span at the current traced operation. These should be reported in errors and tracings.
-     *
-     * @param key Custom parameter key.
-     * @param value Custom parameter value.
-     * @since 2.0.0
-     */
-    fun addRootProperty(key: String, value: Number?)
-
-    /**
      * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.
      *
      * @param key Custom parameter key.
@@ -59,15 +41,6 @@ interface Tracer {
      * @since 2.0.0
      */
     fun addProperty(key: String, value: Boolean?)
-
-    /**
-     * Add a key/value pair to the local root span at the current traced operation. These should be reported in errors and tracings.
-     *
-     * @param key Custom parameter key.
-     * @param value Custom parameter value.
-     * @since 2.0.0
-     */
-    fun addRootProperty(key: String, value: Boolean?)
 
     /**
      * Add a key/value pair to the current traced operation. These should be reported in errors and tracings.

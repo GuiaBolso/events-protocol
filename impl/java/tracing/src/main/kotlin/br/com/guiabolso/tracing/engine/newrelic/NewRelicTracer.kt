@@ -17,24 +17,11 @@ class NewRelicTracer : TracerEngine<Token> {
     override fun addProperty(key: String, value: String?) {
         addCustomParameter(key, value)
     }
-
-    override fun addRootProperty(key: String, value: String?) {
-        addCustomParameter(key, value)
-    }
-
     override fun addProperty(key: String, value: Number?) {
         addCustomParameter(key, value)
     }
 
-    override fun addRootProperty(key: String, value: Number?) {
-        addCustomParameter(key, value)
-    }
-
     override fun addProperty(key: String, value: Boolean?) {
-        addCustomParameter(key, value.toString())
-    }
-
-    override fun addRootProperty(key: String, value: Boolean?) {
         addCustomParameter(key, value.toString())
     }
 

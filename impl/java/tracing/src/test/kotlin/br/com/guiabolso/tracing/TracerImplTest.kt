@@ -31,13 +31,6 @@ class TracerImplTest {
     }
 
     @Test
-    fun `should delegate addRootProperty for string`() {
-        tracer.addRootProperty("key", "value")
-
-        verify(mockTracer, times(1)).addRootProperty("key", "value")
-    }
-
-    @Test
     fun `should delegate addProperty for number`() {
         tracer.addProperty("key", 10)
 
@@ -45,24 +38,10 @@ class TracerImplTest {
     }
 
     @Test
-    fun `should delegate addRootProperty for number`() {
-        tracer.addRootProperty("key", 10)
-
-        verify(mockTracer, times(1)).addRootProperty("key", 10)
-    }
-
-    @Test
     fun `should delegate addProperty for boolean`() {
         tracer.addProperty("key", true)
 
         verify(mockTracer, times(1)).addProperty("key", true)
-    }
-
-    @Test
-    fun `should delegate addRootProperty for boolean`() {
-        tracer.addRootProperty("key", true)
-
-        verify(mockTracer, times(1)).addRootProperty("key", true)
     }
 
     @Test

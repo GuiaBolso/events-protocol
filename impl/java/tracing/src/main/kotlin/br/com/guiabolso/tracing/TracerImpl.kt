@@ -23,24 +23,12 @@ class TracerImpl(
         tracerEngine.addProperty(key, value)
     }
 
-    override fun addRootProperty(key: String, value: String?) {
-        tracerEngine.addRootProperty(key, value)
-    }
-
-    override fun addRootProperty(key: String, value: Number?) {
-        tracerEngine.addRootProperty(key, value)
-    }
-
     override fun addProperty(key: String, value: Number?) {
         tracerEngine.addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: Boolean?) {
         tracerEngine.addProperty(key, value)
-    }
-
-    override fun addRootProperty(key: String, value: Boolean?) {
-        tracerEngine.addRootProperty(key, value)
     }
 
     override fun addProperty(key: String, value: List<*>) {

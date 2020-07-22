@@ -21,7 +21,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         tracer.activeSpan()?.setTag(key, value)
     }
 
-    override fun addRootProperty(key: String, value: String?) {
+    fun addRootProperty(key: String, value: String?) {
         tracer.activeSpan()?.let { span ->
             when (span) {
                 is MutableSpan -> {
@@ -40,7 +40,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         tracer.activeSpan()?.setTag(key, value)
     }
 
-    override fun addRootProperty(key: String, value: Number?) {
+    fun addRootProperty(key: String, value: Number?) {
         tracer.activeSpan()?.let { span ->
             when (span) {
                 is MutableSpan -> {
@@ -59,7 +59,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         if (value != null) tracer.activeSpan()?.setTag(key, value)
     }
 
-    override fun addRootProperty(key: String, value: Boolean?) {
+    fun addRootProperty(key: String, value: Boolean?) {
         if (value != null) {
             tracer.activeSpan()?.let { span ->
                 when (span) {
