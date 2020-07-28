@@ -29,7 +29,7 @@ interface Tracer {
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun addRootProperty(key: String, value: String?)
 
@@ -47,7 +47,7 @@ interface Tracer {
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun addRootProperty(key: String, value: Number?)
 
@@ -65,7 +65,7 @@ interface Tracer {
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun addRootProperty(key: String, value: Boolean?)
 

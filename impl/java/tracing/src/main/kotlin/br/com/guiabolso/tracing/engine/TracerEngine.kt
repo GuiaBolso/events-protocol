@@ -26,7 +26,7 @@ interface TracerEngine<C> {
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun addRootProperty(key: String, value: String?)
 
@@ -44,7 +44,7 @@ interface TracerEngine<C> {
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun addRootProperty(key: String, value: Number?)
 
@@ -62,7 +62,7 @@ interface TracerEngine<C> {
      *
      * @param key Custom parameter key.
      * @param value Custom parameter value.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun addRootProperty(key: String, value: Boolean?)
 

@@ -23,16 +23,8 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun addRootProperty(key: String, value: String?) {
         tracer.activeSpan()?.let { span ->
-            when (span) {
-                is MutableSpan -> {
-                    val mutableSpan = (span as MutableSpan)
-                    val rootSpan = mutableSpan.localRootSpan
-                    rootSpan?.run {
-                        this.setTag(key, value) as Any
-                    }
-                }
-                else -> span.setTag(key, value)
-            }
+            if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
+            else span.setTag(key, value)
         }
     }
 
@@ -42,16 +34,8 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun addRootProperty(key: String, value: Number?) {
         tracer.activeSpan()?.let { span ->
-            when (span) {
-                is MutableSpan -> {
-                    val mutableSpan = (span as MutableSpan)
-                    val rootSpan = mutableSpan.localRootSpan
-                    rootSpan?.run {
-                        this.setTag(key, value) as Any
-                    }
-                }
-                else -> span.setTag(key, value)
-            }
+            if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
+            else span.setTag(key, value)
         }
     }
 
@@ -62,16 +46,8 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
     override fun addRootProperty(key: String, value: Boolean?) {
         if (value != null) {
             tracer.activeSpan()?.let { span ->
-                when (span) {
-                    is MutableSpan -> {
-                        val mutableSpan = (span as MutableSpan)
-                        val rootSpan = mutableSpan.localRootSpan
-                        rootSpan?.run {
-                            this.setTag(key, value) as Any
-                        }
-                    }
-                    else -> span.setTag(key, value)
-                }
+                if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
+                else span.setTag(key, value)
             }
         }
     }
@@ -98,7 +74,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun notifyRootError(exception: Throwable, expected: Boolean) {
         tracer.activeSpan()?.let { span ->
-            if (span is MutableSpan) (span as MutableSpan).localRootSpan.isError = true
+            if (span is MutableSpan) span.localRootSpan.isError = true
             DatadogUtils.notifyError(span, exception, expected)
         }
     }
@@ -112,7 +88,7 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
 
     override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
         tracer.activeSpan()?.let { span ->
-            if (span is MutableSpan) (span as MutableSpan).localRootSpan.isError = true
+            if (span is MutableSpan) span.localRootSpan.isError = true
             DatadogUtils.notifyError(span, message, params, expected)
         }
     }
