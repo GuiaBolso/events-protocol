@@ -110,7 +110,7 @@ interface TracerEngine<C> {
      *
      * @param exception The exception to be reported.
      * @param expected true if this error is expected, false otherwise.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun notifyRootError(exception: Throwable, expected: Boolean)
 
@@ -130,7 +130,7 @@ interface TracerEngine<C> {
      * @param message Error message.
      * @param params Custom parameters to include in the traced error. May be null.
      * @param expected true if this error is expected, false otherwise.
-     * @since 2.0.0
+     * @since 2.10.1
      */
     fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean)
 
