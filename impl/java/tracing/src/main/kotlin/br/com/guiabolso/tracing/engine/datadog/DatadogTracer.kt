@@ -3,6 +3,7 @@ package br.com.guiabolso.tracing.engine.datadog
 import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.utils.DatadogUtils
 import datadog.trace.api.DDTags.RESOURCE_NAME
+import datadog.trace.api.interceptor.MutableSpan
 import io.opentracing.Tracer
 import io.opentracing.Tracer.SpanBuilder
 import io.opentracing.util.GlobalTracer
@@ -20,12 +21,35 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         tracer.activeSpan()?.setTag(key, value)
     }
 
+    override fun addRootProperty(key: String, value: String?) {
+        tracer.activeSpan()?.let { span ->
+            if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
+            else span.setTag(key, value)
+        }
+    }
+
     override fun addProperty(key: String, value: Number?) {
         tracer.activeSpan()?.setTag(key, value)
     }
 
+    override fun addRootProperty(key: String, value: Number?) {
+        tracer.activeSpan()?.let { span ->
+            if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
+            else span.setTag(key, value)
+        }
+    }
+
     override fun addProperty(key: String, value: Boolean?) {
         if (value != null) tracer.activeSpan()?.setTag(key, value)
+    }
+
+    override fun addRootProperty(key: String, value: Boolean?) {
+        if (value != null) {
+            tracer.activeSpan()?.let { span ->
+                if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
+                else span.setTag(key, value)
+            }
+        }
     }
 
     override fun addProperty(key: String, value: List<*>) {
@@ -48,9 +72,23 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         }
     }
 
+    override fun notifyRootError(exception: Throwable, expected: Boolean) {
+        tracer.activeSpan()?.let { span ->
+            if (span is MutableSpan) span.localRootSpan.isError = true
+            DatadogUtils.notifyError(span, exception, expected)
+        }
+    }
+
     override fun notifyError(message: String, params: Map<String, String?>, expected: Boolean) {
         val span = tracer.activeSpan()
         if (span != null) {
+            DatadogUtils.notifyError(span, message, params, expected)
+        }
+    }
+
+    override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
+        tracer.activeSpan()?.let { span ->
+            if (span is MutableSpan) span.localRootSpan.isError = true
             DatadogUtils.notifyError(span, message, params, expected)
         }
     }
