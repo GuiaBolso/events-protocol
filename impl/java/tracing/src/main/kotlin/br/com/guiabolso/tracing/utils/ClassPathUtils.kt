@@ -3,9 +3,6 @@ package br.com.guiabolso.tracing.utils
 object ClassPathUtils {
 
     @JvmStatic
-    fun isNewRelicPresent() = isClassPresent("com.newrelic.api.agent.NewRelic")
-
-    @JvmStatic
     fun isDatadogPresent() = isClassPresent("datadog.opentracing.DDTracer")
 
     @JvmStatic

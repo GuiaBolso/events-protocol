@@ -4,9 +4,6 @@ buildscript {
 }
 
 dependencies {
-    //NewRelic
-    compileOnly group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
-
     //Datadog
     compileOnly group: 'io.opentracing', name: 'opentracing-api', version: open_tracing
     compileOnly group: 'io.opentracing', name: 'opentracing-util', version: open_tracing
@@ -16,8 +13,6 @@ dependencies {
 
     compileOnly group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.1'
 
-    //To run NewRelic examples
-    testImplementation group: 'com.newrelic.agent.java', name: 'newrelic-api', version: '4.4.0'
     //To run Datadog examples
     testImplementation group: 'io.opentracing', name: 'opentracing-api', version: open_tracing
     testImplementation group: 'io.opentracing', name: 'opentracing-util', version: open_tracing
