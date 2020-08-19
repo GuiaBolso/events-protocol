@@ -3,14 +3,11 @@ package br.com.guiabolso.tracing.factory
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.TracerImpl
 import br.com.guiabolso.tracing.async.DefaultAsyncExecutor
-import br.com.guiabolso.tracing.async.NewRelicAsyncExecutor
 import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.engine.datadog.DatadogStatsDTracer
 import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
-import br.com.guiabolso.tracing.engine.newrelic.NewRelicTracer
 import br.com.guiabolso.tracing.engine.slf4j.Slf4JTracer
 import br.com.guiabolso.tracing.utils.ClassPathUtils.isDatadogPresent
-import br.com.guiabolso.tracing.utils.ClassPathUtils.isNewRelicPresent
 import br.com.guiabolso.tracing.utils.ClassPathUtils.isStatsDPresent
 import br.com.guiabolso.tracing.utils.EnvironmentUtils
 import org.slf4j.LoggerFactory
@@ -25,7 +22,6 @@ object TracerFactory {
         isDatadogPresent() -> {
             if (isStatsDPresent()) createTracerWithDatadogStatsD() else createTracerWithDatadog()
         }
-        isNewRelicPresent() -> createTracerWithNewRelic()
         else -> createTracerWithoutAnyAPM()
     }
 
@@ -51,15 +47,6 @@ object TracerFactory {
                 )
             ),
             DefaultAsyncExecutor()
-        )
-    }
-
-    @JvmStatic
-    fun createTracerWithNewRelic(): Tracer {
-        LOGGER.info("Using NewRelic as APM tracer.")
-        return TracerImpl(
-            compose(Slf4JTracer(), NewRelicTracer()),
-            NewRelicAsyncExecutor()
         )
     }
 

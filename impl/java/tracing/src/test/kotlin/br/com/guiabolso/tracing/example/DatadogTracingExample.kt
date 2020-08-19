@@ -73,7 +73,7 @@ fun main(vararg args: String) {
 }
 
 // If you want to change the name of this method span set 'operationName'.
-// Remember that unlike NewRelic's metrics '/' should not be used.
+// Remember that '/' should not be used.
 @Trace
 private fun someWork() {
     logger.info("Starting some work")
