@@ -8,27 +8,25 @@ import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.EventErrorType
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
 
 class EventClientTest {
 
     @Test
     fun testSuccessResponse() {
-        val httpClient = mock(HttpClientAdapter::class.java)
+        val httpClient = mockk<HttpClientAdapter>()
         val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent()
 
-        whenever(
+        every {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
@@ -36,7 +34,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        ).thenReturn(mapper.toJson(responseEvent))
+        } returns mapper.toJson(responseEvent)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -46,13 +44,13 @@ class EventClientTest {
 
     @Test
     fun testSuccessResponseWithCustomHeader() {
-        val httpClient = mock(HttpClientAdapter::class.java)
+        val httpClient = mockk<HttpClientAdapter>()
         val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent()
 
-        whenever(
+        every {
             httpClient.post(
                 eq("url"),
                 any(),
@@ -60,31 +58,33 @@ class EventClientTest {
                 eq(Charsets.UTF_8),
                 eq(1000)
             )
-        ).thenReturn(mapper.toJson(responseEvent))
+        } returns mapper.toJson(responseEvent)
 
         val response = eventClient.sendEvent("url", event, mapOf("Test" to "some value"), 1000)
 
         assertTrue(response is Response.Success)
         assertEquals(responseEvent, (response as Response.Success).event)
 
-        verify(httpClient).post(
-            eq("url"),
-            eq(mapOf("Content-Type" to "application/json", "Test" to "some value")),
-            eq(mapper.toJson(event)),
-            eq(Charsets.UTF_8),
-            eq(1000)
-        )
+        verify {
+            httpClient.post(
+                eq("url"),
+                eq(mapOf("Content-Type" to "application/json", "Test" to "some value")),
+                eq(mapper.toJson(event)),
+                eq(Charsets.UTF_8),
+                eq(1000)
+            )
+        }
     }
 
     @Test
     fun testRedirectResponse() {
-        val httpClient = mock(HttpClientAdapter::class.java)
+        val httpClient = mockk<HttpClientAdapter>()
         val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildRedirectEvent()
 
-        whenever(
+        every {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
@@ -92,7 +92,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        ).thenReturn(mapper.toJson(responseEvent))
+        } returns mapper.toJson(responseEvent)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -102,13 +102,13 @@ class EventClientTest {
 
     @Test
     fun testErrorResponse() {
-        val httpClient = mock(HttpClientAdapter::class.java)
+        val httpClient = mockk<HttpClientAdapter>()
         val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent().copy(name = "${event.name}:error")
 
-        whenever(
+        every {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
@@ -116,7 +116,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        ).thenReturn(mapper.toJson(responseEvent))
+        } returns mapper.toJson(responseEvent)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -127,12 +127,12 @@ class EventClientTest {
 
     @Test
     fun testTimeout() {
-        val httpClient = mock(HttpClientAdapter::class.java)
+        val httpClient = mockk<HttpClientAdapter>()
         val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
 
-        whenever(
+        every {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
@@ -140,7 +140,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        ).thenThrow(TimeoutException::class.java)
+        } throws TimeoutException("timeout", cause = null)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -150,12 +150,12 @@ class EventClientTest {
 
     @Test
     fun testInvalidResponse() {
-        val httpClient = mock(HttpClientAdapter::class.java)
+        val httpClient = mockk<HttpClientAdapter>()
         val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
 
-        whenever(
+        every {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
@@ -163,7 +163,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        ).thenReturn("something")
+        } returns "something"
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -174,12 +174,12 @@ class EventClientTest {
 
     @Test
     fun testCannotConnect() {
-        val httpClient = mock(HttpClientAdapter::class.java)
+        val httpClient = mockk<HttpClientAdapter>()
         val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
 
-        whenever(
+        every {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
@@ -187,7 +187,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        ).thenThrow(FailedDependencyException::class.java)
+        } throws FailedDependencyException("Failed dependency", null)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 

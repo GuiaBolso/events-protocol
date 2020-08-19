@@ -1,15 +1,14 @@
 package br.com.guiabolso.tracing.async
 
 import br.com.guiabolso.tracing.engine.TracerEngine
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.Closeable
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 
 class DefaultAsyncExecutorTest {
 
@@ -17,11 +16,11 @@ class DefaultAsyncExecutorTest {
     fun `should execute an async task tracing it`() {
         val pool = Executors.newSingleThreadExecutor()
         val executor = DefaultAsyncExecutor()
-        val tracer: TracerEngine<*> = mock()
-        val closeable: Closeable = mock()
+        val tracer: TracerEngine<*> = mockk()
+        val closeable: Closeable = mockk(relaxed = true)
 
-        whenever(tracer.extractContext()).thenReturn("context")
-        whenever(tracer.withContext("context")).thenReturn(closeable)
+        every { tracer.extractContext() } returns "context"
+        every { tracer.withContext("context") } returns closeable
 
         val result = executor.executeAsync(tracer, pool) {
             "someWork"
@@ -30,30 +29,30 @@ class DefaultAsyncExecutorTest {
         pool.shutdown()
 
         assertEquals("someWork", result.get())
-        verify(tracer, times(1)).extractContext()
-        verify(tracer, times(1)).withContext("context")
-        verify(closeable, times(1)).close()
+        verify(exactly = 1) { tracer.extractContext() }
+        verify(exactly = 1) { tracer.withContext("context") }
+        verify(exactly = 1) { closeable.close() }
     }
 
     @Test
     fun `should execute an async callable tracing it`() {
         val pool = Executors.newSingleThreadExecutor()
         val executor = DefaultAsyncExecutor()
-        val tracer: TracerEngine<*> = mock()
-        val closeable: Closeable = mock()
+        val tracer: TracerEngine<*> = mockk()
+        val closeable: Closeable = mockk(relaxed = true)
 
-        whenever(tracer.extractContext()).thenReturn("context")
-        whenever(tracer.withContext("context")).thenReturn(closeable)
+        every { tracer.extractContext() } returns "context"
+        every { tracer.withContext("context") } returns closeable
 
-        val result = executor.executeAsync(tracer, pool, (Callable<String> {
+        val result = executor.executeAsync(tracer, pool, (Callable {
             "someWork"
         }))
 
         pool.shutdown()
 
         assertEquals("someWork", result.get())
-        verify(tracer, times(1)).extractContext()
-        verify(tracer, times(1)).withContext("context")
-        verify(closeable, times(1)).close()
+        verify(exactly = 1) { tracer.extractContext() }
+        verify(exactly = 1) { tracer.withContext("context") }
+        verify(exactly = 1) { closeable.close() }
     }
 }

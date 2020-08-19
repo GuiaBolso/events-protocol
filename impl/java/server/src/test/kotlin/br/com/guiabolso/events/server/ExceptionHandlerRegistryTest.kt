@@ -4,12 +4,11 @@ import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.server.exception.BypassedException
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.bypassExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.exceptionHandler
-import br.com.guiabolso.tracing.Tracer
 import com.google.gson.JsonPrimitive
+import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 
 class ExceptionHandlerRegistryTest {
 
@@ -24,7 +23,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
             RuntimeException("Some error"),
             EventBuilderForTest.buildRequestEvent(),
-            Mockito.mock(Tracer::class.java)
+            mockk(relaxed = true)
         )
 
         assertEquals("Some error", response.payload.asString)
@@ -45,7 +44,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
             RuntimeException("Some error"),
             EventBuilderForTest.buildRequestEvent(),
-            Mockito.mock(Tracer::class.java)
+            mockk(relaxed = true)
         )
 
         assertEquals("Exception", response.payload.asString)
@@ -66,7 +65,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
             RuntimeException("Some error"),
             EventBuilderForTest.buildRequestEvent(),
-            Mockito.mock(Tracer::class.java)
+            mockk(relaxed = true)
         )
 
         assertEquals("RuntimeException", response.payload.asString)
@@ -79,7 +78,7 @@ class ExceptionHandlerRegistryTest {
         val response = exceptionHandlerRegistry.handleException(
             RuntimeException("Some error"),
             EventBuilderForTest.buildRequestEvent(),
-            Mockito.mock(Tracer::class.java)
+            mockk(relaxed = true)
         )
 
         assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)
@@ -93,7 +92,7 @@ class ExceptionHandlerRegistryTest {
         val event = EventBuilderForTest.buildRequestEvent()
 
         val exception = assertThrows(BypassedException::class.java) {
-            exceptionHandlerRegistry.handleException(cause, event, Mockito.mock(Tracer::class.java))
+            exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
         }
 
         assertEquals(cause, exception.exception)
@@ -108,7 +107,7 @@ class ExceptionHandlerRegistryTest {
         val event = EventBuilderForTest.buildRequestEvent()
 
         val exception = assertThrows(RuntimeException::class.java) {
-            exceptionHandlerRegistry.handleException(cause, event, Mockito.mock(Tracer::class.java))
+            exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
         }
 
         assertEquals(cause, exception)
