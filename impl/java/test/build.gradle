@@ -7,14 +7,13 @@ repositories {
 
 dependencies {
     api project(":core")
-    api "io.kotest:kotest-assertions-core-jvm:4.0.5"
-    api "io.kotest:kotest-assertions-jvm:4.0.5"
     api project(":server")
-    implementation "io.kotest:kotest-assertions-json-jvm:4.0.5"
-    
-    
-    testImplementation "io.kotest:kotest-runner-junit5-jvm:4.0.5"
-    testImplementation "io.kotest:kotest-runner-console-jvm:4.0.5"
+
+    api "io.kotest:kotest-assertions-api:4.2.0"
+    api "io.kotest:kotest-assertions-core-jvm:4.2.0"
+    implementation "io.kotest:kotest-assertions-json-jvm:4.2.0"
+
+    testImplementation "io.kotest:kotest-runner-junit5-jvm:4.2.0"
 }
 
 sourceCompatibility = VERSION_1_8
