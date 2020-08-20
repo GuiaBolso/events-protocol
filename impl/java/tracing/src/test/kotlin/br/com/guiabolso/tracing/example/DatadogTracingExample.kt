@@ -16,7 +16,7 @@ private val logger = LoggerFactory.getLogger(DatadogTracer::class.java)
  * Start the JVM with '-javaagent:/path/to/the/dd-java-agent.jar'
  * Set environment variable 'DD_SERVICE_NAME'
  */
-fun main(vararg args: String) {
+fun main() {
     val tracer = TracerFactory.createTracerWithDatadog()
     val executor = Executors.newFixedThreadPool(2)
 

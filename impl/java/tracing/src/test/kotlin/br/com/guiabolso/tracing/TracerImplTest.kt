@@ -2,67 +2,66 @@ package br.com.guiabolso.tracing
 
 import br.com.guiabolso.tracing.async.AsyncExecutor
 import br.com.guiabolso.tracing.engine.TracerEngine
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
+import io.mockk.mockk
+import io.mockk.verify
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import org.junit.jupiter.api.Test
 
 class TracerImplTest {
 
-    private val mockTracer: TracerEngine<*> = mock()
-    private val mockExecutorService: ExecutorService = mock()
-    private val mockExecutor: AsyncExecutor = mock()
+    private val mockTracer: TracerEngine<*> = mockk(relaxed = true)
+    private val mockExecutorService: ExecutorService = mockk()
+    private val mockExecutor: AsyncExecutor = mockk(relaxed = true)
     private val tracer = TracerImpl(mockTracer, mockExecutor)
 
     @Test
     fun `should delegate setOperationName`() {
         tracer.setOperationName("operationName")
 
-        verify(mockTracer, times(1)).setOperationName("operationName")
+        verify(exactly = 1) { mockTracer.setOperationName("operationName") }
     }
 
     @Test
     fun `should delegate addProperty for string`() {
         tracer.addProperty("key", "value")
 
-        verify(mockTracer, times(1)).addProperty("key", "value")
+        verify(exactly = 1) { mockTracer.addProperty("key", "value") }
     }
 
     @Test
     fun `should delegate addRootProperty for string`() {
         tracer.addRootProperty("key", "value")
 
-        verify(mockTracer, times(1)).addRootProperty("key", "value")
+        verify(exactly = 1) { mockTracer.addRootProperty("key", "value") }
     }
 
     @Test
     fun `should delegate addProperty for number`() {
         tracer.addProperty("key", 10)
 
-        verify(mockTracer, times(1)).addProperty("key", 10)
+        verify(exactly = 1) { mockTracer.addProperty("key", 10) }
     }
 
     @Test
     fun `should delegate addRootProperty for number`() {
         tracer.addRootProperty("key", 10)
 
-        verify(mockTracer, times(1)).addRootProperty("key", 10)
+        verify(exactly = 1) { mockTracer.addRootProperty("key", 10) }
     }
 
     @Test
     fun `should delegate addProperty for boolean`() {
         tracer.addProperty("key", true)
 
-        verify(mockTracer, times(1)).addProperty("key", true)
+        verify(exactly = 1) { mockTracer.addProperty("key", true) }
     }
 
     @Test
     fun `should delegate addRootProperty for boolean`() {
         tracer.addRootProperty("key", true)
 
-        verify(mockTracer, times(1)).addRootProperty("key", true)
+        verify(exactly = 1) { mockTracer.addRootProperty("key", true) }
     }
 
     @Test
@@ -70,7 +69,7 @@ class TracerImplTest {
         val task: () -> String = { "batata" }
         tracer.executeAsync(mockExecutorService, task)
 
-        verify(mockExecutor, times(1)).executeAsync(mockTracer, mockExecutorService, task)
+        verify(exactly = 1) { mockExecutor.executeAsync(mockTracer, mockExecutorService, task) }
     }
 
     @Test
@@ -78,7 +77,7 @@ class TracerImplTest {
         val task: Callable<String> = (Callable { "batata" })
         tracer.executeAsync(mockExecutorService, task)
 
-        verify(mockExecutor, times(1)).executeAsync(mockTracer, mockExecutorService, task)
+        verify(exactly = 1) { mockExecutor.executeAsync(mockTracer, mockExecutorService, task) }
     }
 
     @Test
@@ -86,20 +85,20 @@ class TracerImplTest {
         val exception = RuntimeException(":]")
         tracer.notifyError(exception, false)
 
-        verify(mockTracer, times(1)).notifyError(exception, false)
+        verify(exactly = 1) { mockTracer.notifyError(exception, false) }
     }
 
     @Test
     fun `should delegate noticeError with message`() {
         tracer.notifyError("error", emptyMap(), false)
 
-        verify(mockTracer, times(1)).notifyError("error", emptyMap(), false)
+        verify(exactly = 1) { mockTracer.notifyError("error", emptyMap(), false) }
     }
 
     @Test
     fun `should delegate clear`() {
         tracer.clear()
 
-        verify(mockTracer, times(1)).clear()
+        verify(exactly = 1) { mockTracer.clear() }
     }
 }
