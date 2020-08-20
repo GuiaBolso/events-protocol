@@ -6,12 +6,12 @@ import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.engine.TracerEngine
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Test
 import java.io.Closeable
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Test
 
 class TracingExecutorTest {
 

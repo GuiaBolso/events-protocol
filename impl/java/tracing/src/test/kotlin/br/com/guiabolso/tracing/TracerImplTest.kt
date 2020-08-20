@@ -4,9 +4,9 @@ import br.com.guiabolso.tracing.async.AsyncExecutor
 import br.com.guiabolso.tracing.engine.TracerEngine
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Test
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
+import org.junit.jupiter.api.Test
 
 class TracerImplTest {
 
