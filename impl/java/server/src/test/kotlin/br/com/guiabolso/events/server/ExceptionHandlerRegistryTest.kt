@@ -4,8 +4,10 @@ import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.server.exception.BypassedException
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.bypassExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.exceptionHandler
-import com.google.gson.JsonPrimitive
 import io.mockk.mockk
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -26,7 +28,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("Some error", response.payload.asString)
+        assertEquals("Some error", response.payload.jsonPrimitive.content)
     }
 
     @Test
@@ -47,7 +49,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("Exception", response.payload.asString)
+        assertEquals("Exception", response.payload.jsonPrimitive.content)
     }
 
     @Test
@@ -68,7 +70,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("RuntimeException", response.payload.asString)
+        assertEquals("RuntimeException", response.payload.jsonPrimitive.content)
     }
 
     @Test
@@ -81,7 +83,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)
+        assertEquals("UNHANDLED_ERROR", response.payload.jsonObject["code"]!!.jsonPrimitive.content)
     }
 
     @Test

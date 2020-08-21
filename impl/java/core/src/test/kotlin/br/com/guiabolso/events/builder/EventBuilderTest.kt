@@ -10,13 +10,17 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventContextHolder
 import br.com.guiabolso.events.exception.MissingEventInformationException
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.utils.EventUtils
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -31,7 +35,7 @@ class EventBuilderTest {
             flowId = "flowId"
             name = "event"
             version = 1
-            payload = 42
+            payload(42)
         }
 
         assertEquals("id", event.id)
@@ -39,9 +43,9 @@ class EventBuilderTest {
         assertEquals("event", event.name)
         assertEquals(1, event.version)
         assertEquals(JsonPrimitive(42), event.payload)
-        assertEquals(JsonObject(), event.auth)
-        assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertEquals(buildJsonObject {}, event.auth)
+        assertEquals(buildJsonObject {}, event.identity)
+        assertEquals(buildJsonObject {}, event.metadata)
     }
 
     @Test
@@ -50,7 +54,7 @@ class EventBuilderTest {
             event {
                 name = "event"
                 version = 1
-                payload = 42
+                payload(42)
             }
         }
 
@@ -59,9 +63,9 @@ class EventBuilderTest {
         assertEquals("event", event.name)
         assertEquals(1, event.version)
         assertEquals(JsonPrimitive(42), event.payload)
-        assertEquals(JsonObject(), event.auth)
-        assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertEquals(buildJsonObject {}, event.auth)
+        assertEquals(buildJsonObject {}, event.identity)
+        assertEquals(buildJsonObject {}, event.metadata)
     }
 
     @Test
@@ -72,7 +76,7 @@ class EventBuilderTest {
                 id = "otherId"
                 flowId = "otherFlowId"
                 version = 1
-                payload = 42
+                payload(42)
             }
         }
 
@@ -81,9 +85,9 @@ class EventBuilderTest {
         assertEquals("event", event.name)
         assertEquals(1, event.version)
         assertEquals(JsonPrimitive(42), event.payload)
-        assertEquals(JsonObject(), event.auth)
-        assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertEquals(buildJsonObject {}, event.auth)
+        assertEquals(buildJsonObject {}, event.identity)
+        assertEquals(buildJsonObject {}, event.metadata)
     }
 
     @Test
@@ -92,7 +96,7 @@ class EventBuilderTest {
             event {
                 name = "event"
                 version = 1
-                payload = 42
+                payload(42)
             }
         }
     }
@@ -104,7 +108,7 @@ class EventBuilderTest {
                 id = "id"
                 flowId = "flowId"
                 version = 1
-                payload = 42
+                payload(42)
             }
         }
     }
@@ -116,7 +120,7 @@ class EventBuilderTest {
                 id = "id"
                 flowId = "flowId"
                 name = "event"
-                payload = 42
+                payload(42)
             }
         }
     }
@@ -139,7 +143,7 @@ class EventBuilderTest {
             flowId = "flowId"
             name = "event:response"
             version = 1
-            payload = 84
+            payload(84)
         }
 
         assertEquals("id", response.id)
@@ -147,9 +151,9 @@ class EventBuilderTest {
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
         assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 
     @Test
@@ -159,10 +163,10 @@ class EventBuilderTest {
             flowId = "flowId"
             name = "event"
             version = 1
-            payload = 42
+            payload(42)
         }
         val response = responseFor(event) {
-            payload = 84
+            payload(84)
         }
 
         assertEquals("id", response.id)
@@ -170,9 +174,9 @@ class EventBuilderTest {
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
         assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 
     @Test
@@ -181,11 +185,11 @@ class EventBuilderTest {
             event {
                 name = "event"
                 version = 1
-                payload = 42
+                payload(42)
             }
         }
         val response = responseFor(event) {
-            payload = 84
+            payload(84)
         }
 
         assertEquals("id", response.id)
@@ -193,9 +197,9 @@ class EventBuilderTest {
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
         assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
 
         EventContextHolder.clean()
     }
@@ -207,12 +211,12 @@ class EventBuilderTest {
             flowId = "flowId"
             name = "event"
             version = 1
-            payload = 42
+            payload(42)
         }
         val response = responseFor(event) {
             id = "otherId"
             flowId = "otherFlowId"
-            payload = 84
+            payload(84)
         }
 
         assertEquals("otherId", response.id)
@@ -220,9 +224,9 @@ class EventBuilderTest {
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
         assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 
     @Test
@@ -231,12 +235,12 @@ class EventBuilderTest {
             val event = event {
                 name = "event"
                 version = 1
-                payload = 42
+                payload(42)
             }
             responseFor(event) {
                 id = null
                 flowId = null
-                payload = 84
+                payload(84)
             }
         }
     }
@@ -247,11 +251,11 @@ class EventBuilderTest {
             val event = event {
                 name = "event"
                 version = 1
-                payload = 42
+                payload(42)
             }
             responseFor(event) {
                 name = null
-                payload = 84
+                payload(84)
             }
         }
     }
@@ -262,11 +266,11 @@ class EventBuilderTest {
             val event = event {
                 name = "event"
                 version = 1
-                payload = 42
+                payload(42)
             }
             responseFor(event) {
                 version = null
-                payload = 84
+                payload(84)
             }
         }
     }
@@ -277,7 +281,7 @@ class EventBuilderTest {
             val event = event {
                 name = "event"
                 version = 1
-                payload = 42
+                payload(42)
             }
             responseFor(event) {
             }
@@ -291,18 +295,21 @@ class EventBuilderTest {
             flowId = "flowId"
             name = "event"
             version = 1
-            payload = 42
+            payload(42)
         }
-        val response = errorFor(event, EventErrorType.Generic, EventMessage("code", emptyMap()))
+        val response = errorFor(event, EventErrorType.Generic, EventMessage("code", buildJsonObject { }))
 
         assertEquals("id", response.id)
         assertEquals("flowId", response.flowId)
         assertEquals("event:error", response.name)
         assertEquals(1, response.version)
-        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("code", emptyMap())), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(
+            mapper.encodeToJsonElement(EventMessage("code", buildJsonObject { })),
+            response.payload
+        )
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 
     @Test
@@ -312,7 +319,7 @@ class EventBuilderTest {
             flowId = "flowId"
             name = "event"
             version = 1
-            payload = 42
+            payload(42)
         }
 
         val redirectURL = "https://www.google.com.br"
@@ -323,10 +330,10 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:redirect", response.name)
         assertEquals(1, response.version)
-        assertEquals(redirectURL, response.payload.asJsonObject.get("url").asString)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(redirectURL, response.payload.jsonObject["url"]?.jsonPrimitive?.content)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 
     @Test
@@ -336,7 +343,7 @@ class EventBuilderTest {
             flowId = "flowId"
             name = "event"
             version = 1
-            payload = 42
+            payload(42)
         }
         val response = eventNotFound(event)
 
@@ -345,32 +352,36 @@ class EventBuilderTest {
         assertEquals("eventNotFound", response.name)
         assertEquals(1, response.version)
         assertEquals(
-            MapperHolder.mapper.toJsonTree(
+            mapper.encodeToJsonElement(
                 EventMessage(
                     "NO_EVENT_HANDLER_FOUND",
-                    mapOf("event" to event.name, "version" to event.version)
+                    buildJsonObject {
+                        put("event", event.name)
+                        put("version", event.version)
+                    }
                 )
-            ), response.payload
+            ),
+            response.payload
         )
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 
     @Test
     fun testCreateBadProtocolResponseEvent() {
-        val response = badProtocol(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap()))
+        val response = badProtocol(EventMessage("INVALID_COMMUNICATION_PROTOCOL", buildJsonObject { }))
 
         assertNotNull(response.id)
         assertNotNull(response.flowId)
         assertEquals("badProtocol", response.name)
         assertEquals(1, response.version)
         assertEquals(
-            MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())),
+            mapper.encodeToJsonElement(EventMessage("INVALID_COMMUNICATION_PROTOCOL", buildJsonObject { })),
             response.payload
         )
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 }

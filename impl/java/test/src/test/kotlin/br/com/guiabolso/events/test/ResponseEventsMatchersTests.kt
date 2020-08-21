@@ -6,12 +6,14 @@ import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.serialization.json.buildJsonObject
 
 class ResponseEventsMatchersTests : FunSpec({
 
     val successResponse = EventBuilder.responseFor(event) { }
     val redirectResponse = EventBuilder.redirectFor(event, RedirectPayload("a"))
-    val errorResponse = EventBuilder.errorFor(event, EventErrorType.BadRequest, EventMessage("code", emptyMap()))
+    val errorResponse =
+        EventBuilder.errorFor(event, EventErrorType.BadRequest, EventMessage("code", buildJsonObject { }))
 
     test("Should be success") {
         successResponse.shouldBeSuccess()
@@ -57,10 +59,10 @@ private val event = EventBuilder.event {
     version = 3
     id = "id"
     flowId = "flowId"
-    payload = complexMap
-    identity = complexMap
-    auth = complexMap
-    metadata = complexMap
+    payload(complexMap)
+    identity(complexMap)
+    auth(complexMap)
+    metadata(complexMap)
 }
 
 private val complexMap = mapOf(

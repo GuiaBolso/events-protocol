@@ -3,8 +3,11 @@ package br.com.guiabolso.events
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
 
 object EventBuilderForTest {
 
@@ -14,9 +17,9 @@ object EventBuilderForTest {
         id = "id",
         flowId = "flowId",
         payload = JsonPrimitive(42),
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        identity = buildJsonObject {},
+        auth = buildJsonObject {},
+        metadata = buildJsonObject {}
     )
 
     fun buildRequestEvent() = RequestEvent(
@@ -25,9 +28,9 @@ object EventBuilderForTest {
         id = "id",
         flowId = "flowId",
         payload = JsonPrimitive(42),
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        identity = buildJsonObject {},
+        auth = buildJsonObject {},
+        metadata = buildJsonObject {}
     )
 
     fun buildResponseEvent() = ResponseEvent(
@@ -36,9 +39,9 @@ object EventBuilderForTest {
         id = "id",
         flowId = "flowId",
         payload = JsonPrimitive(42),
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        identity = buildJsonObject {},
+        auth = buildJsonObject {},
+        metadata = buildJsonObject {}
     )
 
     fun buildRedirectEvent() = ResponseEvent(
@@ -46,12 +49,12 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonObject().apply {
-            addProperty("url", "https://www.google.com")
-            add("queryParameters", JsonObject())
+        payload = buildJsonObject {
+            put("url", "https://www.google.com")
+            putJsonObject("queryParameters") {}
         },
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        identity = buildJsonObject {},
+        auth = buildJsonObject {},
+        metadata = buildJsonObject {}
     )
 }

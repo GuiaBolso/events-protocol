@@ -11,6 +11,8 @@ import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import org.slf4j.LoggerFactory
 
 class EventClient
@@ -38,7 +40,7 @@ constructor(
             val rawResponse = httpClient.post(
                 url,
                 customHeaders,
-                mapper.toJson(requestEvent),
+                mapper.encodeToString(requestEvent),
                 Charsets.UTF_8,
                 timeout ?: defaultTimeout
             )
@@ -71,7 +73,7 @@ constructor(
 
     private fun parseEvent(rawResponse: String): ResponseEvent {
         try {
-            val rawEvent = mapper.fromJson(rawResponse, RawEvent::class.java)
+            val rawEvent = mapper.decodeFromString<RawEvent>(rawResponse)
             return eventValidator.validateAsResponseEvent(rawEvent)
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)

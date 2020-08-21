@@ -11,6 +11,7 @@ import br.com.guiabolso.events.model.EventErrorType
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.serialization.encodeToString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -30,11 +31,11 @@ class EventClientTest {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
-                mapper.toJson(event),
+                mapper.encodeToString(event),
                 Charsets.UTF_8,
                 1000
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.encodeToString(responseEvent)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -54,11 +55,11 @@ class EventClientTest {
             httpClient.post(
                 eq("url"),
                 any(),
-                eq(mapper.toJson(event)),
+                eq(mapper.encodeToString(event)),
                 eq(Charsets.UTF_8),
                 eq(1000)
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.encodeToString(responseEvent)
 
         val response = eventClient.sendEvent("url", event, mapOf("Test" to "some value"), 1000)
 
@@ -69,7 +70,7 @@ class EventClientTest {
             httpClient.post(
                 eq("url"),
                 eq(mapOf("Content-Type" to "application/json", "Test" to "some value")),
-                eq(mapper.toJson(event)),
+                eq(mapper.encodeToString(event)),
                 eq(Charsets.UTF_8),
                 eq(1000)
             )
@@ -88,11 +89,11 @@ class EventClientTest {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
-                mapper.toJson(event),
+                mapper.encodeToString(event),
                 Charsets.UTF_8,
                 1000
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.encodeToString(responseEvent)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -112,11 +113,11 @@ class EventClientTest {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
-                mapper.toJson(event),
+                mapper.encodeToString(event),
                 Charsets.UTF_8,
                 1000
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.encodeToString(responseEvent)
 
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
@@ -136,7 +137,7 @@ class EventClientTest {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
-                mapper.toJson(event),
+                mapper.encodeToString(event),
                 Charsets.UTF_8,
                 1000
             )
@@ -159,7 +160,7 @@ class EventClientTest {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
-                mapper.toJson(event),
+                mapper.encodeToString(event),
                 Charsets.UTF_8,
                 1000
             )
@@ -183,7 +184,7 @@ class EventClientTest {
             httpClient.post(
                 "url",
                 mapOf("Content-Type" to "application/json"),
-                mapper.toJson(event),
+                mapper.encodeToString(event),
                 Charsets.UTF_8,
                 1000
             )

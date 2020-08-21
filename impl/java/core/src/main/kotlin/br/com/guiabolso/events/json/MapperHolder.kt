@@ -1,11 +1,11 @@
 package br.com.guiabolso.events.json
 
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.json.Json
 
 object MapperHolder {
 
     @JvmField
-    var mapper = GsonBuilder()
-        .serializeNulls()
-        .create()!!
+    var mapper = Json {
+        ignoreUnknownKeys = true
+    }
 }

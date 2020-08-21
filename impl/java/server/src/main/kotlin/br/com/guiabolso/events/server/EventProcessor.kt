@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
@@ -11,6 +11,8 @@ import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.factory.TracerFactory
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
 class EventProcessor
 @JvmOverloads
@@ -34,12 +36,14 @@ constructor(
     }
 
     private fun parseEvent(payload: String?): RawEvent? {
-        try {
-            return MapperHolder.mapper.fromJson(payload, RawEvent::class.java)
+        return try {
+            if (payload != null) {
+                mapper.decodeFromString(payload)
+            } else null
         } catch (e: Throwable) {
             throw EventParsingException(e)
         }
     }
 
-    private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
+    private fun ResponseEvent.json() = mapper.encodeToString(this)
 }

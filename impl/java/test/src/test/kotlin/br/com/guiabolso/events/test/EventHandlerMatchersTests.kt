@@ -25,7 +25,7 @@ private fun createEvent(str: String) = EventBuilder.event {
     version = 1
     id = "id"
     flowId = "flowId"
-    payload = str
+    payload(str)
 }
 
 object MyHandler : ConvertingEventHandler<String> {

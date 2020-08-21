@@ -3,9 +3,11 @@ package br.com.guiabolso.events.utils
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.model.EventErrorType
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.addJsonObject
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -57,7 +59,7 @@ class EventsTest {
     @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsNumber() {
         val event = buildRequestEvent().copy(
-            identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+            identity = buildJsonObject { put("userId", JsonPrimitive(42)) }
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -65,7 +67,7 @@ class EventsTest {
     @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsString() {
         val event = buildRequestEvent().copy(
-            identity = JsonObject().apply { this.add("userId", JsonPrimitive("42")) }
+            identity = buildJsonObject { put("userId", JsonPrimitive("42")) }
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -75,7 +77,7 @@ class EventsTest {
         assertNull(buildRequestEvent().userId)
 
         val responseEvent = buildRequestEvent().copy(
-            identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+            identity = buildJsonObject { put("userId", JsonPrimitive(42)) }
         )
         assertEquals(42L, responseEvent.userId)
     }
@@ -85,73 +87,61 @@ class EventsTest {
         assertNull(buildRequestEvent().origin)
 
         val responseEvent = buildRequestEvent().copy(
-            metadata = JsonObject().apply { this.add("origin", JsonPrimitive("batata")) }
+            metadata = buildJsonObject { put("origin", JsonPrimitive("batata")) }
         )
         assertEquals("batata", responseEvent.origin)
     }
 
     @Test
     fun testGetPayload() {
-        val request = buildRequestEvent().copy(payload = JsonObject().apply {
-            this.add("a", JsonPrimitive("someString"))
-            this.add("b", JsonPrimitive(60))
+        val request = buildRequestEvent().copy(payload = buildJsonObject {
+            put("a", JsonPrimitive("someString"))
+            put("b", JsonPrimitive(60))
         })
 
-        val vo = request.payloadAs(VO::class.java)
-        val vo2: VO = request.payloadAs()
+        val vo: VO = request.payloadAs()
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)
-
-        assertEquals("someString", vo2.a)
-        assertEquals(60L, vo2.b)
     }
 
     @Test
     fun testGetIdentity() {
-        val request = buildRequestEvent().copy(identity = JsonObject().apply {
-            this.add("a", JsonPrimitive("someString"))
-            this.add("b", JsonPrimitive(60))
+        val request = buildRequestEvent().copy(identity = buildJsonObject {
+            put("a", JsonPrimitive("someString"))
+            put("b", JsonPrimitive(60))
         })
 
-        val vo = request.identityAs(VO::class.java)
-        val vo2: VO = request.identityAs()
+        val vo: VO = request.identityAs()
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)
-
-        assertEquals("someString", vo2.a)
-        assertEquals(60L, vo2.b)
     }
 
     @Test
     fun testGetAuth() {
-        val request = buildRequestEvent().copy(auth = JsonObject().apply {
-            this.add("a", JsonPrimitive("someString"))
-            this.add("b", JsonPrimitive(60))
+        val request = buildRequestEvent().copy(auth = buildJsonObject {
+            put("a", JsonPrimitive("someString"))
+            put("b", JsonPrimitive(60))
         })
 
-        val vo = request.authAs(VO::class.java)
-        val vo2: VO = request.authAs()
+        val vo: VO = request.authAs()
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)
-
-        assertEquals("someString", vo2.a)
-        assertEquals(60L, vo2.b)
     }
 
     @Test
     fun testCanParseJsonArrays() {
-        val request = buildRequestEvent().copy(payload = JsonArray().apply {
-            this.add(JsonObject().apply {
-                this.add("a", JsonPrimitive("someString"))
-                this.add("b", JsonPrimitive(60))
-            })
-            this.add(JsonObject().apply {
-                this.add("a", JsonPrimitive("someOtherString"))
-                this.add("b", JsonPrimitive(120))
-            })
+        val request = buildRequestEvent().copy(payload = buildJsonArray {
+            this.addJsonObject {
+                put("a", JsonPrimitive("someString"))
+                put("b", JsonPrimitive(60))
+            }
+            this.addJsonObject {
+                put("a", JsonPrimitive("someOtherString"))
+                put("b", JsonPrimitive(120))
+            }
         })
 
         val voList: List<VO> = request.payloadAs()
@@ -163,5 +153,6 @@ class EventsTest {
         assertEquals(120L, voList[1].b)
     }
 
+    @Serializable
     private data class VO(val a: String? = null, val b: Long? = null)
 }

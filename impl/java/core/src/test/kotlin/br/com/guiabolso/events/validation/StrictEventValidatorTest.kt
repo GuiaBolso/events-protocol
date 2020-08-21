@@ -1,9 +1,9 @@
 package br.com.guiabolso.events.validation
 
 import br.com.guiabolso.events.model.RawEvent
-import com.google.gson.JsonNull.INSTANCE as JsonNull
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -14,7 +14,16 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidation() {
-        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject())
+        val raw = RawEvent(
+            "event",
+            1,
+            "id",
+            "flow",
+            JsonPrimitive(42),
+            buildJsonObject {},
+            buildJsonObject {},
+            buildJsonObject {}
+        )
 
         val response = validator.validateAsResponseEvent(raw)
         assertEquals("event", response.name)
@@ -22,9 +31,9 @@ class StrictEventValidatorTest {
         assertEquals("id", response.id)
         assertEquals("flow", response.flowId)
         assertEquals(JsonPrimitive(42), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(buildJsonObject {}, response.auth)
+        assertEquals(buildJsonObject {}, response.identity)
+        assertEquals(buildJsonObject {}, response.metadata)
     }
 
     @Test
@@ -37,9 +46,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -55,9 +64,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -73,9 +82,9 @@ class StrictEventValidatorTest {
                     null,
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -91,9 +100,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     null,
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -104,9 +113,9 @@ class StrictEventValidatorTest {
                 "id",
                 "flow",
                 JsonNull,
-                JsonObject(),
-                JsonObject(),
-                JsonObject()
+                buildJsonObject {},
+                buildJsonObject {},
+                buildJsonObject {}
             )
         )
     }
@@ -122,8 +131,8 @@ class StrictEventValidatorTest {
                     "flow",
                     JsonPrimitive(42),
                     null,
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -136,8 +145,8 @@ class StrictEventValidatorTest {
                     "flow",
                     JsonPrimitive(42),
                     JsonNull,
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -153,9 +162,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
+                    buildJsonObject {},
                     null,
-                    JsonObject()
+                    buildJsonObject {}
                 )
             )
         }
@@ -167,9 +176,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
+                    buildJsonObject {},
                     JsonNull,
-                    JsonObject()
+                    buildJsonObject {}
                 )
             )
         }
@@ -185,8 +194,8 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
+                    buildJsonObject {},
+                    buildJsonObject {},
                     null
                 )
             )
@@ -199,8 +208,8 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
+                    buildJsonObject {},
+                    buildJsonObject {},
                     JsonNull
                 )
             )
@@ -209,7 +218,16 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidation() {
-        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject())
+        val raw = RawEvent(
+            "event",
+            1,
+            "id",
+            "flow",
+            JsonPrimitive(42),
+            buildJsonObject {},
+            buildJsonObject {},
+            buildJsonObject { }
+        )
 
         val request = validator.validateAsRequestEvent(raw)
         assertEquals("event", request.name)
@@ -217,9 +235,9 @@ class StrictEventValidatorTest {
         assertEquals("id", request.id)
         assertEquals("flow", request.flowId)
         assertEquals(JsonPrimitive(42), request.payload)
-        assertEquals(JsonObject(), request.auth)
-        assertEquals(JsonObject(), request.identity)
-        assertEquals(JsonObject(), request.metadata)
+        assertEquals(buildJsonObject {}, request.auth)
+        assertEquals(buildJsonObject {}, request.identity)
+        assertEquals(buildJsonObject {}, request.metadata)
     }
 
     @Test
@@ -232,9 +250,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -250,9 +268,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -268,9 +286,9 @@ class StrictEventValidatorTest {
                     null,
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -286,9 +304,9 @@ class StrictEventValidatorTest {
                     "id",
                     null,
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -304,9 +322,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     null,
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -317,9 +335,9 @@ class StrictEventValidatorTest {
                 "id",
                 "flow",
                 JsonNull,
-                JsonObject(),
-                JsonObject(),
-                JsonObject()
+                buildJsonObject {},
+                buildJsonObject {},
+                buildJsonObject {}
             )
         )
     }
@@ -335,8 +353,8 @@ class StrictEventValidatorTest {
                     "flow",
                     JsonPrimitive(42),
                     null,
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -349,8 +367,8 @@ class StrictEventValidatorTest {
                     "flow",
                     JsonPrimitive(42),
                     JsonNull,
-                    JsonObject(),
-                    JsonObject()
+                    buildJsonObject {},
+                    buildJsonObject {}
                 )
             )
         }
@@ -366,9 +384,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
+                    buildJsonObject {},
                     null,
-                    JsonObject()
+                    buildJsonObject {}
                 )
             )
         }
@@ -380,9 +398,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
+                    buildJsonObject {},
                     JsonNull,
-                    JsonObject()
+                    buildJsonObject {}
                 )
             )
         }
@@ -398,8 +416,8 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
+                    buildJsonObject {},
+                    buildJsonObject {},
                     null
                 )
             )
@@ -412,8 +430,8 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
+                    buildJsonObject {},
+                    buildJsonObject {},
                     JsonNull
                 )
             )

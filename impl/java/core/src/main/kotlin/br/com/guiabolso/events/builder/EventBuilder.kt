@@ -1,15 +1,19 @@
 package br.com.guiabolso.events.builder
 
 import br.com.guiabolso.events.exception.MissingEventInformationException
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.utils.EventUtils
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 import java.util.UUID
 
 class EventBuilder {
@@ -56,7 +60,7 @@ class EventBuilder {
             val builder = EventBuilder()
             builder.name = "${event.name}:${type.typeName}"
             builder.version = event.version
-            builder.payload = message
+            builder.payload(message)
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
 
@@ -68,7 +72,7 @@ class EventBuilder {
             val builder = EventBuilder()
             builder.name = "${requestEvent.name}:redirect"
             builder.version = requestEvent.version
-            builder.payload = payload
+            builder.payload(payload)
             builder.id = builder.id ?: requestEvent.id
             builder.flowId = builder.flowId ?: requestEvent.flowId
 
@@ -82,8 +86,15 @@ class EventBuilder {
             builder.version = 1
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
-            builder.payload =
-                EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
+            builder.payload(
+                EventMessage(
+                    code = "NO_EVENT_HANDLER_FOUND",
+                    parameters = buildJsonObject {
+                        put("event", event.name)
+                        put("version", event.version)
+                    }
+                )
+            )
             return builder.buildResponseEvent()
         }
 
@@ -94,7 +105,7 @@ class EventBuilder {
             builder.version = 1
             builder.id = UUID.randomUUID().toString()
             builder.flowId = UUID.randomUUID().toString()
-            builder.payload = message
+            builder.payload(message)
             return builder.buildResponseEvent()
         }
     }
@@ -103,17 +114,36 @@ class EventBuilder {
     var version: Int? = null
     var id = EventUtils.eventId
     var flowId = EventUtils.flowId
-    var payload: Any? = null
-    var identity: Any? = null
-    var auth: Any? = null
-    var metadata: Any? = null
+    var payload: JsonElement = JsonNull
+    var identity: JsonElement = JsonNull
+    var auth: JsonElement = JsonNull
+    var metadata: JsonElement = JsonNull
+
+    inline fun <reified T> payload(payload: T?) {
+        this.payload = when (payload) {
+            null -> JsonNull
+            else -> mapper.encodeToJsonElement(payload)
+        }
+    }
+
+    inline fun <reified T> identity(identity: T?) {
+        this.identity = convertToJsonObjectOrEmpty(identity)
+    }
+
+    inline fun <reified T> auth(auth: T?) {
+        this.auth = convertToJsonObjectOrEmpty(auth)
+    }
+
+    inline fun <reified T> metadata(metadata: T?) {
+        this.metadata = convertToJsonObjectOrEmpty(metadata)
+    }
 
     fun buildRequestEvent() = RequestEvent(
         name = this.name ?: throw MissingEventInformationException("Missing event name."),
         version = this.version ?: throw MissingEventInformationException("Missing event version."),
         id = this.id ?: throw MissingEventInformationException("Missing event id."),
         flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
-        payload = convertPayload(),
+        payload = this.payload,
         identity = convertToJsonObjectOrEmpty(this.identity),
         auth = convertToJsonObjectOrEmpty(this.auth),
         metadata = convertToJsonObjectOrEmpty(this.metadata)
@@ -124,20 +154,15 @@ class EventBuilder {
         version = this.version ?: throw MissingEventInformationException("Missing event version."),
         id = this.id ?: throw MissingEventInformationException("Missing event id."),
         flowId = this.flowId ?: throw MissingEventInformationException("Missing event flowId."),
-        payload = convertPayload(),
+        payload = this.payload,
         identity = convertToJsonObjectOrEmpty(this.identity),
         auth = convertToJsonObjectOrEmpty(this.auth),
         metadata = convertToJsonObjectOrEmpty(this.metadata)
     )
 
-    private fun convertPayload() = when (this.payload) {
-        null -> JsonNull.INSTANCE
-        else -> MapperHolder.mapper.toJsonTree(this.payload)
-    }
-
-    private fun convertToJsonObjectOrEmpty(value: Any?) = when (value) {
-        null -> JsonObject()
-        JsonNull.INSTANCE -> JsonObject()
-        else -> MapperHolder.mapper.toJsonTree(value).asJsonObject
+    inline fun <reified T> convertToJsonObjectOrEmpty(value: T?) = when (value) {
+        null -> buildJsonObject {}
+        JsonNull -> buildJsonObject {}
+        else -> mapper.encodeToJsonElement(value).jsonObject
     }
 }

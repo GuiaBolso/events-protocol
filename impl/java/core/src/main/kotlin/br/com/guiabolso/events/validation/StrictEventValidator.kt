@@ -3,8 +3,9 @@ package br.com.guiabolso.events.validation
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 
 class StrictEventValidator : EventValidator {
 
@@ -31,7 +32,7 @@ class StrictEventValidator : EventValidator {
     )
 
     private fun JsonElement?.requiredJsonObject(name: String): JsonObject {
-        if (this == null || !this.isJsonObject) throw EventValidationException(name)
-        return this.asJsonObject
+        if (this == null || this !is JsonObject) throw EventValidationException(name)
+        return this.jsonObject
     }
 }

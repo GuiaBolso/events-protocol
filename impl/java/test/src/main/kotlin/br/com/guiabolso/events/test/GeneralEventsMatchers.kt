@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.test
 
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.Event
-import com.google.gson.GsonBuilder
 import io.kotest.assertions.json.shouldContainJsonKeyValue
 import io.kotest.assertions.json.shouldMatchJson
 import io.kotest.assertions.json.shouldNotContainJsonKeyValue
@@ -10,6 +10,8 @@ import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonObject
 
 infix fun Event.shouldHaveName(name: String) = this should haveName(name)
 infix fun Event.shouldNotHaveName(name: String) = this shouldNot haveName(name)
@@ -55,24 +57,30 @@ fun haveFlowId(flowId: String) = object : Matcher<Event> {
 }
 
 fun <T> Event.shouldContainPayload(key: String, value: T) = payload.toString().shouldContainJsonKeyValue(key, value)
-fun <T> Event.shouldNotContainPayload(key: String, value: T) = payload.toString().shouldNotContainJsonKeyValue(key, value)
-infix fun Event.shouldHavePayload(map: Map<String, Any?>) = payload.toString().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHavePayload(map: Map<String, Any?>) = payload.toString().shouldNotMatchJson(map.toJson())
+fun <T> Event.shouldNotContainPayload(key: String, value: T) =
+    payload.toString().shouldNotContainJsonKeyValue(key, value)
+
+infix fun Event.shouldHavePayload(map: JsonObject) = payload.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHavePayload(map: JsonObject) = payload.toString().shouldNotMatchJson(map.toJson())
 
 fun <T> Event.shouldContainIdentity(key: String, value: T) = identity.toString().shouldContainJsonKeyValue(key, value)
-fun <T> Event.shouldNotContainIdentity(key: String, value: T) = identity.toString().shouldNotContainJsonKeyValue(key, value)
-infix fun Event.shouldHaveIdentity(map: Map<String, Any?>) = identity.toString().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHaveIdentity(map: Map<String, Any?>) = identity.toString().shouldNotMatchJson(map.toJson())
+fun <T> Event.shouldNotContainIdentity(key: String, value: T) =
+    identity.toString().shouldNotContainJsonKeyValue(key, value)
+
+infix fun Event.shouldHaveIdentity(map: JsonObject) = identity.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHaveIdentity(map: JsonObject) = identity.toString().shouldNotMatchJson(map.toJson())
 
 fun <T> Event.shouldContainAuth(key: String, value: T) = auth.toString().shouldContainJsonKeyValue(key, value)
 fun <T> Event.shouldNotContainAuth(key: String, value: T) = auth.toString().shouldNotContainJsonKeyValue(key, value)
-infix fun Event.shouldHaveAuth(map: Map<String, Any?>) = auth.toString().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHaveAuth(map: Map<String, Any?>) = auth.toString().shouldNotMatchJson(map.toJson())
+infix fun Event.shouldHaveAuth(map: JsonObject) = auth.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHaveAuth(map: JsonObject) = auth.toString().shouldNotMatchJson(map.toJson())
 
 fun <T> Event.shouldContainMetadata(key: String, value: T) = metadata.toString().shouldContainJsonKeyValue(key, value)
-fun <T> Event.shouldNotContainMetadata(key: String, value: T) = metadata.toString().shouldNotContainJsonKeyValue(key, value)
-infix fun Event.shouldHaveMetadata(map: Map<String, Any?>) = metadata.toString().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHaveMetadata(map: Map<String, Any?>) = metadata.toString().shouldNotMatchJson(map.toJson())
+fun <T> Event.shouldNotContainMetadata(key: String, value: T) =
+    metadata.toString().shouldNotContainJsonKeyValue(key, value)
+
+infix fun Event.shouldHaveMetadata(map: JsonObject) = metadata.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHaveMetadata(map: JsonObject) = metadata.toString().shouldNotMatchJson(map.toJson())
 
 infix fun Event.shouldHaveUserId(userId: Long) = this should haveUserId(userId)
 infix fun Event.shouldNotHaveUserId(userId: Long) = this shouldNot haveUserId(userId)
@@ -94,4 +102,4 @@ fun haveOrigin(origin: String) = object : Matcher<Event> {
     )
 }
 
-private fun Map<String, Any?>.toJson() = GsonBuilder().serializeNulls().create().toJson(this)
+private fun JsonObject.toJson() = mapper.encodeToString(this)

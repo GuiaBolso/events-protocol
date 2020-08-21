@@ -3,9 +3,10 @@ package br.com.guiabolso.events.validation
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import com.google.gson.JsonElement
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
 import org.slf4j.LoggerFactory
 
 @Deprecated(
@@ -67,7 +68,7 @@ class LenientEventValidator : EventValidator {
     private fun JsonElement?.getPayload(missingProperties: MutableList<String>, name: String): JsonElement {
         return if (this == null) {
             missingProperties.add(name)
-            JsonNull.INSTANCE
+            JsonNull
         } else {
             this
         }
@@ -78,7 +79,7 @@ class LenientEventValidator : EventValidator {
             is JsonObject -> this
             else -> {
                 missingProperties.add(name)
-                JsonObject()
+                buildJsonObject {}
             }
         }
 

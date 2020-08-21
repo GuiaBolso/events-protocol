@@ -1,11 +1,15 @@
 package br.com.guiabolso.events.model
 
-import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.validation.withCheckedJsonNull
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
+import br.com.guiabolso.events.json.MapperHolder.mapper
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 
+@Serializable
 sealed class Event {
     abstract val name: String
     abstract val version: Int
@@ -16,38 +20,25 @@ sealed class Event {
     abstract val auth: JsonObject
     abstract val metadata: JsonObject
 
-    fun <T> payloadAs(clazz: Class<T>): T = this.payload.convertTo(clazz)
-
     inline fun <reified T> payloadAs(): T = this.payload.convertTo()
 
-    fun <T> identityAs(clazz: Class<T>): T = this.identity.convertTo(clazz)
-
     inline fun <reified T> identityAs(): T = this.identity.convertTo()
-
-    fun <T> authAs(clazz: Class<T>): T = this.auth.convertTo(clazz)
 
     inline fun <reified T> authAs(): T = this.auth.convertTo()
 
     val userId: Long?
-        get() = this.identity.withCheckedJsonNull("userId") {
-            it.getAsJsonPrimitive("userId")?.asLong
-        }
+        get() = this.identity["userId"]?.jsonPrimitive?.longOrNull
 
     val userIdAsString: String?
-        get() = this.identity.withCheckedJsonNull("userId") {
-            it.getAsJsonPrimitive("userId")?.asString
-        }
+        get() = this.identity["userId"]?.jsonPrimitive?.contentOrNull
 
     val origin: String?
-        get() = this.metadata.withCheckedJsonNull("origin") {
-            it.getAsJsonPrimitive("origin")?.asString
-        }
+        get() = this.metadata["origin"]?.jsonPrimitive?.contentOrNull
 
-    inline fun <reified T> JsonElement.convertTo(): T = MapperHolder.mapper.fromJson(this, object : TypeToken<T>() {}.type)
-
-    private fun <T> JsonElement.convertTo(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this, clazz)
+    inline fun <reified T> JsonElement.convertTo(): T = mapper.decodeFromJsonElement(this)
 }
 
+@Serializable
 data class ResponseEvent(
     override val name: String,
     override val version: Int,
@@ -71,6 +62,7 @@ data class ResponseEvent(
     }
 }
 
+@Serializable
 data class RequestEvent(
     override val name: String,
     override val version: Int,

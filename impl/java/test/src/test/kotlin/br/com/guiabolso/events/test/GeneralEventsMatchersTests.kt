@@ -1,10 +1,12 @@
 package br.com.guiabolso.events.test
 
 import br.com.guiabolso.events.builder.EventBuilder
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
 
 class GeneralEventsMatchersTests : FunSpec({
 
@@ -13,10 +15,10 @@ class GeneralEventsMatchersTests : FunSpec({
         version = 3
         id = "id"
         flowId = "flowId"
-        payload = complexMap
-        identity = complexMap
-        auth = complexMap
-        metadata = complexMap
+        payload(complexMap)
+        identity(complexMap)
+        auth(complexMap)
+        metadata(complexMap)
     }
 
     test("should have name") {
@@ -63,12 +65,12 @@ class GeneralEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { event.shouldContainPayload("c.a", "d") }
 
         event shouldHavePayload complexMap
-        event shouldNotHavePayload mapOf("a" to "b")
-        event shouldNotHavePayload emptyMap()
+        event shouldNotHavePayload buildJsonObject { put("a", "b") }
+        event shouldNotHavePayload buildJsonObject { }
 
         shouldThrow<AssertionError> { event shouldNotHavePayload complexMap }
-        shouldThrow<AssertionError> { event shouldHavePayload mapOf("a" to "b") }
-        shouldThrow<AssertionError> { event shouldHavePayload emptyMap() }
+        shouldThrow<AssertionError> { event shouldHavePayload buildJsonObject { put("a", "b") } }
+        shouldThrow<AssertionError> { event shouldHavePayload buildJsonObject { } }
     }
 
     test("Should have identity") {
@@ -83,12 +85,12 @@ class GeneralEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { event.shouldContainIdentity("c.a", "d") }
 
         event shouldHaveIdentity complexMap
-        event shouldNotHaveIdentity mapOf("a" to "b")
-        event shouldNotHaveIdentity emptyMap()
+        event shouldNotHaveIdentity buildJsonObject { put("a", "b") }
+        event shouldNotHaveIdentity buildJsonObject { }
 
         shouldThrow<AssertionError> { event shouldNotHaveIdentity complexMap }
-        shouldThrow<AssertionError> { event shouldHaveIdentity mapOf("a" to "b") }
-        shouldThrow<AssertionError> { event shouldHaveIdentity emptyMap() }
+        shouldThrow<AssertionError> { event shouldHaveIdentity buildJsonObject { put("a", "b") } }
+        shouldThrow<AssertionError> { event shouldHaveIdentity buildJsonObject { } }
     }
 
     test("Should have auth") {
@@ -103,12 +105,12 @@ class GeneralEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { event.shouldContainAuth("c.a", "d") }
 
         event shouldHaveAuth complexMap
-        event shouldNotHaveAuth mapOf("a" to "b")
-        event shouldNotHaveAuth emptyMap()
+        event shouldNotHaveAuth buildJsonObject { put("a", "b") }
+        event shouldNotHaveAuth buildJsonObject { }
 
         shouldThrow<AssertionError> { event shouldNotHaveAuth complexMap }
-        shouldThrow<AssertionError> { event shouldHaveAuth mapOf("a" to "b") }
-        shouldThrow<AssertionError> { event shouldHaveAuth emptyMap() }
+        shouldThrow<AssertionError> { event shouldHaveAuth buildJsonObject { put("a", "b") } }
+        shouldThrow<AssertionError> { event shouldHaveAuth buildJsonObject { } }
     }
 
     test("Should have metadata") {
@@ -123,16 +125,16 @@ class GeneralEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { event.shouldContainMetadata("c.a", "d") }
 
         event shouldHaveMetadata complexMap
-        event shouldNotHaveMetadata mapOf("a" to "b")
-        event shouldNotHaveMetadata emptyMap()
+        event shouldNotHaveMetadata buildJsonObject { put("a", "b") }
+        event shouldNotHaveMetadata buildJsonObject { }
 
         shouldThrow<AssertionError> { event shouldNotHaveMetadata complexMap }
-        shouldThrow<AssertionError> { event shouldHaveMetadata mapOf("a" to "b") }
-        shouldThrow<AssertionError> { event shouldHaveMetadata emptyMap() }
+        shouldThrow<AssertionError> { event shouldHaveMetadata buildJsonObject { put("a", "b") } }
+        shouldThrow<AssertionError> { event shouldHaveMetadata buildJsonObject { } }
     }
 
     test("Should have userId") {
-        val eventWithUserId = event.copy(identity = mapOf("userId" to 42).toJsonObject())
+        val eventWithUserId = event.copy(identity = buildJsonObject { put("userId", 42) })
 
         eventWithUserId shouldHaveUserId 42
         eventWithUserId shouldNotHaveUserId 43
@@ -142,7 +144,7 @@ class GeneralEventsMatchersTests : FunSpec({
     }
 
     test("Should have origin") {
-        val eventWithOrigin = event.copy(metadata = mapOf("origin" to "foo").toJsonObject())
+        val eventWithOrigin = event.copy(metadata = buildJsonObject { put("origin", "foo") })
 
         eventWithOrigin shouldHaveOrigin "foo"
         eventWithOrigin shouldNotHaveOrigin "bar"
@@ -152,9 +154,7 @@ class GeneralEventsMatchersTests : FunSpec({
     }
 })
 
-private val complexMap = mapOf(
-    "a" to "b",
-    "c" to mapOf("a" to "b")
-)
-
-private fun Map<String, Any?>.toJsonObject(): JsonObject = Gson().toJsonTree(this).asJsonObject
+private val complexMap: JsonObject = buildJsonObject {
+    put("a", "b")
+    putJsonObject("c") { put("a", "b") }
+}

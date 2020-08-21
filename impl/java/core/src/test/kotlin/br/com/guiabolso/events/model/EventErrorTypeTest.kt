@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.EventBuilderForTest
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.EventErrorType.Companion.getErrorType
 import br.com.guiabolso.events.model.EventErrorType.Expired
 import br.com.guiabolso.events.model.EventErrorType.Forbidden
@@ -11,7 +11,7 @@ import br.com.guiabolso.events.model.EventErrorType.ResourceDenied
 import br.com.guiabolso.events.model.EventErrorType.Unauthorized
 import br.com.guiabolso.events.model.EventErrorType.Unknown
 import br.com.guiabolso.events.model.EventErrorType.UserDenied
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.jsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -47,13 +47,13 @@ class EventErrorTypeTest {
 
     @Test
     fun testJsonNullUserIdEvent() {
-        val identity = MapperHolder.mapper.fromJson(
+        val identity = mapper.parseToJsonElement(
             """
             {
                 "userId": null
             }
-        """.trimIndent(), JsonObject::class.java
-        )
+        """.trimIndent()
+        ).jsonObject
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
 
@@ -62,13 +62,13 @@ class EventErrorTypeTest {
 
     @Test
     fun testJsonNullOriginEvent() {
-        val metadata = MapperHolder.mapper.fromJson(
+        val metadata = mapper.parseToJsonElement(
             """
             {
                 "origin": null
             }
-        """.trimIndent(), JsonObject::class.java
-        )
+        """.trimIndent()
+        ).jsonObject
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)
 
@@ -77,13 +77,13 @@ class EventErrorTypeTest {
 
     @Test
     fun testNotNullUserIdEvent() {
-        val identity = MapperHolder.mapper.fromJson(
+        val identity = mapper.parseToJsonElement(
             """
             {
                 "userId": 123987
             }
-        """.trimIndent(), JsonObject::class.java
-        )
+        """.trimIndent()
+        ).jsonObject
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
 
@@ -92,13 +92,13 @@ class EventErrorTypeTest {
 
     @Test
     fun testNotNullOriginEvent() {
-        val metadata = MapperHolder.mapper.fromJson(
+        val metadata = mapper.parseToJsonElement(
             """
             {
                 "origin": "east"
             }
-        """.trimIndent(), JsonObject::class.java
-        )
+        """.trimIndent()
+        ).jsonObject
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)
 

@@ -2,18 +2,23 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 class SAMLambdaEventProcessorTest {
 
@@ -40,12 +45,13 @@ class SAMLambdaEventProcessorTest {
         val output = ByteArrayOutputStream()
         lambdaEventProcessor.processEvent(input, output)
 
-        val lambdaBody = MapperHolder.mapper.fromJson(String(output.toByteArray()), JsonObject::class.java).get("body").asString
-        val responseEvent = MapperHolder.mapper.fromJson(lambdaBody, RawEvent::class.java)
+        val lambdaBody =
+            mapper.parseToJsonElement(String(output.toByteArray())).jsonObject["body"]!!.jsonPrimitive.content
+        val responseEvent = mapper.decodeFromString<RawEvent>(lambdaBody)
 
         assertEquals("event:name:response", responseEvent.name)
         assertEquals(1, responseEvent.version)
-        assertEquals(42, responseEvent.payload?.asInt)
+        assertEquals(42, responseEvent.payload?.jsonPrimitive?.int)
     }
 
     @Test
@@ -54,19 +60,23 @@ class SAMLambdaEventProcessorTest {
         val output = ByteArrayOutputStream()
         lambdaEventProcessor.processEvent(input, output)
 
-        val lambdaBody = MapperHolder.mapper.fromJson(String(output.toByteArray()), JsonObject::class.java).get("body").asString
-        val responseEvent = MapperHolder.mapper.fromJson(lambdaBody, RawEvent::class.java)
+        val lambdaBody =
+            mapper.parseToJsonElement(String(output.toByteArray())).jsonObject["body"]!!.jsonPrimitive.content
+        val responseEvent = mapper.decodeFromString<RawEvent>(lambdaBody)
 
         assertEquals("badProtocol", responseEvent.name)
         assertEquals(1, responseEvent.version)
-        assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload!!.asJsonObject.get("code").asString)
+        assertEquals(
+            "INVALID_COMMUNICATION_PROTOCOL",
+            responseEvent.payload!!.jsonObject["code"]!!.jsonPrimitive.content
+        )
     }
 
-    private fun buildLambdaRequestEventString(event: RequestEvent = buildRequestEvent()) = MapperHolder.mapper.toJson(
-        JsonObject().apply {
-            add("body", JsonPrimitive(MapperHolder.mapper.toJson(event)!!))
+    private fun buildLambdaRequestEventString(event: RequestEvent = buildRequestEvent()) = mapper.encodeToString(
+        buildJsonObject {
+            put("body", JsonPrimitive(mapper.encodeToString(event)))
         }
-    )!!
+    )
 
     private fun String.asStream() = ByteArrayInputStream(this.toByteArray())
 }

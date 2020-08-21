@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
@@ -11,9 +11,12 @@ import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.factory.TracerFactory
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.io.OutputStream
-import org.slf4j.LoggerFactory
 
 /**
  *  Used for running with AWS SAM because its input and expected output is different than the real AWS Lambda
@@ -45,9 +48,11 @@ constructor(
     }
 
     private fun parseEvent(payload: String?): RawEvent? {
-        try {
-            val lambdaBody = MapperHolder.mapper.fromJson(payload, SAMLambdaRequest::class.java)?.body ?: return null
-            return MapperHolder.mapper.fromJson(lambdaBody, RawEvent::class.java)
+        return try {
+            if (payload != null) {
+                val lambdaBody = mapper.decodeFromString<SAMLambdaRequest>(payload).body ?: return null
+                mapper.decodeFromString(lambdaBody)
+            } else null
         } catch (e: Throwable) {
             throw EventParsingException(e)
         }
@@ -61,18 +66,20 @@ constructor(
         output.use { it.write(response.toByteArray()) }
     }
 
-    private fun ResponseEvent.json() = MapperHolder.mapper.toJson(
+    private fun ResponseEvent.json() = mapper.encodeToString(
         SAMLambdaResponse(
             statusCode = 200,
             headers = mapOf("Content-Type" to "application/json"),
-            body = MapperHolder.mapper.toJson(this)
+            body = mapper.encodeToString(this)
         )
     )
 
+    @Serializable
     private data class SAMLambdaRequest(
         val body: String?
     )
 
+    @Serializable
     private data class SAMLambdaResponse(
         val statusCode: Int,
         val headers: Map<String, String>,

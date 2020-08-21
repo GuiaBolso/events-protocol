@@ -6,11 +6,16 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 class AWSLambdaEventProcessorTest {
 
@@ -33,15 +38,15 @@ class AWSLambdaEventProcessorTest {
             buildResponseEvent()
         }
 
-        val input = MapperHolder.mapper.toJson(event).asStream()
+        val input = MapperHolder.mapper.encodeToString(event).asStream()
         val output = ByteArrayOutputStream()
         lambdaEventProcessor.processEvent(input, output)
 
-        val responseEvent = MapperHolder.mapper.fromJson(String(output.toByteArray()), RawEvent::class.java)
+        val responseEvent = MapperHolder.mapper.decodeFromString<RawEvent>(String(output.toByteArray()))
 
         assertEquals("event:name:response", responseEvent.name)
         assertEquals(1, responseEvent.version)
-        assertEquals(42, responseEvent.payload?.asInt)
+        assertEquals(42, responseEvent.payload?.jsonPrimitive?.int)
     }
 
     @Test
@@ -50,11 +55,14 @@ class AWSLambdaEventProcessorTest {
         val output = ByteArrayOutputStream()
         lambdaEventProcessor.processEvent(input, output)
 
-        val responseEvent = MapperHolder.mapper.fromJson(String(output.toByteArray()), RawEvent::class.java)
+        val responseEvent = MapperHolder.mapper.decodeFromString<RawEvent>(String(output.toByteArray()))
 
         assertEquals("badProtocol", responseEvent.name)
         assertEquals(1, responseEvent.version)
-        assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload!!.asJsonObject.get("code").asString)
+        assertEquals(
+            "INVALID_COMMUNICATION_PROTOCOL",
+            responseEvent.payload!!.jsonObject["code"]?.jsonPrimitive?.content
+        )
     }
 
     private fun String.asStream() = ByteArrayInputStream(this.toByteArray())

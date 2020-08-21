@@ -6,6 +6,8 @@ import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.tracing.Tracer
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.slf4j.LoggerFactory
 
 class ExceptionHandlerRegistry {
@@ -34,7 +36,7 @@ class ExceptionHandlerRegistry {
             EventBuilder.errorFor(
                 event,
                 EventErrorType.Generic,
-                EventMessage("UNHANDLED_ERROR", mapOf("message" to e.message))
+                EventMessage("UNHANDLED_ERROR", buildJsonObject { put("message", e.message) })
             )
         }
     }
