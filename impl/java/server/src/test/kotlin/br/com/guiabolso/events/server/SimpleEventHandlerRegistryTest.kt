@@ -8,6 +8,7 @@ import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class SimpleEventHandlerRegistryTest {
@@ -62,6 +63,17 @@ class SimpleEventHandlerRegistryTest {
 
         assertNull(handler)
     }
+
+    @Test
+    fun testThrowsExceptionWhenRegisteringDuplicatedEvent() {
+        val eventHandlerDiscovery = SimpleEventHandlerRegistry()
+
+        val handlers = listOf(Handler1, Handler1)
+
+        assertThrows(IllegalStateException::class.java) {
+            eventHandlerDiscovery.addAll(*handlers.toTypedArray())
+        }
+    }
 }
 
 private object Handler1 : EventHandler {
@@ -75,6 +87,7 @@ private object Handler1 : EventHandler {
         return EventBuilder.responseFor(event) { }
     }
 }
+
 private object Handler2 : EventHandler {
     var handles = 0
 
