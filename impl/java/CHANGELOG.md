@@ -15,6 +15,8 @@ Changes in dependencies:
 - `com.datadoghq:dd-trace-ot` is now set to `api`. Defining this dependency explicit will not be required anymore.
 - `com.datadoghq:dd-trace-api` is now set to `api`. Defining this dependency explicit will not be required anymore.
 
+**If you use the datadog with StatsD you need to explicitly create a Tracer with `withDatadogAPMAndStatsD(prefix: String, host: String, port: Int)`.**
+
 ### Added
 
 - Now you can use the [Tracer](/tracing/src/main/kotlin/br/com/guiabolso/tracing/Tracer.kt) to wrap instances of
