@@ -5,6 +5,9 @@ import br.com.guiabolso.tracing.engine.TracerEngine
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 class TracerImpl(
     private val tracerEngine: TracerEngine<*>,
@@ -51,12 +54,12 @@ class TracerImpl(
         return tracerEngine.executeAndRecordTime(name, block)
     }
 
-    override fun <T> executeAsync(executor: ExecutorService, task: () -> T): Future<T> {
+    override fun <T> executeAsync(executor: ExecutorService, task: Callable<T>): Future<T> {
         return asyncExecutor.executeAsync(tracerEngine, executor, task)
     }
 
-    override fun <T> executeAsync(executor: ExecutorService, task: Callable<T>): Future<T> {
-        return asyncExecutor.executeAsync(tracerEngine, executor, task)
+    override fun <T> schedule(executor: ScheduledExecutorService, task: Callable<T>, delay: Long, unit: TimeUnit): ScheduledFuture<T> {
+        return asyncExecutor.schedule(tracerEngine, executor, task, delay, unit)
     }
 
     override fun notifyError(exception: Throwable, expected: Boolean) {

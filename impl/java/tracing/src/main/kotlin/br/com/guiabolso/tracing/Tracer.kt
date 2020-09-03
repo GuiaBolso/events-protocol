@@ -4,6 +4,9 @@ import br.com.guiabolso.tracing.engine.TracerEngine
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 interface Tracer {
 
@@ -95,16 +98,18 @@ interface Tracer {
      * @param task The task.
      * @since 2.0.0
      */
-    fun <T> executeAsync(executor: ExecutorService, task: () -> T): Future<T>
+    fun <T> executeAsync(executor: ExecutorService, task: Callable<T>): Future<T>
 
     /**
-     * Track an asynchronous task execution
+     * Track a scheduled task execution
      *
      * @param executor The desired executor.
      * @param task The task.
-     * @since 2.0.0
+     * @param delay The delay.
+     * @param unit The time unit.
+     * @since 3.1.0
      */
-    fun <T> executeAsync(executor: ExecutorService, task: Callable<T>): Future<T>
+    fun <T> schedule(executor: ScheduledExecutorService, task: Callable<T>, delay: Long, unit: TimeUnit): ScheduledFuture<T>
 
     /**
      * Notice an error and report it to the tracer.

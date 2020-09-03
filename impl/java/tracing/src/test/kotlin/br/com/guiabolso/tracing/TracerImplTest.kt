@@ -6,12 +6,15 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 import org.junit.jupiter.api.Test
 
 class TracerImplTest {
 
     private val mockTracer: TracerEngine<*> = mockk(relaxed = true)
     private val mockExecutorService: ExecutorService = mockk()
+    private val mockSchedulerService: ScheduledExecutorService = mockk()
     private val mockExecutor: AsyncExecutor = mockk(relaxed = true)
     private val tracer = TracerImpl(mockTracer, mockExecutor)
 
@@ -65,19 +68,19 @@ class TracerImplTest {
     }
 
     @Test
-    fun `should delegate executeAsync`() {
-        val task: () -> String = { "batata" }
+    fun `should delegate executeAsync callable`() {
+        val task: Callable<String> = (Callable { "batata" })
         tracer.executeAsync(mockExecutorService, task)
 
         verify(exactly = 1) { mockExecutor.executeAsync(mockTracer, mockExecutorService, task) }
     }
 
     @Test
-    fun `should delegate executeAsync callable`() {
+    fun `should delegate schedule callable`() {
         val task: Callable<String> = (Callable { "batata" })
-        tracer.executeAsync(mockExecutorService, task)
+        tracer.schedule(mockSchedulerService, task, 1, TimeUnit.SECONDS)
 
-        verify(exactly = 1) { mockExecutor.executeAsync(mockTracer, mockExecutorService, task) }
+        verify(exactly = 1) { mockExecutor.schedule(mockTracer, mockSchedulerService, task, 1, TimeUnit.SECONDS) }
     }
 
     @Test
