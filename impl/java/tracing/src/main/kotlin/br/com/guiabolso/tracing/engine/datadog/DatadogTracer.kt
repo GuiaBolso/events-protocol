@@ -1,5 +1,6 @@
 package br.com.guiabolso.tracing.engine.datadog
 
+import br.com.guiabolso.tracing.context.ThreadContextManager
 import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.utils.DatadogUtils
 import datadog.trace.api.DDTags.RESOURCE_NAME
@@ -9,7 +10,10 @@ import io.opentracing.Tracer.SpanBuilder
 import io.opentracing.util.GlobalTracer
 import java.io.Closeable
 
-open class DatadogTracer : TracerEngine<SpanBuilder> {
+open class DatadogTracer : TracerEngine, ThreadContextManager<SpanBuilder> {
+
+    override val type = SpanBuilder::class.java
+
     private val tracer: Tracer
         get() = GlobalTracer.get()
 
@@ -57,11 +61,11 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         addProperty(key, finalValue)
     }
 
-    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+    override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
         throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
     }
 
-    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
         throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
     }
 
@@ -93,22 +97,18 @@ open class DatadogTracer : TracerEngine<SpanBuilder> {
         }
     }
 
-    override fun extractContext(): SpanBuilder {
+    override fun extract(): SpanBuilder {
         return tracer.buildSpan("asyncTask")
             .asChildOf(tracer.activeSpan())
     }
 
-    override fun withContext(context: Any): Closeable {
-        val span = (context as SpanBuilder).start()
+    override fun withContext(context: SpanBuilder): Closeable {
+        val span = context.start()
         val scope = tracer.activateSpan(span)
         return Closeable {
             span.finish()
             scope.close()
         }
-    }
-
-    override fun withContext(context: SpanBuilder, func: () -> Any) {
-        withContext(context).use { func() }
     }
 
     override fun clear() {}

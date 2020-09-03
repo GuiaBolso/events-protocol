@@ -10,12 +10,7 @@ class DatadogStatsDTracer(
 
     private val statsDClient = NonBlockingStatsDClient(prefix, host, port)
 
-    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
-        val tags = context.map { it.key + ":" + it.value }
-        statsDClient.recordExecutionTime(name, elapsedTime, 1.0, *tags.toTypedArray())
-    }
-
-    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+    override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
         val start = System.currentTimeMillis()
         val context = mutableMapOf<String, String>()
         try {
@@ -24,5 +19,10 @@ class DatadogStatsDTracer(
             val elapsedTime = System.currentTimeMillis() - start
             recordExecutionTime(name, elapsedTime, context)
         }
+    }
+
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        val tags = context.map { it.key + ":" + it.value }
+        statsDClient.recordExecutionTime(name, elapsedTime, 1.0, *tags.toTypedArray())
     }
 }

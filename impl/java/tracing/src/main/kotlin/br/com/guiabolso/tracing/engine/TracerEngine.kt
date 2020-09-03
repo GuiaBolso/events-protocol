@@ -1,8 +1,6 @@
 package br.com.guiabolso.tracing.engine
 
-import java.io.Closeable
-
-interface TracerEngine<C> {
+interface TracerEngine {
 
     /**
      * Defines the operation name.
@@ -76,6 +74,16 @@ interface TracerEngine<C> {
     fun addProperty(key: String, value: List<*>)
 
     /**
+     * Run a block of code and register its execution time using the current Engine, under the received metric name.
+     * The block of code receives a MutableMap context to save specific metric tags, and return an object of type T.
+     *
+     * @param name Metric name that registers execution time.
+     * @param block Block of code to be executed.
+     * @since 4.0.0
+     */
+    fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T
+
+    /**
      * Register an execution time using the current Engine, under the received metric name. The metric will be
      * registered with any tags that come within the context Map
      *
@@ -85,16 +93,6 @@ interface TracerEngine<C> {
      * @since 2.2.0
      */
     fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>)
-
-    /**
-     * Run a block of code and register its execution time using the current Engine, under the received metric name.
-     * The block of code receives a MutableMap context to save specific metric tags, and return an object of type T.
-     *
-     * @param name Metric name that registers execution time.
-     * @param block Block of code to be executed.
-     * @since 2.2.0
-     */
-    fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T
 
     /**
      * Notice an error and report it to the tracer.
@@ -133,22 +131,6 @@ interface TracerEngine<C> {
      * @since 2.10.1
      */
     fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean)
-
-    /**
-     * Extract the current trace context
-     */
-    fun extractContext(): C
-
-    /**
-     * Uses the current trace context. After the execution the the context must be closed.
-     * Its safer to use {@link #withContext(context: C, func: () -> Any) withContext}
-     */
-    fun withContext(context: Any): Closeable
-
-    /**
-     * Uses the current trace context
-     */
-    fun withContext(context: C, func: () -> Any)
 
     /**
      * Cleans the tracer state.

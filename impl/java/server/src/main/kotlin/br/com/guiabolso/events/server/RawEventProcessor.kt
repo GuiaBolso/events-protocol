@@ -3,25 +3,25 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.context.EventContext
-import br.com.guiabolso.events.context.EventContextHolder
+import br.com.guiabolso.events.context.EventThreadContextManager
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
+import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidationException
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
-import br.com.guiabolso.tracing.factory.TracerFactory
 
 class RawEventProcessor
 @JvmOverloads
 constructor(
     private val discovery: EventHandlerDiscovery,
     private val exceptionHandlerRegistry: ExceptionHandlerRegistry,
-    private val tracer: Tracer = TracerFactory.createTracer(),
+    private val tracer: Tracer = DefaultTracer,
     private val eventValidator: EventValidator = StrictEventValidator()
 ) {
 
@@ -33,13 +33,13 @@ constructor(
                     eventNotFound(event)
                 } else {
                     try {
-                        EventContextHolder.setContext(EventContext(event.id, event.flowId))
-                        startProcessingEvent(event)
-                        handler.handle(event)
+                        EventThreadContextManager.withContext(EventContext(event.id, event.flowId)).use {
+                            startProcessingEvent(event)
+                            handler.handle(event)
+                        }
                     } catch (e: Exception) {
                         exceptionHandlerRegistry.handleException(e, event, tracer)
                     } finally {
-                        EventContextHolder.clean()
                         eventProcessFinished()
                     }
                 }

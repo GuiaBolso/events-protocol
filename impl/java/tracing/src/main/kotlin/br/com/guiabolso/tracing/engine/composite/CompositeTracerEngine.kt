@@ -1,11 +1,10 @@
-package br.com.guiabolso.tracing.factory
+package br.com.guiabolso.tracing.engine.composite
 
 import br.com.guiabolso.tracing.engine.TracerEngine
-import java.io.Closeable
 
 class CompositeTracerEngine(
-    private var tracers: List<TracerEngine<*>>
-) : TracerEngine<Map<TracerEngine<*>, Any>> {
+    private var tracers: List<TracerEngine>
+) : TracerEngine {
 
     override fun setOperationName(name: String) {
         tracers.forEach { it.setOperationName(name) }
@@ -39,7 +38,11 @@ class CompositeTracerEngine(
         tracers.forEach { it.addProperty(key, value) }
     }
 
-    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        tracers.forEach { it.recordExecutionTime(name, elapsedTime, context) }
+    }
+
+    override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
         val start = System.currentTimeMillis()
         val context = mutableMapOf<String, String>()
         try {
@@ -47,12 +50,6 @@ class CompositeTracerEngine(
         } finally {
             val elapsedTime = System.currentTimeMillis() - start
             recordExecutionTime(name, elapsedTime, context)
-        }
-    }
-
-    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
-        tracers.forEach {
-            it.recordExecutionTime(name, elapsedTime, context)
         }
     }
 
@@ -70,23 +67,6 @@ class CompositeTracerEngine(
 
     override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
         tracers.forEach { it.notifyRootError(message, params, expected) }
-    }
-
-    override fun extractContext(): Map<TracerEngine<*>, Any> {
-        return tracers.map { it to it.extractContext()!! }.toMap()
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun withContext(context: Any): Closeable {
-        context as Map<TracerEngine<*>, Any>
-
-        return CompositeTracerEngineCloseable(
-            context.map { (engine, c) -> engine.withContext(c) }.toList()
-        )
-    }
-
-    override fun withContext(context: Map<TracerEngine<*>, Any>, func: () -> Any) {
-        withContext(context).use { func() }
     }
 
     override fun clear() {

@@ -1,11 +1,14 @@
 package br.com.guiabolso.tracing.engine.slf4j
 
+import br.com.guiabolso.tracing.context.ThreadContextManager
 import br.com.guiabolso.tracing.engine.TracerEngine
 import java.io.Closeable
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 
-class Slf4JTracer : TracerEngine<Map<String, String?>> {
+class Slf4JTracer : TracerEngine, ThreadContextManager<MDCContext> {
+
+    override val type = MDCContext::class.java
 
     override fun setOperationName(name: String) {
         addProperty("Operation", name)
@@ -42,12 +45,7 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         addProperty(key, finalValue)
     }
 
-    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
-        LOGGER.info("[$name] elapsedTime= $elapsedTime")
-        context.forEach { addProperty(it.key, it.value) }
-    }
-
-    override fun <T> executeAndRecordTime(name: String, block: (MutableMap<String, String>) -> T): T {
+    override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
         val start = System.currentTimeMillis()
         val context = mutableMapOf<String, String>()
         try {
@@ -56,6 +54,11 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
             val elapsedTime = System.currentTimeMillis() - start
             recordExecutionTime(name, elapsedTime, context)
         }
+    }
+
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+        LOGGER.info("[$name] elapsedTime= $elapsedTime")
+        context.forEach { addProperty(it.key, it.value) }
     }
 
     override fun notifyError(exception: Throwable, expected: Boolean) {
@@ -82,16 +85,11 @@ class Slf4JTracer : TracerEngine<Map<String, String?>> {
         notifyError(message, params, expected)
     }
 
-    override fun extractContext(): Map<String, String?> = MDC.getCopyOfContextMap() ?: emptyMap()
+    override fun extract() = MDCContext(MDC.getCopyOfContextMap() ?: emptyMap())
 
-    @Suppress("UNCHECKED_CAST")
-    override fun withContext(context: Any): Closeable {
-        MDC.setContextMap(context as Map<String, String?>)
+    override fun withContext(context: MDCContext): Closeable {
+        MDC.setContextMap(context.data)
         return MDCCloseable
-    }
-
-    override fun withContext(context: Map<String, String?>, func: () -> Any) {
-        withContext(context).use { func() }
     }
 
     override fun clear() {
