@@ -12,10 +12,10 @@ import io.ktor.http.HttpMethod
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.util.UUID
 
 class EventsTest {
 
@@ -60,7 +60,6 @@ fun Application.testModule() {
             errorFor(it, BadRequest, EventMessage("SOME_ERROR", emptyMap()))
         }
     }
-
 }
 
 private val testEvent = event {
