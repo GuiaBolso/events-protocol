@@ -1,0 +1,24 @@
+buildscript {
+    ext.ktor_version = "1.4.0"
+}
+
+dependencies {
+    api project(":server")
+
+    implementation "io.ktor:ktor-server-core:$ktor_version"
+    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+}
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    artifactId = 'events-ktor'
+    autoPublish = true
+    desc = 'Ktor extensions for events-protocol'
+    groupId = 'br.com.guiabolso'
+    licences = ['APACHE-2.0']
+    userOrg = 'gb-opensource'
+    publishVersion = parent.ext.publish_version
+    uploadName = 'Events-Ktor'
+    website = 'https://github.com/GuiaBolso/events-protocol'
+}
