@@ -8,13 +8,12 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.redirectFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseEvent
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
-import br.com.guiabolso.events.context.EventContextHolder
+import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
-import br.com.guiabolso.events.utils.EventUtils
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -46,7 +45,7 @@ class EventBuilderTest {
 
     @Test
     fun testCreateEventWithIdAndFlowIdForward() {
-        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+        val event = withContext(EventContext("id", "flowId")).use {
             event {
                 name = "event"
                 version = 1
@@ -66,7 +65,7 @@ class EventBuilderTest {
 
     @Test
     fun testCreateEventWithIdAndFlowIdForwardOverwritten() {
-        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+        val event = withContext(EventContext("id", "flowId")).use {
             event {
                 name = "event"
                 id = "otherId"
@@ -177,7 +176,7 @@ class EventBuilderTest {
 
     @Test
     fun testResponseForEventWithIdAndFlowIdForward() {
-        val event = EventUtils.withContext(EventContext("id", "flowId")) {
+        val event = withContext(EventContext("id", "flowId")).use {
             event {
                 name = "event"
                 version = 1
@@ -196,8 +195,6 @@ class EventBuilderTest {
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)
         assertEquals(JsonObject(), response.metadata)
-
-        EventContextHolder.clean()
     }
 
     @Test

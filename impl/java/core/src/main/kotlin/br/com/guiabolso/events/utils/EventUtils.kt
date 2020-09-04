@@ -1,25 +1,14 @@
 package br.com.guiabolso.events.utils
 
-import br.com.guiabolso.events.context.EventContext
-import br.com.guiabolso.events.context.EventContextHolder
+import br.com.guiabolso.events.context.EventThreadContextManager
 
 object EventUtils {
 
     @JvmStatic
     val eventId: String?
-        get() = EventContextHolder.getContext()?.id
+        get() = EventThreadContextManager.current.id
 
     @JvmStatic
     val flowId: String?
-        get() = EventContextHolder.getContext()?.flowId
-
-    @JvmStatic
-    fun <T> withContext(context: EventContext, func: () -> T): T {
-        try {
-            EventContextHolder.setContext(context)
-            return func()
-        } finally {
-            EventContextHolder.clean()
-        }
-    }
+        get() = EventThreadContextManager.current.flowId
 }

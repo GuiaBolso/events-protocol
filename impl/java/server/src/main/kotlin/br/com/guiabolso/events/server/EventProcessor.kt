@@ -7,17 +7,17 @@ import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
 import br.com.guiabolso.events.server.parser.EventParsingException
+import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
-import br.com.guiabolso.tracing.factory.TracerFactory
 
 class EventProcessor
 @JvmOverloads
 constructor(
     discovery: EventHandlerDiscovery,
     exceptionHandlerRegistry: ExceptionHandlerRegistry,
-    private val tracer: Tracer = TracerFactory.createTracer(),
+    private val tracer: Tracer = DefaultTracer,
     eventValidator: EventValidator = StrictEventValidator()
 ) {
 

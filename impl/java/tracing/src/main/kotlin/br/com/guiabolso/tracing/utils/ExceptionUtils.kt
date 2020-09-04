@@ -12,4 +12,12 @@ object ExceptionUtils {
         throwable.printStackTrace(pw)
         return sw.buffer.toString()
     }
+
+    fun <T> doNotFail(func: () -> T): T? {
+        return try {
+            func()
+        } catch (t: Throwable) {
+            null
+        }
+    }
 }
