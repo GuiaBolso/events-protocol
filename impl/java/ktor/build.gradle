@@ -1,0 +1,46 @@
+import static org.gradle.api.JavaVersion.VERSION_1_8
+
+buildscript {
+    ext.ktor_version = "1.4.0"
+}
+
+dependencies {
+    api project(":server")
+    
+    
+    implementation "io.ktor:ktor-server-core:$ktor_version"
+    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation(project(path: ":test", configuration: "default"))
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:4.2.3") {
+        exclude(group: "org.junit.jupiter")
+        exclude(group: "org.junit.platform")
+    }
+    testImplementation "io.kotest:kotest-assertions-ktor:4.2.3"
+}
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    artifactId = 'events-ktor'
+    autoPublish = true
+    desc = 'Ktor extensions for events-protocol'
+    groupId = 'br.com.guiabolso'
+    licences = ['Apache-2.0']
+    userOrg = 'gb-opensource'
+    publishVersion = parent.ext.publish_version
+    uploadName = 'Events-Ktor'
+    website = 'https://github.com/GuiaBolso/events-protocol'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileTestKotlin {
+    sourceCompatibility = VERSION_1_8
+    targetCompatibility = VERSION_1_8
+    kotlinOptions {
+        jvmTarget = '1.8'
+        allWarningsAsErrors = true
+    }
+}
