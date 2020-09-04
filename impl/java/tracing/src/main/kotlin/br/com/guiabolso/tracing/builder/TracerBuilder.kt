@@ -4,7 +4,6 @@ import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.TracerImpl
 import br.com.guiabolso.tracing.context.ThreadContextManager
 import br.com.guiabolso.tracing.engine.TracerEngine
-import br.com.guiabolso.tracing.engine.composite.CompositeTracerEngine
 import br.com.guiabolso.tracing.engine.datadog.DatadogStatsDTracer
 import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
 import br.com.guiabolso.tracing.engine.slf4j.Slf4JTracer
@@ -49,11 +48,6 @@ class TracerBuilder {
     }
 
     fun build(): Tracer {
-        val engine = when (tracerEngines.size) {
-            0 -> throw IllegalArgumentException("The tracer must have at least one engine.")
-            1 -> tracerEngines.first()
-            else -> CompositeTracerEngine(tracerEngines)
-        }
-        return TracerImpl(engine, contextManagers)
+        return TracerImpl(tracerEngines, contextManagers)
     }
 }

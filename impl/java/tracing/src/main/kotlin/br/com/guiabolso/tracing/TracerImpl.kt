@@ -8,68 +8,75 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService
 
 class TracerImpl(
-    private val tracerEngine: TracerEngine,
+    private var tracers: List<TracerEngine>,
     private val contextManagers: List<ThreadContextManager<*>>
 ) : Tracer {
 
     override fun setOperationName(name: String) {
-        tracerEngine.setOperationName(name)
+        tracers.forEach { it.setOperationName(name) }
     }
 
     override fun addProperty(key: String, value: String?) {
-        tracerEngine.addProperty(key, value)
-    }
-
-    override fun addRootProperty(key: String, value: String?) {
-        tracerEngine.addRootProperty(key, value)
-    }
-
-    override fun addRootProperty(key: String, value: Number?) {
-        tracerEngine.addRootProperty(key, value)
+        tracers.forEach { it.addProperty(key, value) }
     }
 
     override fun addProperty(key: String, value: Number?) {
-        tracerEngine.addProperty(key, value)
+        tracers.forEach { it.addProperty(key, value) }
     }
 
     override fun addProperty(key: String, value: Boolean?) {
-        tracerEngine.addProperty(key, value)
-    }
-
-    override fun addRootProperty(key: String, value: Boolean?) {
-        tracerEngine.addRootProperty(key, value)
+        tracers.forEach { it.addProperty(key, value) }
     }
 
     override fun addProperty(key: String, value: List<*>) {
-        tracerEngine.addProperty(key, value)
+        tracers.forEach { it.addProperty(key, value) }
+    }
+
+    override fun addRootProperty(key: String, value: String?) {
+        tracers.forEach { it.addRootProperty(key, value) }
+    }
+
+    override fun addRootProperty(key: String, value: Number?) {
+        tracers.forEach { it.addRootProperty(key, value) }
+    }
+
+    override fun addRootProperty(key: String, value: Boolean?) {
+        tracers.forEach { it.addRootProperty(key, value) }
     }
 
     override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
-        return tracerEngine.recordExecutionTime(name, block)
+        val start = System.currentTimeMillis()
+        val context = mutableMapOf<String, String>()
+        try {
+            return block(context)
+        } finally {
+            val elapsedTime = System.currentTimeMillis() - start
+            recordExecutionTime(name, elapsedTime, context)
+        }
     }
 
     override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
-        return tracerEngine.recordExecutionTime(name, elapsedTime, context)
+        tracers.forEach { it.recordExecutionTime(name, elapsedTime, context) }
     }
 
     override fun notifyError(exception: Throwable, expected: Boolean) {
-        tracerEngine.notifyError(exception, expected)
+        tracers.forEach { it.notifyError(exception, expected) }
     }
 
     override fun notifyError(message: String, params: Map<String, String?>, expected: Boolean) {
-        tracerEngine.notifyError(message, params, expected)
+        tracers.forEach { it.notifyError(message, params, expected) }
     }
 
     override fun notifyRootError(exception: Throwable, expected: Boolean) {
-        tracerEngine.notifyRootError(exception, expected)
+        tracers.forEach { it.notifyRootError(exception, expected) }
     }
 
     override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
-        tracerEngine.notifyRootError(message, params, expected)
+        tracers.forEach { it.notifyRootError(message, params, expected) }
     }
 
     override fun clear() {
-        tracerEngine.clear()
+        tracers.forEach { it.clear() }
     }
 
     override fun wrap(executorService: ExecutorService): ExecutorService {
