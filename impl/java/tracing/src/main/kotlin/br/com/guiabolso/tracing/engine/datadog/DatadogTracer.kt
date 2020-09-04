@@ -5,14 +5,14 @@ import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.utils.DatadogUtils
 import datadog.trace.api.DDTags.RESOURCE_NAME
 import datadog.trace.api.interceptor.MutableSpan
+import io.opentracing.Span
 import io.opentracing.Tracer
-import io.opentracing.Tracer.SpanBuilder
 import io.opentracing.util.GlobalTracer
 import java.io.Closeable
 
-open class DatadogTracer : TracerEngine, ThreadContextManager<SpanBuilder> {
+open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
 
-    override val type = SpanBuilder::class.java
+    override val type = Span::class.java
 
     private val tracer: Tracer
         get() = GlobalTracer.get()
@@ -97,19 +97,18 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<SpanBuilder> {
         }
     }
 
-    override fun extract(): SpanBuilder {
-        return tracer.buildSpan("asyncTask")
-            .asChildOf(tracer.activeSpan())
+    override fun clear() {}
+
+    override fun extract(): Span {
+        return tracer.activeSpan()
     }
 
-    override fun withContext(context: SpanBuilder): Closeable {
-        val span = context.start()
+    override fun withContext(context: Span): Closeable {
+        val span = tracer.buildSpan("asyncTask").asChildOf(context).start()
         val scope = tracer.activateSpan(span)
         return Closeable {
             span.finish()
             scope.close()
         }
     }
-
-    override fun clear() {}
 }

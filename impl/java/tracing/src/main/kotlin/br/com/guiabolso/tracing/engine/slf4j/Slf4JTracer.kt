@@ -85,15 +85,15 @@ class Slf4JTracer : TracerEngine, ThreadContextManager<MDCContext> {
         notifyError(message, params, expected)
     }
 
+    override fun clear() {
+        MDC.clear()
+    }
+
     override fun extract() = MDCContext(MDC.getCopyOfContextMap() ?: emptyMap())
 
     override fun withContext(context: MDCContext): Closeable {
         MDC.setContextMap(context.data)
-        return MDCCloseable
-    }
-
-    override fun clear() {
-        MDC.clear()
+        return Closeable { MDC.clear() }
     }
 
     private fun toString(map: Map<String, String?>): String {

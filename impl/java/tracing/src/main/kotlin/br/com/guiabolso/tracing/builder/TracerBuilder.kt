@@ -14,31 +14,25 @@ class TracerBuilder {
     private val contextManagers = mutableListOf<ThreadContextManager<*>>()
 
     fun withSlf4(): TracerBuilder {
-        Slf4JTracer().let { engine ->
-            withEngine(engine)
-            withContextManager(engine)
-        }
+        withEngine(Slf4JTracer())
         return this
     }
 
     fun withDatadogAPM(): TracerBuilder {
-        DatadogTracer().let { engine ->
-            withEngine(engine)
-            withContextManager(engine)
-        }
+        withEngine(DatadogTracer())
         return this
     }
 
     fun withDatadogAPMAndStatsD(prefix: String, host: String, port: Int): TracerBuilder {
-        DatadogStatsDTracer(prefix, host, port).let { engine ->
-            withEngine(engine)
-            withContextManager(engine)
-        }
+        withEngine(DatadogStatsDTracer(prefix, host, port))
         return this
     }
 
     fun withEngine(engine: TracerEngine): TracerBuilder {
         tracerEngines.add(engine)
+        if (engine is ThreadContextManager<*>) {
+            withContextManager(engine)
+        }
         return this
     }
 

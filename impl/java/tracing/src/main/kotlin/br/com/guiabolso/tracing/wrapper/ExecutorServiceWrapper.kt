@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-class ExecutorServiceWrapper(
+open class ExecutorServiceWrapper(
     private val contextManagers: List<ThreadContextManager<*>>,
     private val delegate: ExecutorService
 ) : ExecutorService {
