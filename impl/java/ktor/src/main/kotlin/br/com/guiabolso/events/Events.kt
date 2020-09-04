@@ -20,6 +20,7 @@ import io.ktor.request.receive
 import io.ktor.response.respondText
 import io.ktor.util.AttributeKey
 import io.ktor.util.pipeline.ContextDsl
+import kotlin.reflect.KClass
 
 class Events {
     private val registry = SimpleEventHandlerRegistry()
@@ -37,19 +38,19 @@ class Events {
     }
 
     @ContextDsl
-    fun <T : Throwable> exception(clazz: Class<T>, handler: (T, RequestEvent, Tracer) -> ResponseEvent) {
-        exceptionHandler.register(clazz, handler)
+    inline fun <reified T : Throwable> exception(handler: EventExceptionHandler<T>) = exception(T::class.java, handler)
+
+    @ContextDsl
+    fun <T : Throwable> exception(klass: KClass<T>, handler: (T, RequestEvent, Tracer) -> ResponseEvent) {
+        exceptionHandler.register(klass.java, handler)
     }
 
     @ContextDsl
-    fun <T : Throwable> exception(clazz: Class<T>, handler: EventExceptionHandler<T>) {
-        exceptionHandler.register(clazz, handler)
-    }
+    fun <T : Throwable> exception(klass: Class<T>, handler: EventExceptionHandler<T>) = exceptionHandler.register(klass, handler)
 
     private fun processEvent(rawEvent: String?): String = eventProcessor.processEvent(rawEvent)
 
     companion object Feature : ApplicationFeature<ApplicationCallPipeline, Events, Events> {
-        private const val EVENTS_PATH = "/events/"
         override val key: AttributeKey<Events> = AttributeKey("Events-Protocol")
 
         override fun install(pipeline: ApplicationCallPipeline, configure: Events.() -> Unit): Events {
@@ -57,7 +58,7 @@ class Events {
 
             pipeline.intercept(ApplicationCallPipeline.Call) {
                 val path = call.request.path()
-                if (path == EVENTS_PATH) {
+                if (path == "/events/") {
                     call.respondText(
                         text = events.processEvent(call.receive()),
                         contentType = ContentType.Application.Json
