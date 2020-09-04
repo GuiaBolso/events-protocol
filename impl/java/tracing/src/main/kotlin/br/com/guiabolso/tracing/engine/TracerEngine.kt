@@ -92,7 +92,7 @@ interface TracerEngine {
      * @param context Map of tags to be registered within the metric.
      * @since 2.2.0
      */
-    fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>)
+    fun recordExecutionTime(name: String, elapsedTime: Long, context: Map<String, String>)
 
     /**
      * Notice an error and report it to the tracer.

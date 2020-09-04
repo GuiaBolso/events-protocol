@@ -56,7 +56,7 @@ class Slf4JTracer : TracerEngine, ThreadContextManager<MDCContext> {
         }
     }
 
-    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: Map<String, String>) {
         LOGGER.info("[$name] elapsedTime= $elapsedTime")
         context.forEach { addProperty(it.key, it.value) }
     }

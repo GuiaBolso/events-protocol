@@ -65,7 +65,7 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
         throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
     }
 
-    override fun recordExecutionTime(name: String, elapsedTime: Long, context: MutableMap<String, String>) {
+    override fun recordExecutionTime(name: String, elapsedTime: Long, context: Map<String, String>) {
         throw NotImplementedError("Import com.datadoghq:java-dogstatsd-client dependency to use this feature.")
     }
 
