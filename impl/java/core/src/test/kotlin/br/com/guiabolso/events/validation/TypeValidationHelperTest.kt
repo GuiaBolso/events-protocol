@@ -16,7 +16,8 @@ class TypeValidationHelperTest {
         {
             "userId": null
         }
-        """.trimIndent(), JsonObject::class.java
+            """.trimIndent(),
+            JsonObject::class.java
         )
 
         val userId = jsonObj.withCheckedJsonNull("userId") {
@@ -34,7 +35,8 @@ class TypeValidationHelperTest {
             {
                 "userId": 123987
             }
-        """.trimIndent(), JsonObject::class.java
+            """.trimIndent(),
+            JsonObject::class.java
         )
 
         val userId = identityJsonObj.withCheckedJsonNull("userId") {

@@ -1,11 +1,11 @@
 package br.com.guiabolso.tracing.wrapper
 
 import br.com.guiabolso.tracing.context.SimpleThreadContextManager
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 
 class ScheduledExecutorServiceWrapperTest {
 

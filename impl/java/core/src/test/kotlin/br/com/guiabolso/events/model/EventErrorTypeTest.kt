@@ -52,7 +52,8 @@ class EventErrorTypeTest {
             {
                 "userId": null
             }
-        """.trimIndent(), JsonObject::class.java
+            """.trimIndent(),
+            JsonObject::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
@@ -67,7 +68,8 @@ class EventErrorTypeTest {
             {
                 "origin": null
             }
-        """.trimIndent(), JsonObject::class.java
+            """.trimIndent(),
+            JsonObject::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)
@@ -82,7 +84,8 @@ class EventErrorTypeTest {
             {
                 "userId": 123987
             }
-        """.trimIndent(), JsonObject::class.java
+            """.trimIndent(),
+            JsonObject::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
@@ -97,7 +100,8 @@ class EventErrorTypeTest {
             {
                 "origin": "east"
             }
-        """.trimIndent(), JsonObject::class.java
+            """.trimIndent(),
+            JsonObject::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)

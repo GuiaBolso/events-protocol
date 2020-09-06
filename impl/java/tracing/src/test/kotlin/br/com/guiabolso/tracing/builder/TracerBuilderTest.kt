@@ -13,7 +13,7 @@ class TracerBuilderTest {
 
     @Test
     fun `should create a tracer with Slf4`() {
-        val tracer = TracerBuilder().withSlf4().build()
+        val tracer = TracerBuilder().withSlf4J().build()
 
         tracer as TracerImpl
 

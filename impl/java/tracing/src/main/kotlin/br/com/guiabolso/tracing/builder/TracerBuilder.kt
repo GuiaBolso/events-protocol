@@ -13,7 +13,7 @@ class TracerBuilder {
     private var tracerEngines = mutableListOf<TracerEngine>()
     private val contextManagers = mutableListOf<ThreadContextManager<*>>()
 
-    fun withSlf4(): TracerBuilder {
+    fun withSlf4J(): TracerBuilder {
         withEngine(Slf4JTracer())
         return this
     }

@@ -6,9 +6,9 @@ import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
+import org.slf4j.LoggerFactory
 import java.io.InputStream
 import java.io.OutputStream
-import org.slf4j.LoggerFactory
 
 class AWSLambdaEventProcessor
 @JvmOverloads

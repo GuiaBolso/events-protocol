@@ -2,16 +2,16 @@ package br.com.guiabolso.events.context
 
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.tracing.builder.TracerBuilder
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 class EventThreadContextManagerTest {
 
     private val tracer = TracerBuilder()
-        .withSlf4()
+        .withSlf4J()
         .withContextManager(EventThreadContextManager)
         .build()
 

@@ -12,8 +12,10 @@ import br.com.guiabolso.events.test.shouldHaveErrorType
 import br.com.guiabolso.events.test.shouldHaveName
 import br.com.guiabolso.events.test.shouldHavePayload
 import io.kotest.assertions.assertSoftly
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.should
+import io.kotest.matchers.throwable.shouldHaveMessage
 import io.ktor.application.Application
 import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.server.testing.handleRequest
@@ -62,10 +64,18 @@ class EventsTest : ShouldSpec({
             val response = handleRequest(Post, "/events/") { setBody(testEventHandledErr) }.response
             assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
                 it should beSuccess()
-                it shouldHaveName "test:err:event:with:exception"
+                it shouldHaveName "test:err:event:with:exception:response"
                 it shouldHavePayload mapOf("OK" to "all is fine!")
             }
         }
+    }
+
+    should("Break when tries to register events feature twice") {
+        val e = shouldThrow<IllegalStateException> {
+            withTestApplication({ brokenTestModule() }) {}
+        }
+
+        e shouldHaveMessage "Cannot initialize Events more than once!"
     }
 })
 
@@ -94,7 +104,25 @@ fun Application.testModule() {
     }
 }
 
-private val testEvent = """ {
+fun Application.brokenTestModule() {
+    events {
+        event("test:event", 1) {
+            responseFor(it) {
+                payload = mapOf("answer" to 42)
+            }
+        }
+    }
+    events {
+        event("another:event", 1) {
+            responseFor(it) {
+                payload = mapOf("answer" to 42)
+            }
+        }
+    }
+}
+
+private val testEvent =
+    """ {
     "name": "test:event",
     "version": 1,
     "id": "${randomUUID()}",
@@ -104,9 +132,10 @@ private val testEvent = """ {
     "metadata": {},
     "auth": {}
 }
-""".trimIndent()
+    """.trimIndent()
 
-private val eventNotFound = """ {
+private val eventNotFound =
+    """ {
     "name": "non:existent",
     "version": 1,
     "id": "${randomUUID()}",
@@ -116,9 +145,10 @@ private val eventNotFound = """ {
     "metadata": {},
     "auth": {}
 }
-""".trimIndent()
+    """.trimIndent()
 
-private val testEventErr = """ {
+private val testEventErr =
+    """ {
     "name": "test:err:event",
     "version": 1,
     "id": "${randomUUID()}",
@@ -128,9 +158,10 @@ private val testEventErr = """ {
     "metadata": {},
     "auth": {}
 }
-""".trimIndent()
+    """.trimIndent()
 
-private val testEventHandledErr = """ {
+private val testEventHandledErr =
+    """ {
     "name": "test:err:event:with:exception",
     "version": 1,
     "id": "${randomUUID()}",
@@ -140,4 +171,4 @@ private val testEventHandledErr = """ {
     "metadata": {},
     "auth": {}
 }
-""".trimIndent()
+    """.trimIndent()

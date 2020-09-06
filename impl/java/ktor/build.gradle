@@ -6,8 +6,8 @@ buildscript {
 
 dependencies {
     api project(":server")
-    
-    
+
+
     implementation "io.ktor:ktor-server-core:$ktor_version"
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     testImplementation(project(path: ":test", configuration: "default"))
@@ -30,10 +30,6 @@ publish {
     publishVersion = parent.ext.publish_version
     uploadName = 'Events-Ktor'
     website = 'https://github.com/GuiaBolso/events-protocol'
-}
-
-test {
-    useJUnitPlatform()
 }
 
 compileTestKotlin {
