@@ -1,12 +1,12 @@
 package br.com.guiabolso.events.validation
 
 import br.com.guiabolso.events.model.RawEvent
-import com.google.gson.JsonNull.INSTANCE as JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import com.google.gson.JsonNull.INSTANCE as JsonNull
 
 class LenientEventValidatorTest {
 

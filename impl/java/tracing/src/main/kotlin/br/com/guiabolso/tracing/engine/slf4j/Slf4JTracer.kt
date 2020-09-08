@@ -2,9 +2,9 @@ package br.com.guiabolso.tracing.engine.slf4j
 
 import br.com.guiabolso.tracing.context.ThreadContextManager
 import br.com.guiabolso.tracing.engine.TracerEngine
-import java.io.Closeable
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import java.io.Closeable
 
 class Slf4JTracer : TracerEngine, ThreadContextManager<MDCContext> {
 

@@ -347,7 +347,8 @@ class EventBuilderTest {
                     "NO_EVENT_HANDLER_FOUND",
                     mapOf("event" to event.name, "version" to event.version)
                 )
-            ), response.payload
+            ),
+            response.payload
         )
         assertEquals(JsonObject(), response.auth)
         assertEquals(JsonObject(), response.identity)

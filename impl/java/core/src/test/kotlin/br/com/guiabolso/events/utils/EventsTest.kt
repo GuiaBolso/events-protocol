@@ -92,10 +92,12 @@ class EventsTest {
 
     @Test
     fun testGetPayload() {
-        val request = buildRequestEvent().copy(payload = JsonObject().apply {
-            this.add("a", JsonPrimitive("someString"))
-            this.add("b", JsonPrimitive(60))
-        })
+        val request = buildRequestEvent().copy(
+            payload = JsonObject().apply {
+                this.add("a", JsonPrimitive("someString"))
+                this.add("b", JsonPrimitive(60))
+            }
+        )
 
         val vo = request.payloadAs(VO::class.java)
         val vo2: VO = request.payloadAs()
@@ -109,10 +111,12 @@ class EventsTest {
 
     @Test
     fun testGetIdentity() {
-        val request = buildRequestEvent().copy(identity = JsonObject().apply {
-            this.add("a", JsonPrimitive("someString"))
-            this.add("b", JsonPrimitive(60))
-        })
+        val request = buildRequestEvent().copy(
+            identity = JsonObject().apply {
+                this.add("a", JsonPrimitive("someString"))
+                this.add("b", JsonPrimitive(60))
+            }
+        )
 
         val vo = request.identityAs(VO::class.java)
         val vo2: VO = request.identityAs()
@@ -126,10 +130,12 @@ class EventsTest {
 
     @Test
     fun testGetAuth() {
-        val request = buildRequestEvent().copy(auth = JsonObject().apply {
-            this.add("a", JsonPrimitive("someString"))
-            this.add("b", JsonPrimitive(60))
-        })
+        val request = buildRequestEvent().copy(
+            auth = JsonObject().apply {
+                this.add("a", JsonPrimitive("someString"))
+                this.add("b", JsonPrimitive(60))
+            }
+        )
 
         val vo = request.authAs(VO::class.java)
         val vo2: VO = request.authAs()
@@ -143,16 +149,22 @@ class EventsTest {
 
     @Test
     fun testCanParseJsonArrays() {
-        val request = buildRequestEvent().copy(payload = JsonArray().apply {
-            this.add(JsonObject().apply {
-                this.add("a", JsonPrimitive("someString"))
-                this.add("b", JsonPrimitive(60))
-            })
-            this.add(JsonObject().apply {
-                this.add("a", JsonPrimitive("someOtherString"))
-                this.add("b", JsonPrimitive(120))
-            })
-        })
+        val request = buildRequestEvent().copy(
+            payload = JsonArray().apply {
+                this.add(
+                    JsonObject().apply {
+                        this.add("a", JsonPrimitive("someString"))
+                        this.add("b", JsonPrimitive(60))
+                    }
+                )
+                this.add(
+                    JsonObject().apply {
+                        this.add("a", JsonPrimitive("someOtherString"))
+                        this.add("b", JsonPrimitive(120))
+                    }
+                )
+            }
+        )
 
         val voList: List<VO> = request.payloadAs()
 
