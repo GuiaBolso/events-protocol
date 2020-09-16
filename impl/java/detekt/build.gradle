@@ -1,0 +1,50 @@
+import static org.gradle.api.JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    implementation("io.gitlab.arturbosch.detekt:detekt-api:1.13.1")
+
+    testImplementation "io.kotest:kotest-runner-junit5-jvm:4.2.5"
+    testImplementation("io.gitlab.arturbosch.detekt:detekt-test:1.13.1"){
+        exclude(group: "org.assertj")
+        exclude(group: "org.spekframework.spek2")
+    }
+    
+}
+
+sourceCompatibility = VERSION_1_8
+targetCompatibility = VERSION_1_8
+
+compileKotlin {
+    sourceCompatibility = VERSION_1_8
+    targetCompatibility = VERSION_1_8
+    kotlinOptions {
+        jvmTarget = '1.8'
+        allWarningsAsErrors = true
+    }
+}
+
+compileTestKotlin {
+    sourceCompatibility = VERSION_1_8
+    targetCompatibility = VERSION_1_8
+    kotlinOptions {
+        jvmTarget = '1.8'
+        allWarningsAsErrors = true
+    }
+}
+
+publish {
+    artifactId = 'events-detekt'
+    autoPublish = true
+    desc = 'Detekt rules for event-protocol'
+    groupId = 'br.com.guiabolso'
+    licences = ['APACHE-2.0']
+    userOrg = 'gb-opensource'
+    publishVersion = parent.ext.publish_version
+    uploadName = 'Events-Detekt'
+    website = 'https://github.com/GuiaBolso/events-protocol'
+}

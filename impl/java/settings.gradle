@@ -1,2 +1,2 @@
 rootProject.name = 'events-protocol'
-include 'tracing', 'core', 'server', 'client', 'test', 'ktor'
+include 'tracing', 'core', 'server', 'client', 'test', 'ktor', 'detekt'
