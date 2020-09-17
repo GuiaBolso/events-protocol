@@ -33,7 +33,7 @@ Geralmente as dependências a serem importadas são:
 * Server: Quando é necessário tratar requisições de eventos;
 * Client: Quando é necessário realizar requisições de evento;
 * Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado.
-* Ktor: Quando você integrará o protocolo de eventos com o KTor
+* Ktor: Quando você integrar o protocolo de eventos com o KTor
 * Detekt: Para aplicar regras específicas para o Detekt relacionadas ao protocolo de eventos (ex. Code Smells)
 * Test: Quando você for escrever testes específicos para validação dos eventos. Mais informação na [documentação de testes](doc/test.md)
 
