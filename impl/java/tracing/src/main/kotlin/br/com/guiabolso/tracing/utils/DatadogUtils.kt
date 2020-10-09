@@ -8,6 +8,7 @@ import datadog.trace.api.DDTags.SPAN_TYPE
 import io.opentracing.Span
 import io.opentracing.tag.Tags
 import io.opentracing.util.GlobalTracer
+import kotlinx.coroutines.runBlocking
 
 object DatadogUtils {
 
@@ -17,6 +18,14 @@ object DatadogUtils {
         name: String,
         type: String = HTTP_SERVER,
         func: () -> Unit
+    ) = runBlocking {
+        coTraceAsNewOperation(name, type) { func() }
+    }
+
+    suspend fun coTraceAsNewOperation(
+        name: String,
+        type: String = HTTP_SERVER,
+        func: suspend () -> Unit
     ) {
         val tracer = GlobalTracer.get()!!
         val span = tracer.buildSpan(name).ignoreActiveSpan().start()
