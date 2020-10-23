@@ -65,4 +65,3 @@ private fun notifyError(span: Span, e: Exception): Span? {
     span.setTag(DDTags.ERROR_TYPE, e.javaClass.name)
     return span.setTag(DDTags.ERROR_STACK, ExceptionUtils.getStackTrace(e))
 }
-
