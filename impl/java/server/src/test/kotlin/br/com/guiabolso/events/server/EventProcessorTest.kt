@@ -59,7 +59,7 @@ class EventProcessorTest {
             override suspend fun coHandle(event: RequestEvent): ResponseEvent = coroutineScope {
                 val deferred = async {
                     withContext(Dispatchers.IO) {
-                        //changes the context
+                        // changes the context
                         mapOf(
                             "coId" to EventUtils.eventId,
                             "coFlowId" to EventUtils.flowId

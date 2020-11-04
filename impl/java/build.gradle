@@ -14,7 +14,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jlleitschuh.gradle:ktlint-gradle:9.4.0")
+        classpath("org.jlleitschuh.gradle:ktlint-gradle:9.4.1")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.novoda:bintray-release:0.9.2'
     }
@@ -79,5 +79,9 @@ subprojects {
             jvmTarget = '1.6'
             allWarningsAsErrors = true
         }
+    }
+
+    ktlint {
+        version = "0.39.0"
     }
 }
