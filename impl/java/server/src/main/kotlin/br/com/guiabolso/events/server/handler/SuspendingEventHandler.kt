@@ -14,4 +14,3 @@ interface SuspendingEventHandler : EventHandler {
             coHandle(event)
         }
 }
-

@@ -11,4 +11,3 @@ interface EventHandler {
 
     fun handle(event: RequestEvent): ResponseEvent
 }
-
