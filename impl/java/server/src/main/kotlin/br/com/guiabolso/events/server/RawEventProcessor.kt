@@ -3,7 +3,7 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.context.EventContext
-import br.com.guiabolso.events.context.EventThreadContextManager
+import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -33,7 +33,7 @@ constructor(
                     eventNotFound(event)
                 } else {
                     try {
-                        EventThreadContextManager.withContext(EventContext(event.id, event.flowId)).use {
+                        withContext(EventContext(event.id, event.flowId)).use {
                             startProcessingEvent(event)
                             handler.handle(event)
                         }

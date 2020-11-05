@@ -14,7 +14,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jlleitschuh.gradle:ktlint-gradle:9.4.0")
+        classpath("org.jlleitschuh.gradle:ktlint-gradle:9.4.1")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.novoda:bintray-release:0.9.2'
     }
@@ -23,7 +23,7 @@ buildscript {
 
 allprojects {
     ext {
-        publish_version = '4.2.0'
+        publish_version = '4.3.0'
     }
     tasks.whenTaskAdded {
         if (name == "generateSourcesJarForMavenPublication") {
@@ -81,4 +81,7 @@ subprojects {
         }
     }
 
+    ktlint {
+        version = "0.39.0"
+    }
 }
