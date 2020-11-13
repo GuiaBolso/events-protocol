@@ -11,5 +11,5 @@ interface EventHandlerRegistry : EventHandlerDiscovery {
 
     fun add(handler: EventHandler)
 
-    fun add(eventName: String, eventVersion: Int, handler: (RequestEvent) -> ResponseEvent)
+    fun add(eventName: String, eventVersion: Int, handler: suspend (RequestEvent) -> ResponseEvent)
 }

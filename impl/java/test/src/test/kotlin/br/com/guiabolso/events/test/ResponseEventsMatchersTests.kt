@@ -6,10 +6,11 @@ import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.coroutines.runBlocking
 
 class ResponseEventsMatchersTests : FunSpec({
 
-    val successResponse = EventBuilder.responseFor(event) { }
+    val successResponse = runBlocking { EventBuilder.responseFor(event) { } }
     val redirectResponse = EventBuilder.redirectFor(event, RedirectPayload("a"))
     val errorResponse = EventBuilder.errorFor(event, EventErrorType.BadRequest, EventMessage("code", emptyMap()))
 

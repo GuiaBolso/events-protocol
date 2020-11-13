@@ -4,6 +4,7 @@ import br.com.guiabolso.events.EventBuilderForTest.buildRawRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -14,7 +15,7 @@ class RawEventProcessorTest {
     private val rawEventProcessor = RawEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
 
     @Test
-    fun testCanProcessEvent() {
+    fun testCanProcessEvent() = runBlocking {
         val event = buildRawRequestEvent()
         val expectedResponse = buildResponseEvent()
 
@@ -28,7 +29,7 @@ class RawEventProcessorTest {
     }
 
     @Test
-    fun testEventNotFound() {
+    fun testEventNotFound() = runBlocking {
         val responseEvent = rawEventProcessor.processEvent(buildRawRequestEvent())
 
         assertEquals("id", responseEvent.id)
@@ -42,7 +43,7 @@ class RawEventProcessorTest {
     }
 
     @Test
-    fun testEventThrowException() {
+    fun testEventThrowException() = runBlocking {
         val event = buildRawRequestEvent()
 
         eventHandlerRegistry.add(event.name!!, event.version!!) {
@@ -56,7 +57,7 @@ class RawEventProcessorTest {
     }
 
     @Test
-    fun testCanHandleException() {
+    fun testCanHandleException() = runBlocking {
         val event = buildRawRequestEvent()
 
         eventHandlerRegistry.add(event.name!!, event.version!!) {
@@ -73,7 +74,7 @@ class RawEventProcessorTest {
     }
 
     @Test
-    fun testBadProtocolEventIsReturned() {
+    fun testBadProtocolEventIsReturned() = runBlocking {
         val responseEvent = rawEventProcessor.processEvent(null)
 
         assertEquals("badProtocol", responseEvent.name)
@@ -81,13 +82,16 @@ class RawEventProcessorTest {
     }
 
     @Test
-    fun testBadProtocolEventIsReturnedWhenParameterIsMissing() {
+    fun testBadProtocolEventIsReturnedWhenParameterIsMissing() = runBlocking {
         val event = buildRawRequestEvent().copy(version = null)
 
         val responseEvent = rawEventProcessor.processEvent(event)
 
         assertEquals("badProtocol", responseEvent.name)
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload.asJsonObject["code"].asString)
-        assertEquals("version", responseEvent.payload.asJsonObject["parameters"].asJsonObject["missingProperty"].asString)
+        assertEquals(
+            "version",
+            responseEvent.payload.asJsonObject["parameters"].asJsonObject["missingProperty"].asString
+        )
     }
 }

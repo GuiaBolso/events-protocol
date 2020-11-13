@@ -1,7 +1,7 @@
 import static org.gradle.api.JavaVersion.VERSION_1_8
 
 buildscript {
-    ext.ktor_version = "1.4.0"
+    ext.ktor_version = "1.4.2"
 }
 
 dependencies {

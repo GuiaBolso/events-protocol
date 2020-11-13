@@ -6,8 +6,8 @@ import br.com.guiabolso.events.model.ResponseEvent
 class LambdaEventHandler(
     override val eventName: String,
     override val eventVersion: Int,
-    private val func: (RequestEvent) -> ResponseEvent
+    private val func: suspend (RequestEvent) -> ResponseEvent
 ) : EventHandler {
 
-    override fun handle(event: RequestEvent) = func(event)
+    override suspend fun handle(event: RequestEvent) = func(event)
 }

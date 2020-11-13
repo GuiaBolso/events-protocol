@@ -2,7 +2,7 @@ package br.com.guiabolso.events
 
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.events.server.EventProcessor
+import br.com.guiabolso.events.server.SuspendingEventProcessor
 import br.com.guiabolso.events.server.exception.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.exceptionHandler
 import br.com.guiabolso.events.server.handler.EventHandler
@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
 class Events(configuration: TraceConfiguration) {
 
     private val eventProcessor = with(configuration) {
-        EventProcessor(
+        SuspendingEventProcessor(
             registry,
             exceptionHandler,
             tracer
@@ -56,19 +56,26 @@ class Events(configuration: TraceConfiguration) {
         }
 
         @ContextDsl
-        fun event(name: String, version: Int, handler: (RequestEvent) -> ResponseEvent) {
+        fun event(name: String, version: Int, handler: suspend (RequestEvent) -> ResponseEvent) {
             registry.add(name, version, handler)
         }
 
         @ContextDsl
-        inline fun <reified T : Throwable> exception(handler: EventExceptionHandler<T>) = exception(T::class, handler)
+        inline fun <reified T : Throwable> exception(handler: EventExceptionHandler<T>) =
+            exception(T::class) { t, evt, tracer ->
+                handler.handleException(t, evt, tracer)
+            }
 
         @ContextDsl
-        fun <T : Throwable> exception(klass: KClass<T>, handler: EventExceptionHandler<T>) =
-            exceptionHandler.register(klass.java, handler)
+        fun <T : Throwable> exception(
+            klass: KClass<T>,
+            handler: suspend (exception: T, event: RequestEvent, tracer: Tracer) -> ResponseEvent
+        ) = exceptionHandler.register(klass.java) { e, evt, tracer ->
+            handler(e, evt, tracer)
+        }
     }
 
-    private fun processEvent(rawEvent: String?): String = eventProcessor.processEvent(rawEvent)
+    private suspend fun processEvent(rawEvent: String?): String = eventProcessor.processEvent(rawEvent)
 
     companion object Feature : ApplicationFeature<ApplicationCallPipeline, TraceConfiguration, Events> {
         override val key: AttributeKey<Events> = AttributeKey("Events-Protocol")

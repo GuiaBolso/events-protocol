@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
-class AWSLambdaEventProcessorTest {
+class AWSLambdaBlockingEventProcessorTest {
 
     private lateinit var lambdaEventProcessor: AWSLambdaEventProcessor
     private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry

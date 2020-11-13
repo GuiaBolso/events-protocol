@@ -19,11 +19,14 @@ class ExceptionHandlerRegistry {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Throwable> register(clazz: Class<T>, handler: (T, RequestEvent, Tracer) -> ResponseEvent) {
-        register(clazz, LambdaEventExceptionHandler(handler as (Throwable, RequestEvent, Tracer) -> ResponseEvent))
+    fun <T : Throwable> register(clazz: Class<T>, handler: suspend (T, RequestEvent, Tracer) -> ResponseEvent) {
+        register(
+            clazz,
+            LambdaEventExceptionHandler(handler as suspend (Throwable, RequestEvent, Tracer) -> ResponseEvent)
+        )
     }
 
-    fun <T : Throwable> handleException(e: T, event: RequestEvent, tracer: Tracer): ResponseEvent {
+    suspend fun <T : Throwable> handleException(e: T, event: RequestEvent, tracer: Tracer): ResponseEvent {
         val handler = handlerFor(e)
 
         return if (handler != null) {
