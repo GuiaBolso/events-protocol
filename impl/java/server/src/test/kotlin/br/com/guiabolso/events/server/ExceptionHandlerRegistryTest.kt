@@ -6,6 +6,7 @@ import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.exceptionHandler
 import com.google.gson.JsonPrimitive
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test
 class ExceptionHandlerRegistryTest {
 
     @Test
-    fun testCanRegisterExceptionHandler() {
+    fun testCanRegisterExceptionHandler() = runBlocking {
         val exceptionHandlerRegistry = exceptionHandler()
 
         exceptionHandlerRegistry.register(RuntimeException::class.java) { exception, _, _ ->
@@ -30,7 +31,7 @@ class ExceptionHandlerRegistryTest {
     }
 
     @Test
-    fun testExceptionPriority() {
+    fun testExceptionPriority() = runBlocking {
         val exceptionHandlerRegistry = exceptionHandler()
 
         exceptionHandlerRegistry.register(Exception::class.java) { _, _, _ ->
@@ -51,7 +52,7 @@ class ExceptionHandlerRegistryTest {
     }
 
     @Test
-    fun testExceptionPriority2() {
+    fun testExceptionPriority2() = runBlocking {
         val exceptionHandlerRegistry = exceptionHandler()
 
         exceptionHandlerRegistry.register(RuntimeException::class.java) { _, _, _ ->
@@ -72,7 +73,7 @@ class ExceptionHandlerRegistryTest {
     }
 
     @Test
-    fun testHandleDefaultError() {
+    fun testHandleDefaultError() = runBlocking {
         val exceptionHandlerRegistry = exceptionHandler()
 
         val response = exceptionHandlerRegistry.handleException(
@@ -92,7 +93,9 @@ class ExceptionHandlerRegistryTest {
         val event = EventBuilderForTest.buildRequestEvent()
 
         val exception = assertThrows(BypassedException::class.java) {
-            exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
+            runBlocking {
+                exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
+            }
         }
 
         assertEquals(cause, exception.exception)
@@ -107,7 +110,9 @@ class ExceptionHandlerRegistryTest {
         val event = EventBuilderForTest.buildRequestEvent()
 
         val exception = assertThrows(RuntimeException::class.java) {
-            exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
+            runBlocking {
+                exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
+            }
         }
 
         assertEquals(cause, exception)

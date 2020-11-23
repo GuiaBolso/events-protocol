@@ -9,5 +9,5 @@ interface EventHandler {
 
     val eventVersion: Int
 
-    fun handle(event: RequestEvent): ResponseEvent
+    suspend fun handle(event: RequestEvent): ResponseEvent
 }

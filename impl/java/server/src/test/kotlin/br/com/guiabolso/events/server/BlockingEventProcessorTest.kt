@@ -8,8 +8,8 @@ import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
+import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
-import br.com.guiabolso.events.server.handler.SuspendingEventHandler
 import br.com.guiabolso.events.utils.EventUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class EventProcessorTest {
+class BlockingEventProcessorTest {
 
-    private lateinit var rawEventProcessor: EventProcessor
+    private lateinit var rawEventProcessor: BlockingEventProcessor
     private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry
     private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
 
@@ -29,7 +29,7 @@ class EventProcessorTest {
     fun setUp() {
         eventHandlerRegistry = SimpleEventHandlerRegistry()
         exceptionHandlerRegistry = ExceptionHandlerRegistry()
-        rawEventProcessor = EventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
+        rawEventProcessor = BlockingEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
     }
 
     @Test
@@ -52,11 +52,11 @@ class EventProcessorTest {
     fun testCanProcessSuspendingEvent() {
         val event = buildRequestEvent()
 
-        eventHandlerRegistry.add(object : SuspendingEventHandler {
+        eventHandlerRegistry.add(object : EventHandler {
             override val eventName = event.name
             override val eventVersion: Int = event.version
 
-            override suspend fun coHandle(event: RequestEvent): ResponseEvent = coroutineScope {
+            override suspend fun handle(event: RequestEvent): ResponseEvent = coroutineScope {
                 val deferred = async {
                     withContext(Dispatchers.IO) {
                         // changes the context

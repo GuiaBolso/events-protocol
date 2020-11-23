@@ -31,22 +31,16 @@ class EventBuilder {
         }
 
         @JvmStatic
-        fun responseFor(event: RequestEvent, operations: EventBuilder.() -> Unit): ResponseEvent {
-            val builder = javaResponseFor(event)
-            builder.operations()
-            return builder.buildResponseEvent()
-        }
-
-        @JvmStatic
-        fun javaResponseFor(event: RequestEvent): EventBuilder {
+        suspend fun responseFor(event: RequestEvent, operations: suspend EventBuilder.() -> Unit): ResponseEvent {
             val builder = EventBuilder()
+            builder.operations()
 
             builder.name = "${event.name}:response"
             builder.version = event.version
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
 
-            return builder
+            return builder.buildResponseEvent()
         }
 
         @JvmStatic

@@ -6,6 +6,7 @@ import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -42,7 +43,7 @@ class SimpleEventHandlerRegistryTest {
     }
 
     @Test
-    fun testCanHandleEvent() {
+    fun testCanHandleEvent() = runBlocking {
         val eventHandlerDiscovery = SimpleEventHandlerRegistry()
 
         eventHandlerDiscovery.add("event:name", 1) {
@@ -82,7 +83,7 @@ private object Handler1 : EventHandler {
     override val eventName = "Dummy1"
     override val eventVersion = 1
 
-    override fun handle(event: RequestEvent): ResponseEvent {
+    override suspend fun handle(event: RequestEvent): ResponseEvent {
         handles++
         return EventBuilder.responseFor(event) { }
     }
@@ -94,7 +95,7 @@ private object Handler2 : EventHandler {
     override val eventName = "Dummy2"
     override val eventVersion = 1
 
-    override fun handle(event: RequestEvent): ResponseEvent {
+    override suspend fun handle(event: RequestEvent): ResponseEvent {
         handles++
         return EventBuilder.responseFor(event) { }
     }

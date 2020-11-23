@@ -16,7 +16,7 @@ class SimpleEventHandlerRegistry : EventHandlerRegistry {
         handlers[handler.eventName to handler.eventVersion] = handler
     }
 
-    override fun add(eventName: String, eventVersion: Int, handler: (RequestEvent) -> ResponseEvent) {
+    override fun add(eventName: String, eventVersion: Int, handler: suspend (RequestEvent) -> ResponseEvent) {
         add(LambdaEventHandler(eventName, eventVersion, handler))
     }
 

@@ -3,6 +3,7 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
 import br.com.guiabolso.events.context.EventContext
+import br.com.guiabolso.events.context.EventCoroutineContextForwarder.withCoroutineContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.RawEvent
@@ -25,7 +26,7 @@ constructor(
     private val eventValidator: EventValidator = StrictEventValidator()
 ) {
 
-    fun processEvent(rawEvent: RawEvent?): ResponseEvent {
+    suspend fun processEvent(rawEvent: RawEvent?): ResponseEvent {
         return when (val event = validateEvent(rawEvent)) {
             is RequestEvent -> {
                 val handler = discovery.eventHandlerFor(event.name, event.version)
@@ -34,8 +35,10 @@ constructor(
                 } else {
                     try {
                         withContext(EventContext(event.id, event.flowId)).use {
-                            startProcessingEvent(event)
-                            handler.handle(event)
+                            withCoroutineContext {
+                                startProcessingEvent(event)
+                                handler.handle(event)
+                            }
                         }
                     } catch (e: Exception) {
                         exceptionHandlerRegistry.handleException(e, event, tracer)

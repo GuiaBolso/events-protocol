@@ -19,7 +19,7 @@ constructor(
     eventValidator: EventValidator = StrictEventValidator()
 ) {
 
-    private val eventProcessor = EventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator)
+    private val eventProcessor = BlockingEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator)
 
     fun processEvent(input: InputStream, output: OutputStream) {
         val payload = readInput(input)

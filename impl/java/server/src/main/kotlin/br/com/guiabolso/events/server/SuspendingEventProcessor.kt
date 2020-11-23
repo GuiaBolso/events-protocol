@@ -12,7 +12,7 @@ import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
 
-class EventProcessor
+class SuspendingEventProcessor
 @JvmOverloads
 constructor(
     discovery: EventHandlerDiscovery,
@@ -23,7 +23,7 @@ constructor(
 
     private val eventProcessor = RawEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator)
 
-    fun processEvent(payload: String?): String {
+    suspend fun processEvent(payload: String?): String {
         return try {
             val rawEvent = parseEvent(payload)
             eventProcessor.processEvent(rawEvent).json()

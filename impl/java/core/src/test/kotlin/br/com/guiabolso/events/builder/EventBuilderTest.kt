@@ -16,6 +16,7 @@ import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -152,7 +153,7 @@ class EventBuilderTest {
     }
 
     @Test
-    fun testResponseForEvent() {
+    fun testResponseForEvent() = runBlocking {
         val event = event {
             id = "id"
             flowId = "flowId"
@@ -175,7 +176,7 @@ class EventBuilderTest {
     }
 
     @Test
-    fun testResponseForEventWithIdAndFlowIdForward() {
+    fun testResponseForEventWithIdAndFlowIdForward() = runBlocking {
         val event = withContext(EventContext("id", "flowId")).use {
             event {
                 name = "event"
@@ -198,7 +199,7 @@ class EventBuilderTest {
     }
 
     @Test
-    fun testResponseForEventWithIdAndFlowIdForwardOverwritten() {
+    fun testResponseForEventWithIdAndFlowIdForwardOverwritten() = runBlocking {
         val event = event {
             id = "id"
             flowId = "flowId"
@@ -223,17 +224,19 @@ class EventBuilderTest {
     }
 
     @Test
-    fun testResponseForEventWithoutIdAndFlowId() {
+    fun testResponseForEventWithoutIdAndFlowId() = runBlocking {
         assertThrows(MissingEventInformationException::class.java) {
             val event = event {
                 name = "event"
                 version = 1
                 payload = 42
             }
-            responseFor(event) {
-                id = null
-                flowId = null
-                payload = 84
+            runBlocking {
+                responseFor(event) {
+                    id = null
+                    flowId = null
+                    payload = 84
+                }
             }
         }
     }
@@ -246,9 +249,11 @@ class EventBuilderTest {
                 version = 1
                 payload = 42
             }
-            responseFor(event) {
-                name = null
-                payload = 84
+            runBlocking {
+                responseFor(event) {
+                    name = null
+                    payload = 84
+                }
             }
         }
     }
@@ -261,9 +266,11 @@ class EventBuilderTest {
                 version = 1
                 payload = 42
             }
-            responseFor(event) {
-                version = null
-                payload = 84
+            runBlocking {
+                responseFor(event) {
+                    version = null
+                    payload = 84
+                }
             }
         }
     }
@@ -276,7 +283,9 @@ class EventBuilderTest {
                 version = 1
                 payload = 42
             }
-            responseFor(event) {
+            runBlocking {
+                responseFor(event) {
+                }
             }
         }
     }

@@ -39,7 +39,7 @@ object MyHandler : ConvertingEventHandler<String> {
         return str
     }
 
-    override fun handle(input: RequestEvent, converted: String): ResponseEvent {
+    override suspend fun handle(input: RequestEvent, converted: String): ResponseEvent {
         throw NotImplementedError()
     }
 }
