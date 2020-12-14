@@ -43,7 +43,11 @@ object DatadogUtils {
     }
 
     @JvmStatic
-    fun <T> traceBlock(name: String, func: () -> T): T {
+    fun <T> traceBlock(name: String, func: () -> T): T = runBlocking {
+        suspendingTraceBlock(name) { func() }
+    }
+
+    suspend fun <T> suspendingTraceBlock(name: String, func: suspend () -> T): T {
         val tracer = GlobalTracer.get()!!
 
         val span = tracer.buildSpan(name).start()
