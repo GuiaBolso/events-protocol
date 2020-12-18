@@ -1,7 +1,7 @@
 import static org.gradle.api.JavaVersion.VERSION_1_7
 
 buildscript {
-    ext.kotlin_version = '1.4.10'
+    ext.kotlin_version = '1.4.21'
 
     repositories {
         jcenter()
@@ -23,7 +23,7 @@ buildscript {
 
 allprojects {
     ext {
-        publish_version = '5.0.1'
+        publish_version = '5.0.2'
     }
     tasks.whenTaskAdded {
         if (name == "generateSourcesJarForMavenPublication") {
