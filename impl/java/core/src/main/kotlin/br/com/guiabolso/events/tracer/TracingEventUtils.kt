@@ -11,10 +11,10 @@ import io.opentracing.SpanContext
 import io.opentracing.Tracer
 import io.opentracing.tag.Tags
 
-fun Tracer.traceEvent(
+suspend fun Tracer.traceEvent(
     operationName: String,
     event: RequestEvent,
-    func: (Span) -> ResponseEvent,
+    func: suspend (Span) -> ResponseEvent,
 ): ResponseEvent {
     val span = newSpan(operationName, event)
     return this.activateSpan(span).use {
