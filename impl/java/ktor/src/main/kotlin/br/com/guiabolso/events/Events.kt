@@ -88,7 +88,7 @@ class Events(configuration: TraceConfiguration) {
 
             pipeline.intercept(ApplicationCallPipeline.Call) {
                 val path = call.request.path()
-                if (path == "/events/") {
+                if (path == "/events/" || path == "/events") {
                     call.respondText(
                         text = events.processEvent(call.receive()),
                         contentType = ContentType.Application.Json
