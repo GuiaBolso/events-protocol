@@ -15,6 +15,7 @@ import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
 import io.ktor.application.Application
 import io.ktor.http.HttpMethod.Companion.Post
@@ -24,6 +25,15 @@ import io.ktor.server.testing.withTestApplication
 import java.util.UUID.randomUUID
 
 class EventsTest : ShouldSpec({
+
+    should("Have the same response for /events and /events/") {
+        withTestApplication({ testModule() }) {
+            val response = handleRequest(Post, "/events/") { setBody(testEvent) }.response
+            val response2 = handleRequest(Post, "/events") { setBody(testEvent) }.response
+
+            response shouldBe response2
+        }
+    }
 
     should("Handle a successful event request->response") {
         withTestApplication({ testModule() }) {
