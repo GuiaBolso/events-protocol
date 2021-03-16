@@ -3,7 +3,7 @@ Events Protocol
 
 
 [![Build Status](https://github.com/GuiaBolso/events-protocol/workflows/build/badge.svg?branch=master)](https://github.com/GuiaBolso/events-protocol/actions)
-[![Download](https://api.bintray.com/packages/gb-opensource/maven/Events-Core/images/download.svg) ](https://bintray.com/gb-opensource/maven/Events-Core/_latestVersion)
+![Maven Central](https://img.shields.io/maven-central/v/br.com.guiabolso/events-client)
 
 Dependencias
 ---------------
