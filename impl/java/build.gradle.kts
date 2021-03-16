@@ -50,9 +50,7 @@ allprojects {
             jvmTarget = "1.8"
         }
     }
-}
 
-subprojects {
     val sourcesJar by tasks.registering(Jar::class) {
         archiveClassifier.set("sources")
         from(sourceSets.getByName("main").allSource)
@@ -67,35 +65,23 @@ subprojects {
     }
 
     publishing {
+
+        repositories {
+            maven {
+                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = System.getenv("OSSRH_USERNAME")
+                    password = System.getenv("OSSRH_PASSWORD")
+                }
+            }
+        }
+
         publications.register("mavenJava", MavenPublication::class) {
             from(components["java"])
             artifact(javadocsJar)
             artifact(sourcesJar.get())
-            artifactId = "events-${this@subprojects.name}"
-        }
-    }
+            artifactId = "events-${this@allprojects.name}"
 
-    signing {
-        useGpgCmd()
-
-        sign((extensions.getByName("publishing") as PublishingExtension).publications)
-    }
-}
-
-publishing {
-
-    repositories {
-        maven {
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
-            }
-        }
-    }
-    
-    publications.withType<MavenPublication>().forEach {
-        it.apply {
             pom {
                 name.set("Events Protocol")
                 description.set("Events Protocol")
@@ -121,5 +107,18 @@ publishing {
                 }
             }
         }
+
+    }
+
+    signing {
+        val signingKey: String? by project
+        val signingPassword: String? by project
+
+        useGpgCmd()
+        if (signingKey != null && signingPassword != null) {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+        }
+
+        sign((extensions.getByName("publishing") as PublishingExtension).publications)
     }
 }
