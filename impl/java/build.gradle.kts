@@ -45,6 +45,8 @@ allprojects {
     }
 
     tasks.withType<KotlinCompile> {
+        targetCompatibility = JavaVersion.VERSION_1_8.toString()
+        sourceCompatibility = JavaVersion.VERSION_1_8.toString()
         kotlinOptions {
             useIR = true
             jvmTarget = "1.8"
