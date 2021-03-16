@@ -8,23 +8,14 @@ Events Protocol
 Dependencias
 ---------------
 
-Para utilizar as dependências é necessário habilitar o repositório do jcenter no gradle:
-
-```
-repositories {
-    mavenCentral()
-    jcenter()  <---------
-}
-```
-
-
 A biblioteca é composta de 4 modulos. Server, Client, Core e Test.
 
 ```
- compile "br.com.guiabolso:events-client:{version}"
- compile "br.com.guiabolso:events-server:{version}"
- compile "br.com.guiabolso:events-core:{version}"
- testCompile "br.com.guiabolso:events-test:{version}"
+ implementation("br.com.guiabolso:events-client:{version}")
+ implementation("br.com.guiabolso:events-server:{version}")
+ implementation("br.com.guiabolso:events-core:{version}")
+ 
+ testImplementation("br.com.guiabolso:events-test:{version}")
 ```
 Geralmente as dependências a serem importadas são:
 
