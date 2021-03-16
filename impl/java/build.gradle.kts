@@ -45,11 +45,17 @@ allprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        targetCompatibility = JavaVersion.VERSION_1_8.toString()
-        sourceCompatibility = JavaVersion.VERSION_1_8.toString()
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
         kotlinOptions {
             useIR = true
             jvmTarget = "1.8"
+        }
+    }
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
         }
     }
 
