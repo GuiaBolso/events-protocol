@@ -30,8 +30,8 @@ class EventsTest : ShouldSpec({
         withTestApplication({ testModule() }) {
             val response = handleRequest(Post, "/events/") { setBody(testEvent) }.response
             val response2 = handleRequest(Post, "/events") { setBody(testEvent) }.response
-
-            response shouldBe response2
+            
+            response.content!! shouldBe response2.content!!
         }
     }
 
