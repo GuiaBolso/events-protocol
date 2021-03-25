@@ -11,6 +11,7 @@ import br.com.guiabolso.events.test.beSuccess
 import br.com.guiabolso.events.test.shouldHaveErrorType
 import br.com.guiabolso.events.test.shouldHaveName
 import br.com.guiabolso.events.test.shouldHavePayload
+import br.com.guiabolso.events.test.shouldNotHavePayload
 import io.kotest.assertions.assertSoftly
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
@@ -43,6 +44,33 @@ class EventsTest : ShouldSpec({
                 it should beSuccess()
                 it shouldHaveName "test:event:response"
                 it shouldHavePayload mapOf("answer" to 42)
+            }
+        }
+    }
+
+    should("Handle a successful event with default UTF-8 charset request->response") {
+        withTestApplication({ testModule() }) {
+            val response = handleRequest(Post, "/events/") { setBody(testEncodingEvent) }.response
+
+            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+                it should beSuccess()
+                it shouldHaveName "test:event:encoding:response"
+                it shouldHavePayload mapOf("answer" to mapOf("text" to "éàçãõ£¥ÄĀ"))
+            }
+        }
+    }
+
+    should("Handle a successful event with non default charset request") {
+        withTestApplication({ testModule() }) {
+            val response = handleRequest(Post, "/events/") {
+                setBody(testEncodingEvent)
+                addHeader("Content-Type", "application/json; charset=ISO_8859_1")
+            }.response
+
+            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+                it should beSuccess()
+                it shouldHaveName "test:event:encoding:response"
+                it shouldNotHavePayload mapOf("answer" to mapOf("text" to "éàçãõ£¥ÄĀ"))
             }
         }
     }
@@ -95,6 +123,12 @@ fun Application.testModule() {
         event("test:event", 1) {
             responseFor(it) {
                 payload = mapOf("answer" to 42)
+            }
+        }
+
+        event("test:event:encoding", 1) {
+            responseFor(it) {
+                payload = mapOf("answer" to it.payload)
             }
         }
 
@@ -177,6 +211,19 @@ private val testEventHandledErr =
     "id": "${randomUUID()}",
     "flowId": "${randomUUID()}",
     "payload": {},
+    "identity": {},
+    "metadata": {},
+    "auth": {}
+}
+    """.trimIndent()
+
+private val testEncodingEvent =
+    """ {
+    "name": "test:event:encoding",
+    "version": 1,
+    "id": "${randomUUID()}",
+    "flowId": "${randomUUID()}",
+    "payload": { "text" : "éàçãõ£¥ÄĀ" },
     "identity": {},
     "metadata": {},
     "auth": {}

@@ -16,10 +16,12 @@ import io.ktor.application.call
 import io.ktor.application.featureOrNull
 import io.ktor.application.install
 import io.ktor.http.ContentType
+import io.ktor.request.contentCharset
 import io.ktor.request.path
-import io.ktor.request.receive
+import io.ktor.request.receiveChannel
 import io.ktor.response.respondText
 import io.ktor.util.AttributeKey
+import io.ktor.util.toByteArray
 import io.ktor.util.pipeline.ContextDsl
 import kotlin.reflect.KClass
 
@@ -89,8 +91,11 @@ class Events(configuration: TraceConfiguration) {
             pipeline.intercept(ApplicationCallPipeline.Call) {
                 val path = call.request.path()
                 if (path == "/events/" || path == "/events") {
+                    val rawEvent = call.receiveChannel()
+                        .toByteArray()
+                        .toString(call.request.contentCharset() ?: Charsets.UTF_8)
                     call.respondText(
-                        text = events.processEvent(call.receive()),
+                        text = events.processEvent(rawEvent),
                         contentType = ContentType.Application.Json
                     )
                     return@intercept finish()
