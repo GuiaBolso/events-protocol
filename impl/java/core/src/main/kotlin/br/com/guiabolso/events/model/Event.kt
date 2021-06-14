@@ -4,6 +4,7 @@ import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 
 sealed class Event {
@@ -72,12 +73,27 @@ data class ResponseEvent(
 }
 
 data class RequestEvent(
+    @SerializedName("name")
     override val name: String,
+
+    @SerializedName("version")
     override val version: Int,
+
+    @SerializedName("id")
     override val id: String,
+
+    @SerializedName("flowId")
     override val flowId: String,
+
+    @SerializedName("payload")
     override val payload: JsonElement,
+
+    @SerializedName("identity")
     override val identity: JsonObject,
+
+    @SerializedName("auth")
     override val auth: JsonObject,
+
+    @SerializedName("metadata")
     override val metadata: JsonObject
 ) : Event()
