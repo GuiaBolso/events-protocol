@@ -1,7 +1,7 @@
 dependencies {
     // Datadog
-    api("com.datadoghq:dd-trace-ot:0.49.0")
-    api("com.datadoghq:dd-trace-api:0.49.0")
+    api("com.datadoghq:dd-trace-ot:0.82.0")
+    api("com.datadoghq:dd-trace-api:0.82.0")
     implementation("com.datadoghq:java-dogstatsd-client:2.9.0")
     
     // Open Tracing
