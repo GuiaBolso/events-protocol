@@ -1,3 +1,3 @@
-package br.com.guiabolso.events.validation
+package br.com.guiabolso.events.exception
 
 class EventValidationException(val propertyName: String) : RuntimeException() 

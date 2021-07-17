@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.validation
 
+import br.com.guiabolso.events.exception.EventValidationException
 import br.com.guiabolso.events.model.RawEvent
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive

@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.validation
 
+import br.com.guiabolso.events.exception.EventValidationException
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
