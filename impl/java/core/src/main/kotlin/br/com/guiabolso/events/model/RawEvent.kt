@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.model
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 
 data class RawEvent(
@@ -15,9 +16,9 @@ data class RawEvent(
     @SerializedName("payload")
     val payload: JsonElement?,
     @SerializedName("identity")
-    val identity: JsonElement?,
+    val identity: JsonObject?,
     @SerializedName("auth")
-    val auth: JsonElement?,
+    val auth: JsonObject?,
     @SerializedName("metadata")
-    val metadata: JsonElement?
+    val metadata: JsonObject?
 )
