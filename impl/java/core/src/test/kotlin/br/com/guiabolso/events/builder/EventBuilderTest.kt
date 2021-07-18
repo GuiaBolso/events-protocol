@@ -12,6 +12,7 @@ import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import com.google.gson.JsonObject
@@ -370,7 +371,7 @@ class EventBuilderTest {
 
         assertNotNull(response.id)
         assertNotNull(response.flowId)
-        assertEquals("badProtocol", response.name)
+        assertEquals(BadProtocol.typeName, response.name)
         assertEquals(1, response.version)
         assertEquals(
             MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())),

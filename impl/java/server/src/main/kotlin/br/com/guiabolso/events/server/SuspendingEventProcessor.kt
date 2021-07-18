@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -21,8 +22,9 @@ class SuspendingEventProcessor(private val processor: RawEventProcessor) {
         discovery: EventHandlerDiscovery,
         exceptionHandlerRegistry: ExceptionHandlerRegistry,
         tracer: Tracer = DefaultTracer,
-        eventValidator: EventValidator = StrictEventValidator()
-    ) : this(RawEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator))
+        eventValidator: EventValidator = StrictEventValidator(),
+        traceOperationPrefix: String = ""
+    ) : this(RawEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator, traceOperationPrefix))
 
     suspend fun processEvent(payload: String?): String {
         val rawEvent = try {
@@ -42,7 +44,7 @@ class SuspendingEventProcessor(private val processor: RawEventProcessor) {
     }
 
     private fun badProtocol() = RequestEvent(
-        name = "badProtocol",
+        name = BadProtocol.typeName,
         version = 1,
         id = UUID.randomUUID().toString(),
         flowId = UUID.randomUUID().toString(),

@@ -3,6 +3,8 @@ package br.com.guiabolso.events.builder
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.EventErrorType.BadProtocol
+import br.com.guiabolso.events.model.EventErrorType.EventNotFound
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.model.RequestEvent
@@ -72,7 +74,7 @@ class EventBuilder {
         @JvmStatic
         fun eventNotFound(event: RequestEvent): ResponseEvent {
             val builder = EventBuilder()
-            builder.name = "eventNotFound"
+            builder.name = EventNotFound.typeName
             builder.version = 1
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
@@ -84,7 +86,7 @@ class EventBuilder {
         @JvmStatic
         fun badProtocol(message: EventMessage): ResponseEvent {
             val builder = EventBuilder()
-            builder.name = "badProtocol"
+            builder.name = BadProtocol.typeName
             builder.version = 1
             builder.id = UUID.randomUUID().toString()
             builder.flowId = UUID.randomUUID().toString()

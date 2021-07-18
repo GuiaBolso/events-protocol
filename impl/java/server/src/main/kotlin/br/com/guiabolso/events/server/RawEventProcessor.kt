@@ -3,6 +3,8 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventCoroutineContextForwarder.withCoroutineContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
+import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -23,7 +25,8 @@ constructor(
     val discovery: EventHandlerDiscovery,
     val exceptionHandlerRegistry: ExceptionHandlerRegistry,
     val tracer: Tracer = DefaultTracer,
-    val eventValidator: EventValidator = StrictEventValidator()
+    val eventValidator: EventValidator = StrictEventValidator(),
+    val traceOperationPrefix: String = ""
 ) {
 
     suspend fun processEvent(rawEvent: RawEvent): ResponseEvent {
@@ -49,7 +52,7 @@ constructor(
     }
 
     protected fun startProcessingEvent(event: RequestEvent) {
-        tracer.setOperationName("${event.name}:V${event.version}")
+        tracer.setOperationName("$traceOperationPrefix${event.name}:V${event.version}")
         tracer.addProperty("EventID", event.id)
         tracer.addProperty("FlowID", event.flowId)
         tracer.addProperty("UserID", event.userIdAsString ?: "unknown")
@@ -61,7 +64,7 @@ constructor(
     }
 
     private fun RawEvent.asRequestEvent() = RequestEvent(
-        name = name ?: "badProtocol",
+        name = name ?: BadProtocol.typeName,
         version = version ?: 1,
         id = id ?: UUID.randomUUID().toString(),
         flowId = flowId ?: UUID.randomUUID().toString(),

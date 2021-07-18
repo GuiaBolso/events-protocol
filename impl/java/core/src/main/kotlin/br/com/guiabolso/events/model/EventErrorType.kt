@@ -8,6 +8,8 @@ sealed class EventErrorType(open val typeName: String) {
             "error" -> Generic
             "notFound" -> NotFound
             "badRequest" -> BadRequest
+            "badProtocol" -> BadProtocol
+            "eventNotFound" -> EventNotFound
             "unauthorized" -> Unauthorized
             "forbidden" -> Forbidden
             "userDenied" -> UserDenied
@@ -19,6 +21,8 @@ sealed class EventErrorType(open val typeName: String) {
 
     object Generic : EventErrorType("error")
     object BadRequest : EventErrorType("badRequest")
+    object BadProtocol : EventErrorType("badProtocol")
+    object EventNotFound : EventErrorType("eventNotFound")
     object Unauthorized : EventErrorType("unauthorized")
     object NotFound : EventErrorType("notFound")
     object Forbidden : EventErrorType("forbidden")

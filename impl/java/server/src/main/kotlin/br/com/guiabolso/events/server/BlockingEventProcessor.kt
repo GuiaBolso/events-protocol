@@ -16,8 +16,17 @@ class BlockingEventProcessor(
         discovery: EventHandlerDiscovery,
         exceptionHandlerRegistry: ExceptionHandlerRegistry,
         tracer: Tracer = DefaultTracer,
-        eventValidator: EventValidator = StrictEventValidator()
-    ) : this(SuspendingEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator))
+        eventValidator: EventValidator = StrictEventValidator(),
+        traceOperationPrefix: String = ""
+    ) : this(
+        SuspendingEventProcessor(
+            discovery,
+            exceptionHandlerRegistry,
+            tracer,
+            eventValidator,
+            traceOperationPrefix
+        )
+    )
 
     fun processEvent(payload: String?): String = runBlocking {
         eventProcessor.processEvent(payload)
