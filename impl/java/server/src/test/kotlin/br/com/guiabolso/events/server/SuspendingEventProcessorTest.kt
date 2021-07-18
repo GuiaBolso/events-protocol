@@ -36,7 +36,6 @@ class SuspendingEventProcessorTest {
     fun `should delegate any valid json to raw event processor`(): Unit = runBlocking {
         coEvery { rawEventProcessor.processEvent(any()) } returns buildResponseEvent()
 
-
         val response = processor.processEvent("{}")
         assertEquals(
             "{\"name\":\"event:name:response\",\"version\":1,\"id\":\"id\",\"flowId\":\"flowId\",\"payload\":42,\"identity\":{},\"auth\":{},\"metadata\":{}}",
@@ -96,5 +95,4 @@ class SuspendingEventProcessorTest {
                 )
             }
         }
-
 }

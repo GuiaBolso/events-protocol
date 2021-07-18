@@ -39,5 +39,4 @@ class EventNotFoundExceptionHandlerTest {
 
         verify { tracer.notifyError(exception, false) }
     }
-
 }

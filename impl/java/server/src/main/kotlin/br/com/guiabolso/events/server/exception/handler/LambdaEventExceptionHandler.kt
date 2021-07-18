@@ -8,5 +8,6 @@ class LambdaEventExceptionHandler<in T : Throwable>(
     private val func: suspend (T, RequestEvent, Tracer) -> ResponseEvent
 ) : EventExceptionHandler<T> {
 
-    override suspend fun handleException(exception: T, event: RequestEvent, tracer: Tracer) = func(exception, event, tracer)
+    override suspend fun handleException(exception: T, event: RequestEvent, tracer: Tracer) =
+        func(exception, event, tracer)
 }

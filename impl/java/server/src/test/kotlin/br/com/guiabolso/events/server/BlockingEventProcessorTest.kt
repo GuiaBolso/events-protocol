@@ -19,5 +19,4 @@ class BlockingEventProcessorTest {
 
         coVerify(exactly = 1) { delegate.processEvent("event") }
     }
-
 }
