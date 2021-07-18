@@ -1,5 +1,6 @@
 package br.com.guiabolso.tracing.engine
 
+@Suppress("TooManyFunctions")
 interface TracerEngine {
 
     /**

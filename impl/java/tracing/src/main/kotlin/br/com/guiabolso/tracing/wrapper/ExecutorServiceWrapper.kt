@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
+@Suppress("TooManyFunctions")
 open class ExecutorServiceWrapper(
     private val contextManagers: List<ThreadContextManager<*>>,
     private val delegate: ExecutorService
@@ -51,7 +52,11 @@ open class ExecutorServiceWrapper(
         return delegate.invokeAll(tasks.map { CallableWrapper(contextManagers, it) })
     }
 
-    override fun <T> invokeAll(tasks: MutableCollection<out Callable<T>>, timeout: Long, unit: TimeUnit): MutableList<Future<T>> {
+    override fun <T> invokeAll(
+        tasks: MutableCollection<out Callable<T>>,
+        timeout: Long,
+        unit: TimeUnit
+    ): MutableList<Future<T>> {
         return delegate.invokeAll(tasks.map { CallableWrapper(contextManagers, it) }, timeout, unit)
     }
 

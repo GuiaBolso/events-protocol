@@ -10,6 +10,7 @@ import io.opentracing.Tracer
 import io.opentracing.util.GlobalTracer
 import java.io.Closeable
 
+@Suppress("TooManyFunctions")
 open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
 
     override val type = Span::class.java
@@ -47,6 +48,7 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
         if (value != null) tracer.activeSpan()?.setTag(key, value)
     }
 
+    @Suppress("NestedBlockDepth")
     override fun addRootProperty(key: String, value: Boolean?) {
         if (value != null) {
             tracer.activeSpan()?.let { span ->

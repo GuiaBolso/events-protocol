@@ -7,6 +7,7 @@ import br.com.guiabolso.tracing.wrapper.ScheduledExecutorServiceWrapper
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService
 
+@Suppress("TooManyFunctions")
 class TracerImpl(
     var engines: List<TracerEngine>,
     val contextManagers: List<ThreadContextManager<*>>

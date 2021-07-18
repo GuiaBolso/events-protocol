@@ -21,6 +21,7 @@ class DatadogStatsDTracer(
         }
     }
 
+    @Suppress("SpreadOperator")
     override fun recordExecutionTime(name: String, elapsedTime: Long, context: Map<String, String>) {
         val tags = context.map { it.key + ":" + it.value }
         statsDClient.recordExecutionTime(name, elapsedTime, 1.0, *tags.toTypedArray())
