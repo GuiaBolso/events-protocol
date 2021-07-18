@@ -225,7 +225,7 @@ class EventBuilderTest {
     }
 
     @Test
-    fun testResponseForEventWithoutIdAndFlowId() = runBlocking {
+    fun testResponseForEventWithoutIdAndFlowId(): Unit = runBlocking {
         assertThrows(MissingEventInformationException::class.java) {
             val event = event {
                 name = "event"
