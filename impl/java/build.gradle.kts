@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.5.20"
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.4.20"
+    id("org.jetbrains.dokka") version "1.5.0"
     id("io.gitlab.arturbosch.detekt").version("1.16.0")
 }
 
@@ -24,7 +24,7 @@ allprojects {
     dependencies {
         // Kotlin
         implementation(kotlin("reflect"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
         // SLF4J
         implementation("org.slf4j:slf4j-api:1.7.25")
@@ -37,7 +37,7 @@ allprojects {
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
 
         // Mockk
-        testImplementation("io.mockk:mockk:1.10.0")
+        testImplementation("io.mockk:mockk:1.11.0")
     }
 
     tasks.withType<Test> {

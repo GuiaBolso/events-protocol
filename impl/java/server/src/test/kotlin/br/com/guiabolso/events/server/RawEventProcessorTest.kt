@@ -1,97 +1,120 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest.buildRawRequestEvent
-import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
-import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
+import br.com.guiabolso.events.context.EventContext
+import br.com.guiabolso.events.context.EventCoroutineContextForwarder
+import br.com.guiabolso.events.context.EventThreadContextManager
+import br.com.guiabolso.events.exception.EventValidationException
+import br.com.guiabolso.events.model.RequestEvent
+import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.server.exception.EventNotFoundException
+import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistry
+import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
+import br.com.guiabolso.events.tracer.DefaultTracer
+import br.com.guiabolso.events.validation.StrictEventValidator
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class RawEventProcessorTest {
 
-    private val eventHandlerRegistry = SimpleEventHandlerRegistry()
-    private val exceptionHandlerRegistry = ExceptionHandlerRegistry()
-    private val rawEventProcessor = RawEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry)
+    private lateinit var eventHandlerRegistry: SimpleEventHandlerRegistry
+    private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
+    private lateinit var eventValidator: StrictEventValidator
+    private lateinit var processor: RawEventProcessor
+
+    @BeforeEach
+    fun setup() {
+        eventHandlerRegistry = mockk()
+        exceptionHandlerRegistry = mockk()
+        eventValidator = mockk()
+
+        processor = RawEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, eventValidator = eventValidator)
+    }
 
     @Test
-    fun testCanProcessEvent() = runBlocking {
-        val event = buildRawRequestEvent()
-        val expectedResponse = buildResponseEvent()
+    fun `should execute the event with contexts set`(): Unit = runBlocking {
+        val rawEvent = buildRawRequestEvent()
+        val request = mockk<RequestEvent> {
+            every { id } returns "id"
+            every { flowId } returns "flowId"
+            every { name } returns "eventName"
+            every { version } returns 1
+            every { userIdAsString } returns "42"
+            every { origin } returns "origin"
+        }
+        val response = mockk<ResponseEvent>()
+        val handler = mockk<EventHandler>()
 
-        eventHandlerRegistry.add(event.name!!, event.version!!) {
-            expectedResponse
+        every { eventValidator.validateAsRequestEvent(rawEvent) } returns request
+        every { eventHandlerRegistry.eventHandlerFor("eventName", 1) } returns handler
+        coEvery { handler.handle(request) } answers {
+            assertEquals(EventContext("id", "flowId"), EventThreadContextManager.current)
+            assertEquals(EventContext("id", "flowId"), EventCoroutineContextForwarder.current)
+            response
         }
 
-        val responseEvent = rawEventProcessor.processEvent(event)
+        assertEquals(response, processor.processEvent(rawEvent))
 
-        assertEquals(expectedResponse, responseEvent)
+        verify(exactly = 1) { eventValidator.validateAsRequestEvent(rawEvent) }
+        verify(exactly = 1) { eventHandlerRegistry.eventHandlerFor("eventName", 1) }
+        coVerify(exactly = 1) { handler.handle(request) }
     }
 
     @Test
-    fun testEventNotFound() = runBlocking {
-        val responseEvent = rawEventProcessor.processEvent(buildRawRequestEvent())
+    fun `should route validation exceptions to the ExceptionHandler`(): Unit = runBlocking {
+        val rawEvent = buildRawRequestEvent()
+        val exception = EventValidationException("")
+        val fakeEvent = slot<RequestEvent>()
 
-        assertEquals("id", responseEvent.id)
-        assertEquals("flowId", responseEvent.flowId)
-        assertEquals("eventNotFound", responseEvent.name)
-        assertEquals(1, responseEvent.version)
-        assertEquals("NO_EVENT_HANDLER_FOUND", responseEvent.payload.asJsonObject.get("code").asString)
-        val parameters = responseEvent.payload.asJsonObject.get("parameters").asJsonObject
-        assertEquals("event:name", parameters.get("event").asString)
-        assertEquals(1, parameters.get("version").asInt)
-    }
+        every { eventValidator.validateAsRequestEvent(rawEvent) } throws exception
+        coEvery {
+            exceptionHandlerRegistry.handleException(exception, capture(fakeEvent), DefaultTracer)
+        } throws EventValidationException("")
 
-    @Test
-    fun testEventThrowException() = runBlocking {
-        val event = buildRawRequestEvent()
-
-        eventHandlerRegistry.add(event.name!!, event.version!!) {
-            throw RuntimeException("error")
+        assertThrows<EventValidationException> {
+            runBlocking { processor.processEvent(rawEvent) }
         }
 
-        val responseEvent = rawEventProcessor.processEvent(buildRawRequestEvent())
-
-        assertEquals("${event.name}:error", responseEvent.name)
-        assertEquals("UNHANDLED_ERROR", responseEvent.payload.asJsonObject["code"].asString)
+        verify(exactly = 1) { eventValidator.validateAsRequestEvent(rawEvent) }
+        coVerify(exactly = 1) { exceptionHandlerRegistry.handleException(exception, fakeEvent.captured, DefaultTracer) }
     }
 
     @Test
-    fun testCanHandleException() = runBlocking {
-        val event = buildRawRequestEvent()
+    fun `should route event not found exception to the ExceptionHandler`(): Unit = runBlocking {
+        val rawEvent = buildRawRequestEvent()
+        val request = mockk<RequestEvent> {
+            every { id } returns "id"
+            every { flowId } returns "flowId"
+            every { name } returns "eventName"
+            every { version } returns 1
+            every { userIdAsString } returns "42"
+            every { origin } returns "origin"
+        }
+        val exception = EventNotFoundException()
+        val fakeEvent = slot<RequestEvent>()
 
-        eventHandlerRegistry.add(event.name!!, event.version!!) {
-            throw RuntimeException("error")
+        every { eventValidator.validateAsRequestEvent(rawEvent) } returns request
+        every { eventHandlerRegistry.eventHandlerFor("eventName", 1) } throws exception
+        coEvery {
+            exceptionHandlerRegistry.handleException(exception, capture(fakeEvent), DefaultTracer)
+        } throws EventNotFoundException()
+
+        assertThrows<EventNotFoundException> {
+            runBlocking { processor.processEvent(rawEvent) }
         }
 
-        exceptionHandlerRegistry.register(RuntimeException::class.java) { _, requestEvent, _ ->
-            buildResponseEvent().copy("${requestEvent.name}:bad_request")
-        }
-
-        val responseEvent = rawEventProcessor.processEvent(event)
-
-        assertEquals("${event.name}:bad_request", responseEvent.name)
-    }
-
-    @Test
-    fun testBadProtocolEventIsReturned() = runBlocking {
-        val responseEvent = rawEventProcessor.processEvent(null)
-
-        assertEquals("badProtocol", responseEvent.name)
-        assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload.asJsonObject["code"].asString)
-    }
-
-    @Test
-    fun testBadProtocolEventIsReturnedWhenParameterIsMissing() = runBlocking {
-        val event = buildRawRequestEvent().copy(version = null)
-
-        val responseEvent = rawEventProcessor.processEvent(event)
-
-        assertEquals("badProtocol", responseEvent.name)
-        assertEquals("INVALID_COMMUNICATION_PROTOCOL", responseEvent.payload.asJsonObject["code"].asString)
-        assertEquals(
-            "version",
-            responseEvent.payload.asJsonObject["parameters"].asJsonObject["missingProperty"].asString
-        )
+        verify(exactly = 1) { eventValidator.validateAsRequestEvent(rawEvent) }
+        verify(exactly = 1) { eventHandlerRegistry.eventHandlerFor("eventName", 1) }
+        coVerify(exactly = 1) { exceptionHandlerRegistry.handleException(exception, fakeEvent.captured, DefaultTracer) }
     }
 }

@@ -1,4 +1,4 @@
-package br.com.guiabolso.events.server.exception
+package br.com.guiabolso.events.server.exception.handler
 
 import br.com.guiabolso.events.builder.EventBuilder
 import br.com.guiabolso.events.model.EventErrorType
@@ -8,7 +8,10 @@ import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.tracing.Tracer
 import org.slf4j.LoggerFactory
 
-class ExceptionHandlerRegistry {
+/**
+ * To keep the same behaviour of version 5.x.x or older use [ExceptionHandlerRegistryFactory.exceptionHandler]
+ */
+class ExceptionHandlerRegistry internal constructor() {
 
     private val logger = LoggerFactory.getLogger(ExceptionHandlerRegistry::class.java)!!
     private val handlers = mutableMapOf<Class<*>, EventExceptionHandler<Throwable>>()

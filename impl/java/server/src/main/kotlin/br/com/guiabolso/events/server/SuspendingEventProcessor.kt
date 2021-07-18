@@ -1,45 +1,59 @@
 package br.com.guiabolso.events.server
 
-import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
+import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistry
+import br.com.guiabolso.events.server.exception.EventParsingException
+import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
-import br.com.guiabolso.events.server.parser.EventParsingException
 import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
+import com.google.gson.JsonObject
+import java.util.UUID
 
-class SuspendingEventProcessor
-@JvmOverloads
-constructor(
-    discovery: EventHandlerDiscovery,
-    exceptionHandlerRegistry: ExceptionHandlerRegistry,
-    private val tracer: Tracer = DefaultTracer,
-    eventValidator: EventValidator = StrictEventValidator()
-) {
+class SuspendingEventProcessor(private val processor: RawEventProcessor) {
 
-    private val eventProcessor = RawEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator)
+    @JvmOverloads
+    constructor(
+        discovery: EventHandlerDiscovery,
+        exceptionHandlerRegistry: ExceptionHandlerRegistry,
+        tracer: Tracer = DefaultTracer,
+        eventValidator: EventValidator = StrictEventValidator(),
+        traceOperationPrefix: String = ""
+    ) : this(RawEventProcessor(discovery, exceptionHandlerRegistry, tracer, eventValidator, traceOperationPrefix))
 
     suspend fun processEvent(payload: String?): String {
-        return try {
-            val rawEvent = parseEvent(payload)
-            eventProcessor.processEvent(rawEvent).json()
+        val rawEvent = try {
+            parseEvent(payload)
         } catch (e: EventParsingException) {
-            tracer.notifyError(e, false)
-            badProtocol(e.eventMessage).json()
+            return processor.exceptionHandlerRegistry.handleException(e, badProtocol(), processor.tracer).json()
         }
+        return processor.processEvent(rawEvent).json()
     }
 
-    private fun parseEvent(payload: String?): RawEvent? {
-        try {
-            return MapperHolder.mapper.fromJson(payload, RawEvent::class.java)
+    private fun parseEvent(payload: String?): RawEvent {
+        return try {
+            MapperHolder.mapper.fromJson(payload, RawEvent::class.java)
         } catch (e: Throwable) {
             throw EventParsingException(e)
-        }
+        } ?: throw EventParsingException(null)
     }
 
+    private fun badProtocol() = RequestEvent(
+        name = BadProtocol.typeName,
+        version = 1,
+        id = UUID.randomUUID().toString(),
+        flowId = UUID.randomUUID().toString(),
+        payload = JsonObject(),
+        identity = JsonObject(),
+        auth = JsonObject(),
+        metadata = JsonObject()
+    )
+
     private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
+
 }

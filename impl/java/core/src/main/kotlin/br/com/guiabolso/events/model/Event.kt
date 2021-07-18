@@ -1,6 +1,6 @@
 package br.com.guiabolso.events.model
 
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -44,9 +44,9 @@ sealed class Event {
             it.getAsJsonPrimitive("origin")?.asString
         }
 
-    inline fun <reified T> JsonElement.convertTo(): T = MapperHolder.mapper.fromJson(this, object : TypeToken<T>() {}.type)
+    inline fun <reified T> JsonElement.convertTo(): T = mapper.fromJson(this, object : TypeToken<T>() {}.type)
 
-    private fun <T> JsonElement.convertTo(clazz: Class<T>): T = MapperHolder.mapper.fromJson(this, clazz)
+    private fun <T> JsonElement.convertTo(clazz: Class<T>): T = mapper.fromJson(this, clazz)
 }
 
 data class ResponseEvent(

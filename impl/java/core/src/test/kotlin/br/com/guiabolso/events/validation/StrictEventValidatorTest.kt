@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.validation
 
+import br.com.guiabolso.events.exception.EventValidationException
 import br.com.guiabolso.events.model.RawEvent
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -127,20 +128,6 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
-            validator.validateAsResponseEvent(
-                RawEvent(
-                    "event",
-                    1,
-                    "id",
-                    "flow",
-                    JsonPrimitive(42),
-                    JsonNull,
-                    JsonObject(),
-                    JsonObject()
-                )
-            )
-        }
     }
 
     @Test
@@ -155,20 +142,6 @@ class StrictEventValidatorTest {
                     JsonPrimitive(42),
                     JsonObject(),
                     null,
-                    JsonObject()
-                )
-            )
-        }
-        assertThrows(EventValidationException::class.java) {
-            validator.validateAsResponseEvent(
-                RawEvent(
-                    "event",
-                    1,
-                    "id",
-                    "flow",
-                    JsonPrimitive(42),
-                    JsonObject(),
-                    JsonNull,
                     JsonObject()
                 )
             )
@@ -188,20 +161,6 @@ class StrictEventValidatorTest {
                     JsonObject(),
                     JsonObject(),
                     null
-                )
-            )
-        }
-        assertThrows(EventValidationException::class.java) {
-            validator.validateAsResponseEvent(
-                RawEvent(
-                    "event",
-                    1,
-                    "id",
-                    "flow",
-                    JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonNull
                 )
             )
         }
@@ -340,20 +299,6 @@ class StrictEventValidatorTest {
                 )
             )
         }
-        assertThrows(EventValidationException::class.java) {
-            validator.validateAsRequestEvent(
-                RawEvent(
-                    "event",
-                    1,
-                    "id",
-                    "flow",
-                    JsonPrimitive(42),
-                    JsonNull,
-                    JsonObject(),
-                    JsonObject()
-                )
-            )
-        }
     }
 
     @Test
@@ -368,20 +313,6 @@ class StrictEventValidatorTest {
                     JsonPrimitive(42),
                     JsonObject(),
                     null,
-                    JsonObject()
-                )
-            )
-        }
-        assertThrows(EventValidationException::class.java) {
-            validator.validateAsRequestEvent(
-                RawEvent(
-                    "event",
-                    1,
-                    "id",
-                    "flow",
-                    JsonPrimitive(42),
-                    JsonObject(),
-                    JsonNull,
                     JsonObject()
                 )
             )
@@ -401,20 +332,6 @@ class StrictEventValidatorTest {
                     JsonObject(),
                     JsonObject(),
                     null
-                )
-            )
-        }
-        assertThrows(EventValidationException::class.java) {
-            validator.validateAsRequestEvent(
-                RawEvent(
-                    "event",
-                    1,
-                    "id",
-                    "flow",
-                    JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonNull
                 )
             )
         }

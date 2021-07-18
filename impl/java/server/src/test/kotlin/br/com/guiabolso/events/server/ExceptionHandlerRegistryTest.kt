@@ -2,8 +2,8 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.server.exception.BypassedException
-import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.bypassExceptionHandler
-import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.exceptionHandler
+import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.bypassExceptionHandler
+import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.exceptionHandler
 import com.google.gson.JsonPrimitive
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking

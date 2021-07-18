@@ -1,4 +1,4 @@
-package br.com.guiabolso.events.server.exception
+package br.com.guiabolso.events.server.exception.handler
 
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
