@@ -3,8 +3,8 @@ package br.com.guiabolso.events
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.SuspendingEventProcessor
-import br.com.guiabolso.events.server.exception.EventExceptionHandler
-import br.com.guiabolso.events.server.exception.ExceptionHandlerRegistryFactory.exceptionHandler
+import br.com.guiabolso.events.server.exception.handler.EventExceptionHandler
+import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.exceptionHandler
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import br.com.guiabolso.events.tracer.DefaultTracer
