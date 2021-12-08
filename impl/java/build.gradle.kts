@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
     signing
     id("org.jetbrains.dokka") version "1.5.0"
-    id("io.gitlab.arturbosch.detekt").version("1.16.0")
+    id("io.gitlab.arturbosch.detekt").version("1.17.1")
 }
 
 
@@ -13,6 +13,7 @@ allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
 
     version = System.getenv("RELEASE_VERSION") ?: "local"
     group = "br.com.guiabolso"
@@ -38,6 +39,12 @@ allprojects {
 
         // Mockk
         testImplementation("io.mockk:mockk:1.11.0")
+
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
+    }
+
+    detekt {
+        autoCorrect = true
     }
 
     tasks.withType<Test> {

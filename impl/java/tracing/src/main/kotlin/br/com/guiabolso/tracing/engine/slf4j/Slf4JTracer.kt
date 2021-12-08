@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import java.io.Closeable
 
+@Suppress("TooManyFunctions")
 class Slf4JTracer : TracerEngine, ThreadContextManager<MDCContext> {
 
     override val type = MDCContext::class.java

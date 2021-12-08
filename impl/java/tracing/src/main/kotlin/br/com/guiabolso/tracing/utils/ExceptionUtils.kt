@@ -13,6 +13,7 @@ object ExceptionUtils {
         return sw.buffer.toString()
     }
 
+    @Suppress("SwallowedException")
     fun <T> doNotFail(func: () -> T): T? {
         return try {
             func()

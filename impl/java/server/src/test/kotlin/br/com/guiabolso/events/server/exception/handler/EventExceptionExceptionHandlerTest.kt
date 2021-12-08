@@ -50,5 +50,4 @@ class EventExceptionExceptionHandlerTest {
         code = "CODE",
         parameters = mapOf("some" to "parameter")
     )
-
 }

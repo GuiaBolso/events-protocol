@@ -39,5 +39,4 @@ class BadProtocolExceptionHandlerTest {
 
         verify { tracer.notifyError(exception, false) }
     }
-
 }

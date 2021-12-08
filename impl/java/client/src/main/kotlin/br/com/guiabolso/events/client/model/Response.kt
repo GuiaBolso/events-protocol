@@ -27,6 +27,8 @@ sealed class Response {
 
     fun <T : Response> getAs(clazz: Class<T>): T {
         if (clazz.isAssignableFrom(this::class.java)) return clazz.cast(this)
-        throw IllegalStateException("Invalid response type. This response is ${this.javaClass.simpleName} instead of ${clazz.simpleName}.")
+        throw IllegalStateException(
+            "Invalid response type. This response is ${this.javaClass.simpleName} instead of ${clazz.simpleName}."
+        )
     }
 }

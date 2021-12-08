@@ -11,7 +11,9 @@ class SimpleEventHandlerRegistry : EventHandlerRegistry {
     override fun add(handler: EventHandler) {
         logger.info("Registering event handler for ${handler.eventName} V${handler.eventVersion}")
         if (handlers.containsKey(handler.eventName to handler.eventVersion)) {
-            throw IllegalStateException("Duplicated event. Event ${handler.eventName} V${handler.eventVersion} is already registered")
+            throw IllegalStateException(
+                "Duplicated event. Event ${handler.eventName} V${handler.eventVersion} is already registered"
+            )
         }
         handlers[handler.eventName to handler.eventVersion] = handler
     }

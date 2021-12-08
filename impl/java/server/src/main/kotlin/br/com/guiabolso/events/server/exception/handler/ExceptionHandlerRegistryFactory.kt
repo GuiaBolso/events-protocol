@@ -36,5 +36,4 @@ object ExceptionHandlerRegistryFactory {
     fun bypassAllExceptionHandler(wrapExceptionAndEvent: Boolean = true) = ExceptionHandlerRegistry().apply {
         register(Exception::class.java, BypassExceptionHandler(wrapExceptionAndEvent))
     }
-
 }

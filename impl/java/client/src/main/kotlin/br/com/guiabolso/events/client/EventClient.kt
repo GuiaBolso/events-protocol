@@ -33,7 +33,7 @@ constructor(
         timeout: Int? = null
     ): Response {
         val customHeaders = HashMap(headers).apply { this["Content-Type"] = "application/json" }
-        try {
+        return try {
             logger.debug("Sending event ${requestEvent.name}:${requestEvent.version} to $url with timeout $timeout.")
             val rawResponse = httpClient.post(
                 url,
@@ -43,7 +43,7 @@ constructor(
                 timeout ?: defaultTimeout
             )
             val event = parseEvent(rawResponse)
-            return when {
+            when {
                 event.isSuccess() -> {
                     logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
                     Response.Success(event)
@@ -59,13 +59,13 @@ constructor(
             }
         } catch (e: TimeoutException) {
             logger.warn("Event ${requestEvent.name}:${requestEvent.version} timeout.", e)
-            return Response.Timeout(e)
+            Response.Timeout(e)
         } catch (e: BadProtocolException) {
             logger.warn("Event ${requestEvent.name}:${requestEvent.version} bad protocol.", e)
-            return Response.FailedDependency(e, e.payload)
+            Response.FailedDependency(e, e.payload)
         } catch (e: Exception) {
             logger.warn("Event ${requestEvent.name}:${requestEvent.version} error.", e)
-            return Response.FailedDependency(e)
+            Response.FailedDependency(e)
         }
     }
 

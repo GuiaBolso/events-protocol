@@ -47,7 +47,12 @@ class EventBuilder {
 
         @JvmStatic
         fun errorFor(event: RequestEvent, type: EventErrorType, message: EventMessage): ResponseEvent {
-            if (type is EventErrorType.Unknown) throw IllegalArgumentException("This error type should not be used to send events. This error error type only exists to provide future compatibility with newer versions of this API.")
+            if (type is EventErrorType.Unknown) {
+                throw IllegalArgumentException(
+                    "This error type should not be used to send events. This error error type only exists to provide " +
+                            "future compatibility with newer versions of this API."
+                )
+            }
 
             val builder = EventBuilder()
             builder.name = "${event.name}:${type.typeName}"

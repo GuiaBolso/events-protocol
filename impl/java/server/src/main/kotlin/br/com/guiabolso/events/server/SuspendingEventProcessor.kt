@@ -55,5 +55,4 @@ class SuspendingEventProcessor(private val processor: RawEventProcessor) {
     )
 
     private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
-
 }

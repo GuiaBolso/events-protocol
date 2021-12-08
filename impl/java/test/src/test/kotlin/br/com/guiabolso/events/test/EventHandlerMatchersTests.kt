@@ -34,8 +34,9 @@ object MyHandler : ConvertingEventHandler<String> {
 
     override fun convert(input: RequestEvent): String {
         val str = input.payloadAs<String>()
-        if (str != "success")
-            throw RuntimeException("Failure")
+        if (str != "success") {
+            throw TestException()
+        }
         return str
     }
 
@@ -43,3 +44,5 @@ object MyHandler : ConvertingEventHandler<String> {
         throw NotImplementedError()
     }
 }
+
+class TestException : RuntimeException("Failure")
