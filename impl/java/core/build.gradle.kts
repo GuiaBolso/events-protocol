@@ -3,5 +3,5 @@ dependencies {
     api(project(":tracing"))
     
     // Gson
-    api("com.google.code.gson:gson:2.8.6")
+    api("com.google.code.gson:gson:2.8.9")
 }

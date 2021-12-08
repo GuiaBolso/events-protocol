@@ -26,6 +26,7 @@ object ExceptionHandlerRegistryFactory {
         )
     )
     @JvmStatic
+    // TODO Mark to be removed at v7.0.0
     fun bypassExceptionHandler(wrapExceptionAndEvent: Boolean = true) = ExceptionHandlerRegistry().apply {
         register(EventValidationException::class.java, BadProtocolExceptionHandler)
         register(EventNotFoundException::class.java, EventNotFoundExceptionHandler)

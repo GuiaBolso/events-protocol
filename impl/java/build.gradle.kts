@@ -1,11 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.20"
+    kotlin("jvm") version "1.6.0"
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.5.0"
-    id("io.gitlab.arturbosch.detekt").version("1.17.1")
+    id("org.jetbrains.dokka") version "1.6.0"
+    id("io.gitlab.arturbosch.detekt") version "1.19.0"
+    id("com.github.ben-manes.versions") version "0.36.0"
 }
 
 
@@ -25,22 +26,22 @@ allprojects {
     dependencies {
         // Kotlin
         implementation(kotlin("reflect"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
         // SLF4J
-        implementation("org.slf4j:slf4j-api:1.7.25")
+        implementation("org.slf4j:slf4j-api:1.7.32")
 
         // Logback
-        testImplementation("ch.qos.logback:logback-classic:1.2.3")
+        testImplementation("ch.qos.logback:logback-classic:1.2.7")
 
         // JUnit
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
         // Mockk
-        testImplementation("io.mockk:mockk:1.11.0")
+        testImplementation("io.mockk:mockk:1.12.1")
 
-        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0")
     }
 
     detekt {
@@ -55,7 +56,6 @@ allprojects {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
         kotlinOptions {
-            useIR = true
             jvmTarget = "1.8"
         }
     }
