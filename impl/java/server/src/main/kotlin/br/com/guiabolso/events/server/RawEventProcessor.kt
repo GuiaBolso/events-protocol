@@ -15,7 +15,6 @@ import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
-import com.google.gson.JsonObject
 import java.util.UUID
 
 open class RawEventProcessor
@@ -67,9 +66,9 @@ constructor(
         version = version ?: 1,
         id = id ?: UUID.randomUUID().toString(),
         flowId = flowId ?: UUID.randomUUID().toString(),
-        payload = payload ?: JsonObject(),
-        identity = identity ?: JsonObject(),
-        auth = auth ?: JsonObject(),
-        metadata = metadata ?: JsonObject()
+        payload = payload ?: EmptyTreeNode,
+        identity = identity ?: EmptyTreeNode,
+        auth = auth ?: EmptyTreeNode,
+        metadata = metadata ?: EmptyTreeNode
     )
 }

@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.builder
 
 import br.com.guiabolso.events.exception.MissingEventInformationException
+import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
@@ -10,8 +11,6 @@ import br.com.guiabolso.events.model.RedirectPayload
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.utils.EventUtils
-import com.google.gson.JsonNull
-import com.google.gson.JsonObject
 import java.util.UUID
 
 class EventBuilder {
@@ -132,13 +131,13 @@ class EventBuilder {
     )
 
     private fun convertPayload() = when (this.payload) {
-        null -> JsonNull.INSTANCE
+        null -> JsonNode.JsonNull
         else -> MapperHolder.mapper.toJsonTree(this.payload)
     }
 
     private fun convertToJsonObjectOrEmpty(value: Any?) = when (value) {
-        null -> JsonObject()
-        JsonNull.INSTANCE -> JsonObject()
-        else -> MapperHolder.mapper.toJsonTree(value).asJsonObject
+        null -> JsonNode.TreeNode()
+        JsonNode.JsonNull -> JsonNode.TreeNode()
+        else -> MapperHolder.mapper.toJsonTree(value) as JsonNode.TreeNode
     }
 }

@@ -10,17 +10,21 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.events.exception.MissingEventInformationException
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.NumberNode
+import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.asPrimitiveNumberNode
+import br.com.guiabolso.events.json.asTreeNode
+import br.com.guiabolso.events.json.getAsPrimitiveStringNode
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class EventBuilderTest {
@@ -39,10 +43,11 @@ class EventBuilderTest {
         assertEquals("flowId", event.flowId)
         assertEquals("event", event.name)
         assertEquals(1, event.version)
-        assertEquals(JsonPrimitive(42), event.payload)
-        assertEquals(JsonObject(), event.auth)
-        assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertTrue(event.payload is NumberNode)
+        assertEquals(42, event.payload.asPrimitiveNumberNode().value.toInt())
+        assertEquals(TreeNode(), event.auth)
+        assertEquals(TreeNode(), event.identity)
+        assertEquals(TreeNode(), event.metadata)
     }
 
     @Test
@@ -59,10 +64,11 @@ class EventBuilderTest {
         assertEquals("flowId", event.flowId)
         assertEquals("event", event.name)
         assertEquals(1, event.version)
-        assertEquals(JsonPrimitive(42), event.payload)
-        assertEquals(JsonObject(), event.auth)
-        assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertTrue(event.payload is NumberNode)
+        assertEquals(42, event.payload.asPrimitiveNumberNode().value.toInt())
+        assertEquals(TreeNode(), event.auth)
+        assertEquals(TreeNode(), event.identity)
+        assertEquals(TreeNode(), event.metadata)
     }
 
     @Test
@@ -81,10 +87,11 @@ class EventBuilderTest {
         assertEquals("otherFlowId", event.flowId)
         assertEquals("event", event.name)
         assertEquals(1, event.version)
-        assertEquals(JsonPrimitive(42), event.payload)
-        assertEquals(JsonObject(), event.auth)
-        assertEquals(JsonObject(), event.identity)
-        assertEquals(JsonObject(), event.metadata)
+        assertTrue(event.payload is NumberNode)
+        assertEquals(42, event.payload.asPrimitiveNumberNode().value.toInt())
+        assertEquals(TreeNode(), event.auth)
+        assertEquals(TreeNode(), event.identity)
+        assertEquals(TreeNode(), event.metadata)
     }
 
     @Test
@@ -147,10 +154,11 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertTrue(response.payload is NumberNode)
+        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -170,10 +178,11 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertTrue(response.payload is NumberNode)
+        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -193,10 +202,11 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertTrue(response.payload is NumberNode)
+        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -218,10 +228,11 @@ class EventBuilderTest {
         assertEquals("otherFlowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertEquals(JsonPrimitive(84), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertTrue(response.payload is NumberNode)
+        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -306,10 +317,10 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:error", response.name)
         assertEquals(1, response.version)
-        assertEquals(MapperHolder.mapper.toJsonTree(EventMessage("code", emptyMap())), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(mapper.toJsonTree(EventMessage("code", emptyMap())), response.payload)
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -330,10 +341,10 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:redirect", response.name)
         assertEquals(1, response.version)
-        assertEquals(redirectURL, response.payload.asJsonObject.get("url").asString)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(redirectURL, response.payload.asTreeNode().getAsPrimitiveStringNode("url").value)
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -352,7 +363,7 @@ class EventBuilderTest {
         assertEquals("eventNotFound", response.name)
         assertEquals(1, response.version)
         assertEquals(
-            MapperHolder.mapper.toJsonTree(
+            mapper.toJsonTree(
                 EventMessage(
                     "NO_EVENT_HANDLER_FOUND",
                     mapOf("event" to event.name, "version" to event.version)
@@ -360,9 +371,9 @@ class EventBuilderTest {
             ),
             response.payload
         )
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -374,11 +385,11 @@ class EventBuilderTest {
         assertEquals(BadProtocol.typeName, response.name)
         assertEquals(1, response.version)
         assertEquals(
-            MapperHolder.mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())),
+            mapper.toJsonTree(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap())),
             response.payload
         )
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 }

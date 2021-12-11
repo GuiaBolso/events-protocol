@@ -1,33 +1,34 @@
 package br.com.guiabolso.events.tracer.propagation
 
-import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.JsonNode
+import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.Event
-import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import io.opentracing.propagation.TextMap
 import kotlin.collections.MutableMap.MutableEntry
+import kotlin.reflect.jvm.javaType
+import kotlin.reflect.typeOf
 
 class EventTextMapAdapter(private val event: Event) : TextMap {
 
     override fun iterator(): MutableIterator<MutableEntry<String, String>> {
-        val traceElement: JsonElement? = event.metadata["trace"]
-        val traceMap: MutableMap<String, String> = mapper.fromJson(traceElement) ?: mutableMapOf()
-
-        return traceMap.iterator()
+        val traceElement = event.metadata["trace"]?.run {
+            MapperHolder.mapper.fromJson<MutableMap<String, String>>(
+                jsonNode = this,
+                type = typeOf<MutableMap<String, String>>().javaType
+            )
+        }
+        return (traceElement ?: mutableMapOf()).iterator()
     }
 
     override fun put(key: String, value: String?) {
-        traceElement().addProperty(key, value)
+        traceElement()[key] = MapperHolder.mapper.toJsonTree(value)
     }
 
-    private fun traceElement(): JsonObject {
+    private fun traceElement(): JsonNode.TreeNode {
         val metadata = event.metadata
-        if (!metadata.has("trace")) {
-            metadata.add("trace", JsonObject())
+        if (!metadata.contains("trace")) {
+            metadata["trace"] = JsonNode.TreeNode()
         }
-        return metadata["trace"].asJsonObject
+        return metadata["trace"] as JsonNode.TreeNode
     }
-
-    private inline fun <reified T> Gson.fromJson(element: JsonElement?): T? = fromJson(element, T::class.java)
 }

@@ -1,13 +1,13 @@
 package br.com.guiabolso.events.validation
 
 import br.com.guiabolso.events.exception.EventValidationException
+import br.com.guiabolso.events.json.JsonNode
+import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.JsonPrimitive
 import br.com.guiabolso.events.model.RawEvent
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import com.google.gson.JsonNull.INSTANCE as JsonNull
 
 class StrictEventValidatorTest {
 
@@ -15,7 +15,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidation() {
-        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject())
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), TreeNode(), TreeNode(), TreeNode())
 
         val response = validator.validateAsResponseEvent(raw)
         assertEquals("event", response.name)
@@ -23,9 +23,9 @@ class StrictEventValidatorTest {
         assertEquals("id", response.id)
         assertEquals("flow", response.flowId)
         assertEquals(JsonPrimitive(42), response.payload)
-        assertEquals(JsonObject(), response.auth)
-        assertEquals(JsonObject(), response.identity)
-        assertEquals(JsonObject(), response.metadata)
+        assertEquals(TreeNode(), response.auth)
+        assertEquals(TreeNode(), response.identity)
+        assertEquals(TreeNode(), response.metadata)
     }
 
     @Test
@@ -38,9 +38,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -56,9 +56,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -74,9 +74,9 @@ class StrictEventValidatorTest {
                     null,
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -92,9 +92,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     null,
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -104,10 +104,10 @@ class StrictEventValidatorTest {
                 1,
                 "id",
                 "flow",
-                JsonNull,
-                JsonObject(),
-                JsonObject(),
-                JsonObject()
+                JsonNode.JsonNull,
+                TreeNode(),
+                TreeNode(),
+                TreeNode()
             )
         )
     }
@@ -117,14 +117,14 @@ class StrictEventValidatorTest {
         assertThrows(EventValidationException::class.java) {
             validator.validateAsResponseEvent(
                 RawEvent(
-                    "event",
-                    1,
-                    "id",
-                    "flow",
-                    JsonPrimitive(42),
-                    null,
-                    JsonObject(),
-                    JsonObject()
+                    name = "event",
+                    version = 1,
+                    id = "id",
+                    flowId = "flow",
+                    payload = JsonPrimitive(42),
+                    identity = null,
+                    auth = TreeNode(),
+                    metadata = TreeNode()
                 )
             )
         }
@@ -140,9 +140,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
+                    TreeNode(),
                     null,
-                    JsonObject()
+                    TreeNode()
                 )
             )
         }
@@ -158,8 +158,8 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
+                    TreeNode(),
+                    TreeNode(),
                     null
                 )
             )
@@ -168,7 +168,7 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidation() {
-        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), JsonObject(), JsonObject(), JsonObject())
+        val raw = RawEvent("event", 1, "id", "flow", JsonPrimitive(42), TreeNode(), TreeNode(), TreeNode())
 
         val request = validator.validateAsRequestEvent(raw)
         assertEquals("event", request.name)
@@ -176,9 +176,9 @@ class StrictEventValidatorTest {
         assertEquals("id", request.id)
         assertEquals("flow", request.flowId)
         assertEquals(JsonPrimitive(42), request.payload)
-        assertEquals(JsonObject(), request.auth)
-        assertEquals(JsonObject(), request.identity)
-        assertEquals(JsonObject(), request.metadata)
+        assertEquals(TreeNode(), request.auth)
+        assertEquals(TreeNode(), request.identity)
+        assertEquals(TreeNode(), request.metadata)
     }
 
     @Test
@@ -191,9 +191,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -209,9 +209,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -227,9 +227,9 @@ class StrictEventValidatorTest {
                     null,
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -245,9 +245,9 @@ class StrictEventValidatorTest {
                     "id",
                     null,
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -263,9 +263,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     null,
-                    JsonObject(),
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -275,10 +275,10 @@ class StrictEventValidatorTest {
                 1,
                 "id",
                 "flow",
-                JsonNull,
-                JsonObject(),
-                JsonObject(),
-                JsonObject()
+                JsonNode.JsonNull,
+                TreeNode(),
+                TreeNode(),
+                TreeNode()
             )
         )
     }
@@ -294,8 +294,8 @@ class StrictEventValidatorTest {
                     "flow",
                     JsonPrimitive(42),
                     null,
-                    JsonObject(),
-                    JsonObject()
+                    TreeNode(),
+                    TreeNode()
                 )
             )
         }
@@ -311,9 +311,9 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
+                    TreeNode(),
                     null,
-                    JsonObject()
+                    TreeNode()
                 )
             )
         }
@@ -329,8 +329,8 @@ class StrictEventValidatorTest {
                     "id",
                     "flow",
                     JsonPrimitive(42),
-                    JsonObject(),
-                    JsonObject(),
+                    TreeNode(),
+                    TreeNode(),
                     null
                 )
             )

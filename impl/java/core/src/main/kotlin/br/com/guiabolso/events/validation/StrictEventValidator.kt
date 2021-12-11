@@ -1,11 +1,10 @@
 package br.com.guiabolso.events.validation
 
 import br.com.guiabolso.events.exception.EventValidationException
+import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 
 class StrictEventValidator : EventValidator {
 
@@ -31,8 +30,8 @@ class StrictEventValidator : EventValidator {
         metadata = rawEvent?.metadata.requiredJsonObject("metadata")
     )
 
-    private fun JsonElement?.requiredJsonObject(name: String): JsonObject {
-        if (this == null || !this.isJsonObject) throw EventValidationException(name)
-        return this.asJsonObject
+    private fun JsonNode?.requiredJsonObject(name: String): JsonNode.TreeNode {
+        if (this == null || this !is JsonNode.TreeNode) throw EventValidationException(name)
+        return this as JsonNode.TreeNode
     }
 }
