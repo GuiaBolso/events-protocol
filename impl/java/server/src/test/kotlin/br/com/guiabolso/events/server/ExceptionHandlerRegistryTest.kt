@@ -1,10 +1,17 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
+import br.com.guiabolso.events.json.JsonPrimitive
+import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.asPrimitiveStringNode
+import br.com.guiabolso.events.json.asString
+import br.com.guiabolso.events.json.asTreeNode
+import br.com.guiabolso.events.json.getAsPrimitiveStringNode
+import br.com.guiabolso.events.json.getValue
 import br.com.guiabolso.events.server.exception.BypassedException
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.bypassExceptionHandler
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.exceptionHandler
-import com.google.gson.JsonPrimitive
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,7 +25,7 @@ class ExceptionHandlerRegistryTest {
         val exceptionHandlerRegistry = exceptionHandler()
 
         exceptionHandlerRegistry.register(RuntimeException::class.java) { exception, _, _ ->
-            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive(exception.message))
+            EventBuilderForTest.buildResponseEvent().copy(payload = mapper.toJsonTree(exception.message))
         }
 
         val response = exceptionHandlerRegistry.handleException(
@@ -27,7 +34,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("Some error", response.payload.asString)
+        assertEquals("Some error", response.payload.asPrimitiveStringNode().value)
     }
 
     @Test
@@ -48,7 +55,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("Exception", response.payload.asString)
+        assertEquals("Exception", response.payload.asString())
     }
 
     @Test
@@ -69,7 +76,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("RuntimeException", response.payload.asString)
+        assertEquals("RuntimeException", response.payload.asString())
     }
 
     @Test
@@ -82,7 +89,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("UNHANDLED_ERROR", response.payload.asJsonObject["code"].asString)
+        assertEquals("UNHANDLED_ERROR", response.payload.asTreeNode().getAsPrimitiveStringNode("code").value)
     }
 
     @Test

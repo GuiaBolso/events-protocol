@@ -1,6 +1,8 @@
 package br.com.guiabolso.events.test
 
 import br.com.guiabolso.events.builder.EventBuilder
+import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.gson.GsonParser
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
@@ -9,6 +11,10 @@ import io.kotest.core.spec.style.FunSpec
 import kotlinx.coroutines.runBlocking
 
 class ResponseEventsMatchersTests : FunSpec({
+
+    beforeSpec {
+        MapperHolder.mapper = GsonParser()
+    }
 
     val successResponse = runBlocking { EventBuilder.responseFor(event) { } }
     val redirectResponse = EventBuilder.redirectFor(event, RedirectPayload("a"))

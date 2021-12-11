@@ -15,6 +15,8 @@ fun JsonNode.asPrimitiveStringNode(): PrimitiveNode.StringNode {
     return this as PrimitiveNode.StringNode
 }
 
+fun JsonNode.asString() = this.asPrimitiveStringNode().value
+
 fun JsonNode.asPrimitiveBooleanNode(): PrimitiveNode.BooleanNode {
     return this as PrimitiveNode.BooleanNode
 }

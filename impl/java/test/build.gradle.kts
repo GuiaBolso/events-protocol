@@ -2,6 +2,7 @@ dependencies {
     // Projects
     api(project(":core"))
     api(project(":server"))
+    testImplementation(project(":json-parser-gson"))
 
     // Kotest
     api("io.kotest:kotest-assertions-api:5.0.1")

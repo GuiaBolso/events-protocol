@@ -3,6 +3,7 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventCoroutineContextForwarder.withCoroutineContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
+import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -66,9 +67,9 @@ constructor(
         version = version ?: 1,
         id = id ?: UUID.randomUUID().toString(),
         flowId = flowId ?: UUID.randomUUID().toString(),
-        payload = payload ?: EmptyTreeNode,
-        identity = identity ?: EmptyTreeNode,
-        auth = auth ?: EmptyTreeNode,
-        metadata = metadata ?: EmptyTreeNode
+        payload = payload ?: TreeNode(),
+        identity = identity ?: TreeNode(),
+        auth = auth ?: TreeNode(),
+        metadata = metadata ?: TreeNode()
     )
 }

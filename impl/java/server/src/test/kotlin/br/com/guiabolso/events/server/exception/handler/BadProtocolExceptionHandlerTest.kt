@@ -33,7 +33,7 @@ class BadProtocolExceptionHandlerTest {
         val responseEvent = handleException(exception, requestEvent, tracer)
         assertEquals(BadProtocol, responseEvent.getErrorType())
 
-        val message = responseEvent.payloadAs<EventMessage>()
+        val message = responseEvent.payloadAs(EventMessage::class.java)
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", message.code)
         assertEquals(mapOf("propertyName" to "someProperty"), message.parameters)
 

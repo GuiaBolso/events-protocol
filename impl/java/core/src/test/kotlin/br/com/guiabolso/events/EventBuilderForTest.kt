@@ -35,7 +35,7 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonPrimitive(42),
+        payload = JsonPrimitive("42"),
         identity = TreeNode(),
         auth = TreeNode(),
         metadata = TreeNode()
