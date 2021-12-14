@@ -1,6 +1,6 @@
 package br.com.guiabolso.tracing.engine.datadog
 
-import com.timgroup.statsd.NonBlockingStatsDClient
+import com.timgroup.statsd.NonBlockingStatsDClientBuilder
 
 class DatadogStatsDTracer(
     val prefix: String,
@@ -8,7 +8,12 @@ class DatadogStatsDTracer(
     val port: Int
 ) : DatadogTracer(), AutoCloseable {
 
-    private val statsDClient = NonBlockingStatsDClient(prefix, host, port)
+    private val statsDClient =
+        NonBlockingStatsDClientBuilder()
+            .prefix(prefix)
+            .hostname(host)
+            .port(port)
+            .build()
 
     override fun <T> recordExecutionTime(name: String, block: (MutableMap<String, String>) -> T): T {
         val start = System.currentTimeMillis()

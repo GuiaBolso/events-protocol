@@ -20,6 +20,6 @@ class ExceptionUtilsTest {
     @Test
     fun `should should return null if an exception is thrown`() {
         assertEquals("batata", ExceptionUtils.doNotFail { "batata" })
-        assertNull(ExceptionUtils.doNotFail { throw IllegalArgumentException("Test") })
+        assertNull(ExceptionUtils.doNotFail<Unit> { throw IllegalArgumentException("Test") })
     }
 }

@@ -12,8 +12,8 @@ fun ResponseEvent.shouldNotBeSuccess() = this shouldNot beSuccess()
 fun beSuccess() = object : Matcher<ResponseEvent> {
     override fun test(value: ResponseEvent) = MatcherResult(
         value.isSuccess(),
-        "Event should be success, but isn't",
-        "Event should not be success, but is"
+        { "Event should be success, but isn't" },
+        { "Event should not be success, but is" }
     )
 }
 
@@ -22,8 +22,8 @@ fun ResponseEvent.shouldNotBeError() = this shouldNot beError()
 fun beError() = object : Matcher<ResponseEvent> {
     override fun test(value: ResponseEvent) = MatcherResult(
         value.isError(),
-        "Event should be error, but isn't",
-        "Event should not be error, but is"
+        { "Event should be error, but isn't" },
+        { "Event should not be error, but is" }
     )
 }
 
@@ -32,8 +32,8 @@ fun ResponseEvent.shouldNotBeRedirect() = this shouldNot beRedirect()
 fun beRedirect() = object : Matcher<ResponseEvent> {
     override fun test(value: ResponseEvent) = MatcherResult(
         value.isRedirect(),
-        "Event should be redirect, but isn't",
-        "Event should not be redirect, but is"
+        { "Event should be redirect, but isn't" },
+        { "Event should not be redirect, but is" }
     )
 }
 
@@ -42,7 +42,7 @@ infix fun ResponseEvent.shouldNotHaveErrorType(errorType: EventErrorType) = this
 fun haveErrorType(errorType: EventErrorType) = object : Matcher<ResponseEvent> {
     override fun test(value: ResponseEvent) = MatcherResult(
         value.getErrorType() == errorType,
-        "Event should have error type $errorType, but was ${value.getErrorType()}",
-        "Event should not have error type $errorType, but does."
+        { "Event should have error type $errorType, but was ${value.getErrorType()}" },
+        { "Event should not have error type $errorType, but does." }
     )
 }
