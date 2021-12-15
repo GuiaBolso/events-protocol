@@ -1,0 +1,36 @@
+package br.com.guiabolso.events.json.moshi.adapter
+
+import br.com.guiabolso.events.json.JsonNode
+import br.com.guiabolso.events.json.JsonNode.ArrayNode
+import br.com.guiabolso.events.json.moshi.nullSafeAdapterFor
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.Moshi
+
+class ArrayNodeAdapter(moshi: Moshi) : JsonAdapter<ArrayNode>() {
+    private val jsonNodeAdapter = moshi.nullSafeAdapterFor<JsonNode>()
+
+    override fun fromJson(reader: JsonReader): ArrayNode {
+        return ArrayNode().apply {
+            reader.beginArray()
+            while (reader.hasNext()) {
+                add(jsonNodeAdapter.fromJson(reader) ?: JsonNode.JsonNull)
+            }
+            reader.endArray()
+        }
+    }
+
+    override fun toJson(writer: JsonWriter, value: ArrayNode?) {
+        if (value == null) {
+            writer.nullValue()
+            return
+        }
+
+        writer.beginArray()
+        for (element in value) {
+            jsonNodeAdapter.toJson(writer, element)
+        }
+        writer.endArray()
+    }
+}

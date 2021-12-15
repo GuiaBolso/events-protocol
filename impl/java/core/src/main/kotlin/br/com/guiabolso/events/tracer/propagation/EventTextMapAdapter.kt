@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.tracer.propagation
 
-import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.model.Event
 import io.opentracing.propagation.TextMap
 import kotlin.collections.MutableMap.MutableEntry
@@ -12,7 +12,7 @@ class EventTextMapAdapter(private val event: Event) : TextMap {
 
     override fun iterator(): MutableIterator<MutableEntry<String, String>> {
         val traceElement = event.metadata["trace"]?.run {
-            MapperHolder.mapper.fromJson<MutableMap<String, String>>(
+            mapper.fromJson<MutableMap<String, String>>(
                 jsonNode = this,
                 type = typeOf<MutableMap<String, String>>().javaType
             )
@@ -21,14 +21,14 @@ class EventTextMapAdapter(private val event: Event) : TextMap {
     }
 
     override fun put(key: String, value: String?) {
-        traceElement()[key] = MapperHolder.mapper.toJsonTree(value)
+        traceElement()[key] = mapper.toJsonTree(value)
     }
 
-    private fun traceElement(): JsonNode.TreeNode {
+    private fun traceElement(): TreeNode {
         val metadata = event.metadata
-        if (!metadata.contains("trace")) {
-            metadata["trace"] = JsonNode.TreeNode()
+        if (!metadata.containsKey("trace")) {
+            metadata["trace"] = TreeNode()
         }
-        return metadata["trace"] as JsonNode.TreeNode
+        return metadata["trace"] as TreeNode
     }
 }

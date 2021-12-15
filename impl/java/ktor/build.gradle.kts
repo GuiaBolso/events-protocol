@@ -2,7 +2,7 @@ dependencies {
     // Projects
     api(project(":server"))
     testImplementation(project(":test"))
-    testImplementation(project(":json-parser-gson"))
+    testImplementation(project(":json-moshi"))
     testImplementation(project(":core").dependencyProject.sourceSets.test.get().output)
 
     // Ktor

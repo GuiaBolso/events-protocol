@@ -5,9 +5,6 @@ import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.json.JsonPrimitive
-import br.com.guiabolso.events.json.gson.authAs
-import br.com.guiabolso.events.json.gson.identityAs
-import br.com.guiabolso.events.json.gson.payloadAs
 import br.com.guiabolso.events.model.EventErrorType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

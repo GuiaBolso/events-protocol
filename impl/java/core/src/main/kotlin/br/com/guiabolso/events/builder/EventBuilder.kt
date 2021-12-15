@@ -2,6 +2,7 @@ package br.com.guiabolso.events.builder
 
 import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.JsonNode
+import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
@@ -136,8 +137,8 @@ class EventBuilder {
     }
 
     private fun convertToJsonObjectOrEmpty(value: Any?) = when (value) {
-        null -> JsonNode.TreeNode()
-        JsonNode.JsonNull -> JsonNode.TreeNode()
-        else -> MapperHolder.mapper.toJsonTree(value) as JsonNode.TreeNode
+        null -> TreeNode()
+        JsonNode.JsonNull -> TreeNode()
+        else -> MapperHolder.mapper.toJsonTree(value) as? TreeNode ?: TreeNode()
     }
 }

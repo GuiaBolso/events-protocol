@@ -32,6 +32,6 @@ class StrictEventValidator : EventValidator {
 
     private fun JsonNode?.requiredJsonObject(name: String): JsonNode.TreeNode {
         if (this == null || this !is JsonNode.TreeNode) throw EventValidationException(name)
-        return this as JsonNode.TreeNode
+        return this
     }
 }

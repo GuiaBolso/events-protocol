@@ -1,23 +1,6 @@
 package br.com.guiabolso.events.json
 
-import java.lang.reflect.Type
-
 object MapperHolder {
 
-    lateinit var mapper: JsonParser
-}
-
-interface JsonParser {
-
-    fun toJson(any: Any?): String
-
-    fun toJsonTree(any: Any?): JsonNode
-
-    fun <T> fromJson(json: String, clazz: Class<T>): T
-
-    fun <T> fromJson(json: String, type: Type): T
-
-    fun <T> fromJson(jsonNode: JsonNode, type: Type): T
-
-    fun <T> fromJson(jsonNode: JsonNode, clazz: Class<T>): T
+    lateinit var mapper: JsonAdapter
 }

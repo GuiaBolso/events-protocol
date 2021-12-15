@@ -4,14 +4,14 @@ import br.com.guiabolso.events.builder.EventBuilder
 import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.json.gson.GsonParser
+import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 class GeneralEventsMatchersTests : FunSpec({
 
     beforeSpec {
-        MapperHolder.mapper = GsonParser()
+        MapperHolder.mapper = MoshiJsonAdapter()
     }
 
     val event = EventBuilder.event {

@@ -2,7 +2,7 @@ package br.com.guiabolso.events.test
 
 import br.com.guiabolso.events.builder.EventBuilder
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.json.gson.GsonParser
+import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.handler.ConvertingEventHandler
@@ -12,7 +12,7 @@ import io.kotest.core.spec.style.FunSpec
 class EventHandlerMatchersTests : FunSpec({
 
     beforeSpec {
-        MapperHolder.mapper = GsonParser()
+        MapperHolder.mapper = MoshiJsonAdapter()
     }
 
     test("should convert") {

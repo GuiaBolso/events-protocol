@@ -4,7 +4,7 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.json.gson.GsonParser
+import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import br.com.guiabolso.events.model.EventErrorType.BadRequest
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.ResponseEvent
@@ -25,13 +25,12 @@ import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.server.testing.withTestApplication
-import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID.randomUUID
 
 class EventsTest : ShouldSpec({
 
     beforeSpec {
-        MapperHolder.mapper = GsonParser()
+        MapperHolder.mapper = MoshiJsonAdapter()
     }
 
     should("Have the same response for /events and /events/") {

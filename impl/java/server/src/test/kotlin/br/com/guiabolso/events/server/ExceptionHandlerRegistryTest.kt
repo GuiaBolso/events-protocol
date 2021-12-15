@@ -2,7 +2,6 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.json.JsonPrimitive
-import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.json.asPrimitiveStringNode
 import br.com.guiabolso.events.json.asString
