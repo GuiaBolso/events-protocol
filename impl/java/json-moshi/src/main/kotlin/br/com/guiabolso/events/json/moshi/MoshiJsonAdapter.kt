@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.json.moshi
 
-import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.JsonAdapter
+import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.moshi.factory.EventProtocolJsonAdapterFactory
 import br.com.guiabolso.events.json.moshi.factory.JsonNodeFactory
 import com.squareup.moshi.Moshi
@@ -26,7 +26,7 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Moshi.Builder = { this }) : 
             null -> JsonNode.JsonNull
             is JsonNode -> any
             else -> {
-                val adapter = moshi.adapter(Any::class.java)
+                val adapter = moshi.adapter(Any::class.java).serializeNulls()
                 val jsonValue = adapter.toJsonValue(any)
                 safeAdapterFor(JsonNode::class.java).fromJsonValue(jsonValue)!!
             }
@@ -38,12 +38,12 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Moshi.Builder = { this }) : 
     }
 
     override fun <T> fromJson(json: String, type: Type): T {
-        return safeAdapterFor<T>(type).fromJson(json)!!
+        return nonNullAdapterFor<T>(type).fromJson(json)!!
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {
         val jsonValue = jsonNodeAdapter().toJsonValue(jsonNode)
-        return safeAdapterFor<T>(type).fromJsonValue(jsonValue)!!
+        return nonNullAdapterFor<T>(type).fromJsonValue(jsonValue)!!
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, clazz: Class<T>): T {
@@ -53,7 +53,7 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Moshi.Builder = { this }) : 
 
     private fun jsonNodeAdapter() = moshi.adapter(JsonNode::class.java)
 
-    private fun <T> safeAdapterFor(type: Type) = moshi.adapter<T>(type).nonNull()
+    private fun <T> nonNullAdapterFor(type: Type) = moshi.adapter<T>(type).nonNull()
 
     private fun <T> safeAdapterFor(clazz: Class<T>) = moshi.adapter(clazz).nonNull()
 }

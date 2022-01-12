@@ -4,9 +4,8 @@ import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.NumberNode
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.Moshi
 
-class NumberNodeAdapter(moshi: Moshi) : JsonAdapter<NumberNode>() {
+class NumberNodeAdapter : JsonAdapter<NumberNode>() {
 
     override fun fromJson(reader: JsonReader): NumberNode? {
         if (reader.peek() != JsonReader.Token.NUMBER) return null

@@ -27,7 +27,7 @@ object JsonNodeFactory : JsonAdapter.Factory {
 
         return when {
             StringNode::class.java.isAssignableFrom(rawType) -> StringNodeAdapter(moshi).serializeNulls()
-            NumberNode::class.java.isAssignableFrom(rawType) -> NumberNodeAdapter(moshi).serializeNulls()
+            NumberNode::class.java.isAssignableFrom(rawType) -> NumberNodeAdapter().serializeNulls()
             BooleanNode::class.java.isAssignableFrom(rawType) -> BooleanNodeAdapter(moshi).serializeNulls()
             ArrayNode::class.java.isAssignableFrom(rawType) -> ArrayNodeAdapter(moshi).serializeNulls()
             TreeNode::class.java.isAssignableFrom(rawType) -> TreeNodeAdapter(moshi).serializeNulls()

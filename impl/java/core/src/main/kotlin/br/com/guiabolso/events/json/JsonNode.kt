@@ -34,5 +34,9 @@ sealed interface JsonNode {
         }
     }
 
-    object JsonNull : JsonNode
+    object JsonNull : JsonNode {
+        override fun toString(): String {
+            return "null"
+        }
+    }
 }

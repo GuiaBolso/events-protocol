@@ -2,6 +2,7 @@ package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -37,7 +38,7 @@ class SuspendingEventProcessor(private val processor: RawEventProcessor) {
 
     private fun parseEvent(payload: String?): RawEvent {
         return try {
-            mapper.fromJson(payload ?: throw EventParsingException(null), RawEvent::class.java)
+            mapper.fromJson(payload ?: throw EventParsingException(null))
         } catch (e: Throwable) {
             throw EventParsingException(e)
         }
