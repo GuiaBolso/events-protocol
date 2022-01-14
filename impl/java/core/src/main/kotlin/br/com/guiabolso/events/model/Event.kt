@@ -1,6 +1,9 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.validation.jsonObject
+import br.com.guiabolso.events.validation.long
+import br.com.guiabolso.events.validation.string
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -30,13 +33,13 @@ sealed class Event {
     inline fun <reified T> authAs(): T = this.auth.convertTo()
 
     val userId: Long?
-        get() = this.identity.withCheckedJsonNull("userId") {
-            it.getAsJsonPrimitive("userId")?.asLong
+        get() = with(this.identity) {
+            long("userId") ?: jsonObject("user")?.long("id")
         }
 
     val userIdAsString: String?
-        get() = this.identity.withCheckedJsonNull("userId") {
-            it.getAsJsonPrimitive("userId")?.asString
+        get() = with(this.identity) {
+            string("userId") ?: jsonObject("user")?.string("id")
         }
 
     val origin: String?
