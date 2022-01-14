@@ -63,9 +63,33 @@ class EventsTest {
     }
 
     @Test
+    fun testGetUserIdWithObjectAsStringFromIdentityWhenItIsNumber() {
+        val event = buildRequestEvent().copy(
+            identity = JsonObject().apply {
+                this.add("user", JsonObject().apply {
+                    this.add("id", JsonPrimitive(42))
+                })
+            }
+        )
+        assertEquals("42", event.userIdAsString)
+    }
+
+    @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsString() {
         val event = buildRequestEvent().copy(
             identity = JsonObject().apply { this.add("userId", JsonPrimitive("42")) }
+        )
+        assertEquals("42", event.userIdAsString)
+    }
+
+    @Test
+    fun testGetUserIdWithObjectAsStringFromIdentityWhenItIsString() {
+        val event = buildRequestEvent().copy(
+            identity = JsonObject().apply {
+                this.add("user", JsonObject().apply {
+                    this.add("id", JsonPrimitive("42"))
+                })
+            }
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -76,6 +100,20 @@ class EventsTest {
 
         val responseEvent = buildRequestEvent().copy(
             identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+        )
+        assertEquals(42L, responseEvent.userId)
+    }
+
+    @Test
+    fun testGetUserIdWithObjectFromIdentity() {
+        assertNull(buildRequestEvent().userId)
+
+        val responseEvent = buildRequestEvent().copy(
+            identity = JsonObject().apply {
+                this.add("user", JsonObject().apply {
+                    this.add("id", JsonPrimitive(42))
+                })
+            }
         )
         assertEquals(42L, responseEvent.userId)
     }
