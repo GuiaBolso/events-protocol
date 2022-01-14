@@ -3,6 +3,7 @@ package br.com.guiabolso.events.utils
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.User
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
@@ -116,6 +117,31 @@ class EventsTest {
             }
         )
         assertEquals(42L, responseEvent.userId)
+    }
+
+    @Test
+    fun testGetUserFromIdentity() {
+        val userId = 42L
+        val userType = "CONSUMER"
+
+        assertNull(buildRequestEvent().userId)
+
+        val responseEvent = buildRequestEvent().copy(
+            identity = JsonObject().apply {
+                this.add("user", JsonObject().apply {
+                    this.add("id", JsonPrimitive(userId))
+                    this.add("type", JsonPrimitive(userType))
+                })
+            }
+        )
+
+        assertEquals(User(id = userId, type = userType), responseEvent.user)
+    }
+
+    @Test
+    fun testGetUserFromIdentityWhenIsNull() {
+        val responseEvent = buildRequestEvent()
+        assertNull(responseEvent.user)
     }
 
     @Test

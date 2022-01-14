@@ -7,6 +7,7 @@ import br.com.guiabolso.events.validation.string
 import br.com.guiabolso.events.validation.withCheckedJsonNull
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 
@@ -32,6 +33,11 @@ sealed class Event {
 
     inline fun <reified T> authAs(): T = this.auth.convertTo()
 
+    val user: User?
+        get() = with(this.identity) {
+            jsonObject("user")?.convertToOrNull(User::class.java)
+        }
+
     val userId: Long?
         get() = with(this.identity) {
             long("userId") ?: jsonObject("user")?.long("id")
@@ -50,6 +56,15 @@ sealed class Event {
     inline fun <reified T> JsonElement.convertTo(): T = mapper.fromJson(this, object : TypeToken<T>() {}.type)
 
     private fun <T> JsonElement.convertTo(clazz: Class<T>): T = mapper.fromJson(this, clazz)
+
+    @Suppress("SwallowedException")
+    private fun <T> JsonElement.convertToOrNull(clazz: Class<T>): T? {
+        return try {
+            this.convertTo(clazz)
+        } catch (e: JsonSyntaxException) {
+            null
+        }
+    }
 }
 
 data class ResponseEvent(
@@ -100,3 +115,5 @@ data class RequestEvent(
     @SerializedName("metadata")
     override val metadata: JsonObject
 ) : Event()
+
+data class User(val id: Long, val type: String)
