@@ -116,4 +116,4 @@ data class RequestEvent(
     override val metadata: JsonObject
 ) : Event()
 
-data class User(val id: Long, val type: String)
+data class User(val id: Long?, val type: String?)
