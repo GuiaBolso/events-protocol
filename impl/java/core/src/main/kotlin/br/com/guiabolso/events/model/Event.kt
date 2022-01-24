@@ -1,12 +1,11 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.NumberNode
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.StringNode
-import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.json.getValue
+import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.primitiveNodeOrNull
+import br.com.guiabolso.events.json.longOrNull
+import br.com.guiabolso.events.json.stringOrNull
 import br.com.guiabolso.events.json.withCheckedJsonNull
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.typeOf
@@ -35,17 +34,17 @@ sealed class Event {
 
     val userId: Long?
         get() = this.identity.withCheckedJsonNull("userId") { node ->
-            (node.getValue("userId") as? NumberNode)?.value?.toLong()
+            node.getValue("userId").primitiveNodeOrNull?.longOrNull
         }
 
     val userIdAsString: String?
         get() = this.identity.withCheckedJsonNull("userId") { node ->
-            (node.getValue("userId") as? PrimitiveNode<*>)?.value?.toString()
+            node.getValue("userId").primitiveNodeOrNull?.stringOrNull
         }
 
     val origin: String?
         get() = this.metadata.withCheckedJsonNull("origin") { node ->
-            (node.getValue("origin") as? StringNode)?.value
+            node.getValue("origin").primitiveNodeOrNull?.stringOrNull
         }
 
     inline fun <reified T> JsonNode.convertTo(): T = mapper.fromJson(this, typeOf<T>().javaType)

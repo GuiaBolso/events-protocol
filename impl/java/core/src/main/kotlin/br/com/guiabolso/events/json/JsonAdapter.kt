@@ -1,8 +1,6 @@
 package br.com.guiabolso.events.json
 
 import java.lang.reflect.Type
-import kotlin.reflect.jvm.javaType
-import kotlin.reflect.typeOf
 
 interface JsonAdapter {
 

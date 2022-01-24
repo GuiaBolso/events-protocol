@@ -10,12 +10,12 @@ import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.events.exception.MissingEventInformationException
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.NumberNode
-import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.json.asPrimitiveNumberNode
-import br.com.guiabolso.events.json.asTreeNode
-import br.com.guiabolso.events.json.getAsPrimitiveStringNode
+import br.com.guiabolso.events.json.PrimitiveNode
+import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.int
+import br.com.guiabolso.events.json.treeNode
+import br.com.guiabolso.events.json.primitiveNode
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.EventMessage
@@ -43,8 +43,8 @@ class EventBuilderTest {
         assertEquals("flowId", event.flowId)
         assertEquals("event", event.name)
         assertEquals(1, event.version)
-        assertTrue(event.payload is NumberNode)
-        assertEquals(42, event.payload.asPrimitiveNumberNode().value.toInt())
+        assertTrue(event.payload.primitiveNode.isNumber)
+        assertEquals(42, event.payload.primitiveNode.int)
         assertEquals(TreeNode(), event.auth)
         assertEquals(TreeNode(), event.identity)
         assertEquals(TreeNode(), event.metadata)
@@ -64,8 +64,8 @@ class EventBuilderTest {
         assertEquals("flowId", event.flowId)
         assertEquals("event", event.name)
         assertEquals(1, event.version)
-        assertTrue(event.payload is NumberNode)
-        assertEquals(42, event.payload.asPrimitiveNumberNode().value.toInt())
+        assertTrue(event.payload.primitiveNode.isNumber)
+        assertEquals(42, event.payload.primitiveNode.int)
         assertEquals(TreeNode(), event.auth)
         assertEquals(TreeNode(), event.identity)
         assertEquals(TreeNode(), event.metadata)
@@ -87,8 +87,8 @@ class EventBuilderTest {
         assertEquals("otherFlowId", event.flowId)
         assertEquals("event", event.name)
         assertEquals(1, event.version)
-        assertTrue(event.payload is NumberNode)
-        assertEquals(42, event.payload.asPrimitiveNumberNode().value.toInt())
+        assertTrue(event.payload is PrimitiveNode)
+        assertEquals(42, event.payload.primitiveNode.int)
         assertEquals(TreeNode(), event.auth)
         assertEquals(TreeNode(), event.identity)
         assertEquals(TreeNode(), event.metadata)
@@ -154,8 +154,8 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertTrue(response.payload is NumberNode)
-        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertTrue(response.payload is PrimitiveNode)
+        assertEquals(84, response.payload.primitiveNode.int)
         assertEquals(TreeNode(), response.auth)
         assertEquals(TreeNode(), response.identity)
         assertEquals(TreeNode(), response.metadata)
@@ -178,8 +178,8 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertTrue(response.payload is NumberNode)
-        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertTrue(response.payload is PrimitiveNode)
+        assertEquals(84, response.payload.primitiveNode.int)
         assertEquals(TreeNode(), response.auth)
         assertEquals(TreeNode(), response.identity)
         assertEquals(TreeNode(), response.metadata)
@@ -202,8 +202,8 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertTrue(response.payload is NumberNode)
-        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertTrue(response.payload is PrimitiveNode)
+        assertEquals(84, response.payload.primitiveNode.int)
         assertEquals(TreeNode(), response.auth)
         assertEquals(TreeNode(), response.identity)
         assertEquals(TreeNode(), response.metadata)
@@ -228,8 +228,8 @@ class EventBuilderTest {
         assertEquals("otherFlowId", response.flowId)
         assertEquals("event:response", response.name)
         assertEquals(1, response.version)
-        assertTrue(response.payload is NumberNode)
-        assertEquals(84, response.payload.asPrimitiveNumberNode().value.toInt())
+        assertTrue(response.payload is PrimitiveNode)
+        assertEquals(84, response.payload.primitiveNode.int)
         assertEquals(TreeNode(), response.auth)
         assertEquals(TreeNode(), response.identity)
         assertEquals(TreeNode(), response.metadata)
@@ -341,7 +341,7 @@ class EventBuilderTest {
         assertEquals("flowId", response.flowId)
         assertEquals("event:redirect", response.name)
         assertEquals(1, response.version)
-        assertEquals(redirectURL, response.payload.asTreeNode().getAsPrimitiveStringNode("url").value)
+        assertEquals(redirectURL, response.payload.treeNode["url"]?.primitiveNode?.value)
         assertEquals(TreeNode(), response.auth)
         assertEquals(TreeNode(), response.identity)
         assertEquals(TreeNode(), response.metadata)

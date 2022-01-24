@@ -2,6 +2,7 @@ package br.com.guiabolso.events.json.moshi
 
 import br.com.guiabolso.events.json.JsonAdapter
 import br.com.guiabolso.events.json.JsonNode
+import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.moshi.factory.EventProtocolJsonAdapterFactory
 import br.com.guiabolso.events.json.moshi.factory.JsonNodeFactory
 import com.squareup.moshi.Moshi
@@ -23,7 +24,7 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Moshi.Builder = { this }) : 
 
     override fun toJsonTree(any: Any?): JsonNode {
         return when (any) {
-            null -> JsonNode.JsonNull
+            null -> JsonNull
             is JsonNode -> any
             else -> {
                 val adapter = moshi.adapter(Any::class.java).serializeNulls()
@@ -38,7 +39,8 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Moshi.Builder = { this }) : 
     }
 
     override fun <T> fromJson(json: String, type: Type): T {
-        return nonNullAdapterFor<T>(type).fromJson(json)!!
+        val adapter = nonNullAdapterFor<T>(type)
+        return adapter.fromJson(json)!!
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {

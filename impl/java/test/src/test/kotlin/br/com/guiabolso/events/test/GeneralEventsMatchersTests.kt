@@ -1,9 +1,9 @@
 package br.com.guiabolso.events.test
 
 import br.com.guiabolso.events.builder.EventBuilder
-import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -163,4 +163,4 @@ private val complexMap = mapOf(
     "c" to mapOf("a" to "b")
 )
 
-private fun Map<String, Any?>.toJsonObject(): JsonNode.TreeNode = mapper.toJsonTree(this) as JsonNode.TreeNode
+private fun Map<String, Any?>.toJsonObject(): TreeNode = mapper.toJsonTree(this) as TreeNode

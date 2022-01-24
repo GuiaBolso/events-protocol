@@ -1,13 +1,10 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
-import br.com.guiabolso.events.json.JsonPrimitive
+import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.json.asPrimitiveStringNode
-import br.com.guiabolso.events.json.asString
-import br.com.guiabolso.events.json.asTreeNode
-import br.com.guiabolso.events.json.getAsPrimitiveStringNode
-import br.com.guiabolso.events.json.getValue
+import br.com.guiabolso.events.json.treeNode
+import br.com.guiabolso.events.json.primitiveNode
 import br.com.guiabolso.events.server.exception.BypassedException
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.bypassExceptionHandler
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.exceptionHandler
@@ -33,7 +30,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("Some error", response.payload.asPrimitiveStringNode().value)
+        assertEquals("Some error", response.payload.primitiveNode.value)
     }
 
     @Test
@@ -41,11 +38,11 @@ class ExceptionHandlerRegistryTest {
         val exceptionHandlerRegistry = exceptionHandler()
 
         exceptionHandlerRegistry.register(Exception::class.java) { _, _, _ ->
-            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("Exception"))
+            EventBuilderForTest.buildResponseEvent().copy(payload = PrimitiveNode("Exception"))
         }
 
         exceptionHandlerRegistry.register(RuntimeException::class.java) { _, _, _ ->
-            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("RuntimeException"))
+            EventBuilderForTest.buildResponseEvent().copy(payload = PrimitiveNode("RuntimeException"))
         }
 
         val response = exceptionHandlerRegistry.handleException(
@@ -54,7 +51,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("Exception", response.payload.asString())
+        assertEquals("Exception", response.payload.primitiveNode.value)
     }
 
     @Test
@@ -62,11 +59,11 @@ class ExceptionHandlerRegistryTest {
         val exceptionHandlerRegistry = exceptionHandler()
 
         exceptionHandlerRegistry.register(RuntimeException::class.java) { _, _, _ ->
-            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("RuntimeException"))
+            EventBuilderForTest.buildResponseEvent().copy(payload = PrimitiveNode("RuntimeException"))
         }
 
         exceptionHandlerRegistry.register(Exception::class.java) { _, _, _ ->
-            EventBuilderForTest.buildResponseEvent().copy(payload = JsonPrimitive("Exception"))
+            EventBuilderForTest.buildResponseEvent().copy(payload = PrimitiveNode("Exception"))
         }
 
         val response = exceptionHandlerRegistry.handleException(
@@ -75,7 +72,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("RuntimeException", response.payload.asString())
+        assertEquals("RuntimeException", response.payload.primitiveNode.value)
     }
 
     @Test
@@ -88,7 +85,7 @@ class ExceptionHandlerRegistryTest {
             mockk(relaxed = true)
         )
 
-        assertEquals("UNHANDLED_ERROR", response.payload.asTreeNode().getAsPrimitiveStringNode("code").value)
+        assertEquals("UNHANDLED_ERROR", response.payload.treeNode["code"]!!.primitiveNode.value)
     }
 
     @Test

@@ -1,15 +1,19 @@
 package br.com.guiabolso.events.json.moshi.adapter
 
+import br.com.guiabolso.events.json.ArrayNode
 import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.JsonNode.ArrayNode
-import br.com.guiabolso.events.json.JsonNode.JsonNull
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.BooleanNode
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.NumberNode
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.StringNode
-import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.JsonNull
+import br.com.guiabolso.events.json.PrimitiveNode
+import br.com.guiabolso.events.json.TreeNode
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonReader.Token
+import com.squareup.moshi.JsonReader.Token.BEGIN_ARRAY
+import com.squareup.moshi.JsonReader.Token.BEGIN_OBJECT
+import com.squareup.moshi.JsonReader.Token.BOOLEAN
+import com.squareup.moshi.JsonReader.Token.NULL
+import com.squareup.moshi.JsonReader.Token.NUMBER
+import com.squareup.moshi.JsonReader.Token.STRING
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 
@@ -20,11 +24,9 @@ class JsonNodeAdapter(val moshi: Moshi) : JsonAdapter<JsonNode>() {
     }
 
     private fun adapterFor(token: Token) = when (token) {
-        Token.NUMBER -> adapterOf<NumberNode>()
-        Token.STRING -> adapterOf<StringNode>()
-        Token.BOOLEAN -> adapterOf<BooleanNode>()
-        Token.BEGIN_OBJECT -> adapterOf<TreeNode>()
-        Token.BEGIN_ARRAY -> adapterOf<ArrayNode>()
+        BEGIN_OBJECT -> adapterOf<TreeNode>()
+        BEGIN_ARRAY -> adapterOf<ArrayNode>()
+        NUMBER, STRING, BOOLEAN, NULL -> adapterOf<PrimitiveNode>()
         else -> null
     }
 

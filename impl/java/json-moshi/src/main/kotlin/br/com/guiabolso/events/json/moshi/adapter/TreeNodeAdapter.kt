@@ -1,7 +1,8 @@
 package br.com.guiabolso.events.json.moshi.adapter
 
 import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.JsonNull
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.moshi.nullSafeAdapterFor
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
@@ -9,7 +10,7 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 
-class TreeNodeAdapter(private val moshi: Moshi) : JsonAdapter<TreeNode>() {
+class TreeNodeAdapter(moshi: Moshi) : JsonAdapter<TreeNode>() {
     private val jsonNodeAdapter = moshi.nullSafeAdapterFor<JsonNode>()
 
     override fun fromJson(reader: JsonReader): TreeNode {
@@ -18,7 +19,7 @@ class TreeNodeAdapter(private val moshi: Moshi) : JsonAdapter<TreeNode>() {
             while (reader.hasNext()) {
                 reader.promoteNameToValue()
                 val name: String = reader.nextString()
-                val value = jsonNodeAdapter.fromJson(reader) ?: JsonNode.JsonNull
+                val value = jsonNodeAdapter.fromJson(reader) ?: JsonNull
                 if (contains(name)) {
                     val current = this[name]
                     throw JsonDataException(

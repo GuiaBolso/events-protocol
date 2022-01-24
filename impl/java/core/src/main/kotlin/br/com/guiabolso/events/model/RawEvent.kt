@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.TreeNode
 
 data class RawEvent(
     val name: String?,

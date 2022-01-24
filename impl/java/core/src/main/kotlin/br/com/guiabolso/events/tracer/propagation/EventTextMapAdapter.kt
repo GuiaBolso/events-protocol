@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.tracer.propagation
 
-import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.Event
 import io.opentracing.propagation.TextMap
 import kotlin.collections.MutableMap.MutableEntry

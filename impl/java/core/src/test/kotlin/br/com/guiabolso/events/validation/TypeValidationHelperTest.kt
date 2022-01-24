@@ -1,10 +1,10 @@
 package br.com.guiabolso.events.validation
 
 import br.com.guiabolso.events.MapperHolderSetup
-import br.com.guiabolso.events.json.JsonNode.TreeNode
 import br.com.guiabolso.events.json.MapperHolder
-import br.com.guiabolso.events.json.getAsPrimitiveNumberNode
-import br.com.guiabolso.events.json.getValue
+import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.primitiveNode
+import br.com.guiabolso.events.json.long
 
 import br.com.guiabolso.events.json.withCheckedJsonNull
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -47,7 +47,7 @@ class TypeValidationHelperTest {
         )
 
         val userId = identityJsonObj.withCheckedJsonNull("userId") {
-            it.getAsPrimitiveNumberNode("userId").value.toLong()
+            it["userId"]?.primitiveNode?.long
         }
 
         assertEquals(123987L, userId)

@@ -1,7 +1,8 @@
 package br.com.guiabolso.events.json.moshi.adapter
 
+import br.com.guiabolso.events.json.ArrayNode
 import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.JsonNode.ArrayNode
+import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.moshi.nullSafeAdapterFor
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
@@ -15,7 +16,7 @@ class ArrayNodeAdapter(moshi: Moshi) : JsonAdapter<ArrayNode>() {
         return ArrayNode().apply {
             reader.beginArray()
             while (reader.hasNext()) {
-                add(jsonNodeAdapter.fromJson(reader) ?: JsonNode.JsonNull)
+                add(jsonNodeAdapter.fromJson(reader) ?: JsonNull)
             }
             reader.endArray()
         }

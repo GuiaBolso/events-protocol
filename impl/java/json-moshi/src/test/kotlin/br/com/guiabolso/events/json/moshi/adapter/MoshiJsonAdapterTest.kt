@@ -1,9 +1,9 @@
 package br.com.guiabolso.events.json.moshi.adapter
 
-import br.com.guiabolso.events.json.JsonNode.ArrayNode
-import br.com.guiabolso.events.json.JsonNode.JsonNull
-import br.com.guiabolso.events.json.JsonNode.TreeNode
-import br.com.guiabolso.events.json.JsonPrimitive
+import br.com.guiabolso.events.json.ArrayNode
+import br.com.guiabolso.events.json.JsonNull
+import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import br.com.guiabolso.events.json.moshi.Sample
@@ -26,16 +26,16 @@ class MoshiJsonAdapterTest : AnnotationSpec() {
     )
 
     private val jsonNode = TreeNode(
-        "int" to JsonPrimitive(42),
+        "int" to PrimitiveNode(42),
         "any" to JsonNull,
-        "boolean" to JsonPrimitive(false),
-        "string" to JsonPrimitive("string"),
-        "map" to TreeNode("bla" to JsonPrimitive("bla")),
+        "boolean" to PrimitiveNode(false),
+        "string" to PrimitiveNode("string"),
+        "map" to TreeNode("bla" to PrimitiveNode("bla")),
         "list" to ArrayNode(
-            JsonPrimitive(42.42),
+            PrimitiveNode(42.42),
             TreeNode("nested" to ArrayNode()),
-            JsonPrimitive(true),
-            JsonPrimitive("string")
+            PrimitiveNode(true),
+            PrimitiveNode("string")
         )
     )
 

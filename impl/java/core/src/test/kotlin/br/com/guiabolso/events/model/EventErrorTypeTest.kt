@@ -1,8 +1,8 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.EventBuilderForTest
-import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType.Companion.getErrorType
 import br.com.guiabolso.events.model.EventErrorType.Expired
 import br.com.guiabolso.events.model.EventErrorType.Forbidden
@@ -53,7 +53,7 @@ class EventErrorTypeTest {
                 "userId": null
             }
             """.trimIndent(),
-            JsonNode.TreeNode::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
@@ -69,7 +69,7 @@ class EventErrorTypeTest {
                 "origin": null
             }
             """.trimIndent(),
-            JsonNode.TreeNode::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)
@@ -85,7 +85,7 @@ class EventErrorTypeTest {
                 "userId": 123987
             }
             """.trimIndent(),
-            JsonNode.TreeNode::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
@@ -101,7 +101,7 @@ class EventErrorTypeTest {
                 "origin": "east"
             }
             """.trimIndent(),
-            JsonNode.TreeNode::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)

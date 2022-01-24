@@ -1,6 +1,6 @@
 package br.com.guiabolso.events.server
 
-import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol

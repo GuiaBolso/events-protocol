@@ -1,9 +1,10 @@
 package br.com.guiabolso.events.builder
 
 import br.com.guiabolso.events.exception.MissingEventInformationException
-import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.treeNodeOrNull
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.EventErrorType.EventNotFound
@@ -132,13 +133,13 @@ class EventBuilder {
     )
 
     private fun convertPayload() = when (this.payload) {
-        null -> JsonNode.JsonNull
+        null -> JsonNull
         else -> MapperHolder.mapper.toJsonTree(this.payload)
     }
 
     private fun convertToJsonObjectOrEmpty(value: Any?) = when (value) {
         null -> TreeNode()
-        JsonNode.JsonNull -> TreeNode()
-        else -> MapperHolder.mapper.toJsonTree(value) as? TreeNode ?: TreeNode()
+        JsonNull -> TreeNode()
+        else -> MapperHolder.mapper.toJsonTree(value).treeNodeOrNull ?: TreeNode()
     }
 }

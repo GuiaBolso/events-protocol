@@ -1,12 +1,10 @@
 package br.com.guiabolso.events.json.moshi.adapter
 
+import br.com.guiabolso.events.json.ArrayNode
 import br.com.guiabolso.events.json.JsonNode
-import br.com.guiabolso.events.json.JsonNode.ArrayNode
-import br.com.guiabolso.events.json.JsonNode.JsonNull
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.BooleanNode
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.NumberNode
-import br.com.guiabolso.events.json.JsonNode.PrimitiveNode.StringNode
-import br.com.guiabolso.events.json.JsonNode.TreeNode
+import br.com.guiabolso.events.json.JsonNull
+import br.com.guiabolso.events.json.PrimitiveNode
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import io.kotest.core.spec.style.AnnotationSpec
@@ -19,11 +17,11 @@ class JsonNodeAdapterTest : AnnotationSpec() {
     @Test
     fun shouldSerializeAndDeserializeArrayNodeSuccessfully() {
         val arrayNode = ArrayNode(
-            StringNode("bla"),
-            NumberNode(42),
-            NumberNode(42.42),
-            BooleanNode(true),
-            TreeNode("key" to StringNode("value"), "other" to JsonNull),
+            PrimitiveNode("bla"),
+            PrimitiveNode(42),
+            PrimitiveNode(42.42),
+            PrimitiveNode(true),
+            TreeNode("key" to PrimitiveNode("value"), "other" to JsonNull),
             JsonNull
         )
 
