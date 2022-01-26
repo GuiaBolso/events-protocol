@@ -17,7 +17,7 @@ class TreeNode(
             postfix = "}",
             transform = { (key, jsonNode) ->
                 buildString {
-                    key.toQuotedString()
+                    append(key.toQuotedString())
                     append(':')
                     append(jsonNode)
                 }
