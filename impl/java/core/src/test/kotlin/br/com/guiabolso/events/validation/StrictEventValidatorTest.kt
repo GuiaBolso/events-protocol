@@ -2,7 +2,7 @@ package br.com.guiabolso.events.validation
 
 import br.com.guiabolso.events.exception.EventValidationException
 import br.com.guiabolso.events.json.TreeNode
-import br.com.guiabolso.events.json.JsonLiteral
+import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.model.RawEvent
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,14 +15,14 @@ class StrictEventValidatorTest {
 
     @Test
     fun testResponseValidation() {
-        val raw = RawEvent("event", 1, "id", "flow", JsonLiteral(42), TreeNode(), TreeNode(), TreeNode())
+        val raw = RawEvent("event", 1, "id", "flow", PrimitiveNode(42), TreeNode(), TreeNode(), TreeNode())
 
         val response = validator.validateAsResponseEvent(raw)
         assertEquals("event", response.name)
         assertEquals(1, response.version)
         assertEquals("id", response.id)
         assertEquals("flow", response.flowId)
-        assertEquals(JsonLiteral(42), response.payload)
+        assertEquals(PrimitiveNode(42), response.payload)
         assertEquals(TreeNode(), response.auth)
         assertEquals(TreeNode(), response.identity)
         assertEquals(TreeNode(), response.metadata)
@@ -37,7 +37,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     TreeNode()
@@ -55,7 +55,7 @@ class StrictEventValidatorTest {
                     null,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     TreeNode()
@@ -73,7 +73,7 @@ class StrictEventValidatorTest {
                     1,
                     null,
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     TreeNode()
@@ -121,7 +121,7 @@ class StrictEventValidatorTest {
                     version = 1,
                     id = "id",
                     flowId = "flow",
-                    payload = JsonLiteral(42),
+                    payload = PrimitiveNode(42),
                     identity = null,
                     auth = TreeNode(),
                     metadata = TreeNode()
@@ -139,7 +139,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     null,
                     TreeNode()
@@ -157,7 +157,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     null
@@ -168,14 +168,14 @@ class StrictEventValidatorTest {
 
     @Test
     fun testRequestValidation() {
-        val raw = RawEvent("event", 1, "id", "flow", JsonLiteral(42), TreeNode(), TreeNode(), TreeNode())
+        val raw = RawEvent("event", 1, "id", "flow", PrimitiveNode(42), TreeNode(), TreeNode(), TreeNode())
 
         val request = validator.validateAsRequestEvent(raw)
         assertEquals("event", request.name)
         assertEquals(1, request.version)
         assertEquals("id", request.id)
         assertEquals("flow", request.flowId)
-        assertEquals(JsonLiteral(42), request.payload)
+        assertEquals(PrimitiveNode(42), request.payload)
         assertEquals(TreeNode(), request.auth)
         assertEquals(TreeNode(), request.identity)
         assertEquals(TreeNode(), request.metadata)
@@ -190,7 +190,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     TreeNode()
@@ -208,7 +208,7 @@ class StrictEventValidatorTest {
                     null,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     TreeNode()
@@ -226,7 +226,7 @@ class StrictEventValidatorTest {
                     1,
                     null,
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     TreeNode()
@@ -244,7 +244,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     null,
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     TreeNode()
@@ -292,7 +292,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     null,
                     TreeNode(),
                     TreeNode()
@@ -310,7 +310,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     null,
                     TreeNode()
@@ -328,7 +328,7 @@ class StrictEventValidatorTest {
                     1,
                     "id",
                     "flow",
-                    JsonLiteral(42),
+                    PrimitiveNode(42),
                     TreeNode(),
                     TreeNode(),
                     null

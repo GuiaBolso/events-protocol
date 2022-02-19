@@ -27,7 +27,7 @@ class JsonNodeAdapter(val moshi: Moshi) : JsonAdapter<JsonNode>() {
         BEGIN_OBJECT -> adapterOf<TreeNode>()
         BEGIN_ARRAY -> adapterOf<ArrayNode>()
         NUMBER, STRING, BOOLEAN, NULL -> adapterOf<PrimitiveNode>()
-        else -> null
+        else -> error("No adapter found for token $token")
     }
 
     private inline fun <reified T> adapterOf() = moshi.adapter(T::class.java).nullSafe()

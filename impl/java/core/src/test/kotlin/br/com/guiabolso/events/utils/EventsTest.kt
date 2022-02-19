@@ -3,7 +3,7 @@ package br.com.guiabolso.events.utils
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.json.ArrayNode
-import br.com.guiabolso.events.json.JsonLiteral
+import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -57,7 +57,7 @@ class EventsTest {
     @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsNumber() {
         val event = buildRequestEvent().copy(
-            identity = TreeNode("userId" to JsonLiteral(42))
+            identity = TreeNode("userId" to PrimitiveNode(42))
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -65,7 +65,7 @@ class EventsTest {
     @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsString() {
         val event = buildRequestEvent().copy(
-            identity = TreeNode("userId" to JsonLiteral("42"))
+            identity = TreeNode("userId" to PrimitiveNode("42"))
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -75,7 +75,7 @@ class EventsTest {
         assertNull(buildRequestEvent().userId)
 
         val responseEvent = buildRequestEvent().copy(
-            identity = TreeNode("userId" to JsonLiteral(42))
+            identity = TreeNode("userId" to PrimitiveNode(42))
         )
         assertEquals(42L, responseEvent.userId)
     }
@@ -85,7 +85,7 @@ class EventsTest {
         assertNull(buildRequestEvent().origin)
 
         val responseEvent = buildRequestEvent().copy(
-            metadata = TreeNode("origin" to JsonLiteral("batata"))
+            metadata = TreeNode("origin" to PrimitiveNode("batata"))
         )
         assertEquals("batata", responseEvent.origin)
     }
@@ -93,7 +93,7 @@ class EventsTest {
     @Test
     fun testGetPayload() {
         val request = buildRequestEvent().copy(
-            payload = TreeNode("a" to JsonLiteral("someString"), "b" to JsonLiteral(60))
+            payload = TreeNode("a" to PrimitiveNode("someString"), "b" to PrimitiveNode(60))
         )
 
         val vo = request.payloadAs(VO::class.java)
@@ -110,8 +110,8 @@ class EventsTest {
     fun testGetIdentity() {
         val request = buildRequestEvent().copy(
             identity = TreeNode(
-                "a" to JsonLiteral("someString"),
-                "b" to JsonLiteral(60)
+                "a" to PrimitiveNode("someString"),
+                "b" to PrimitiveNode(60)
             )
         )
 
@@ -129,8 +129,8 @@ class EventsTest {
     fun testGetAuth() {
         val request = buildRequestEvent().copy(
             auth = TreeNode(
-                "a" to JsonLiteral("someString"),
-                "b" to JsonLiteral(60)
+                "a" to PrimitiveNode("someString"),
+                "b" to PrimitiveNode(60)
             )
         )
 
@@ -150,14 +150,14 @@ class EventsTest {
             payload = ArrayNode().apply {
                 this.add(
                     TreeNode(
-                        "a" to JsonLiteral("someString"),
-                        "b" to JsonLiteral(60)
+                        "a" to PrimitiveNode("someString"),
+                        "b" to PrimitiveNode(60)
                     )
                 )
                 this.add(
                     TreeNode(
-                        "a" to JsonLiteral("someOtherString"),
-                        "b" to JsonLiteral(120)
+                        "a" to PrimitiveNode("someOtherString"),
+                        "b" to PrimitiveNode(120)
                     )
                 )
             }

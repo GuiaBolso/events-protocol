@@ -8,8 +8,6 @@ class TreeNode(
 
     constructor(vararg nodes: Pair<String, JsonNode>) : this(nodes.associateTo(mutableMapOf()) { it })
 
-    override fun equals(other: Any?) = nodes == other
-    override fun hashCode() = nodes.hashCode()
     override fun toString(): String {
         return nodes.entries.joinToString(
             separator = ",",
@@ -24,10 +22,15 @@ class TreeNode(
             }
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        return nodes == (other as? TreeNode)?.nodes
+    }
+
+    override fun hashCode() = nodes.hashCode()
 }
 
-// TODO Maybe escape json especials properly
-private fun String.toQuotedString() = "\"$this\""
+private fun String.toQuotedString() = """"$this""""
 
 class ArrayNode(
     private val elements: MutableList<JsonNode> = ArrayList()
@@ -35,8 +38,8 @@ class ArrayNode(
 
     constructor(vararg elements: JsonNode) : this(elements.toMutableList())
 
-    override fun equals(other: Any?): Boolean = elements == other
     override fun hashCode(): Int = elements.hashCode()
+    override fun equals(other: Any?): Boolean = elements == (other as? ArrayNode)?.elements
     override fun toString(): String = elements.joinToString(prefix = "[", postfix = "]", separator = ",")
 }
 
@@ -68,5 +71,4 @@ object JsonNull : PrimitiveNode() {
     override val isBoolean: Boolean = false
     override val isString: Boolean = false
     override val isNumber: Boolean = false
-    override fun toString() = value
 }
