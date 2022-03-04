@@ -71,4 +71,6 @@ object JsonNull : PrimitiveNode() {
     override val isBoolean: Boolean = false
     override val isString: Boolean = false
     override val isNumber: Boolean = false
+
+    override fun toString() = value
 }
