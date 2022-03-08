@@ -20,15 +20,19 @@ class TreeNodeAdapter(moshi: Moshi) : JsonAdapter<TreeNode>() {
                 reader.promoteNameToValue()
                 val name: String = reader.nextString()
                 val value = jsonNodeAdapter.fromJson(reader) ?: JsonNull
-                if (contains(name)) {
-                    val current = this[name]
-                    throw JsonDataException(
-                        "JsonNode key '$name' has multiple values at path ${reader.path}:$current and $value"
-                    )
-                }
+                ensureNotExists(name, value, reader.path)
                 this[name] = value
             }
             reader.endObject()
+        }
+    }
+
+    private fun TreeNode.ensureNotExists(name: String, current: JsonNode, path: String) {
+        if (contains(name)) {
+            val existent = this[name]
+            throw JsonDataException(
+                "JsonNode key '$name' has multiple values at path $path, values $existent and $current"
+            )
         }
     }
 

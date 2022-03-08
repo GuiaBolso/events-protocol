@@ -9,18 +9,13 @@ class TreeNode(
     constructor(vararg nodes: Pair<String, JsonNode>) : this(nodes.associateTo(mutableMapOf()) { it })
 
     override fun toString(): String {
-        return nodes.entries.joinToString(
-            separator = ",",
-            prefix = "{",
-            postfix = "}",
-            transform = { (key, jsonNode) ->
-                buildString {
-                    append(key.toQuotedString())
-                    append(':')
-                    append(jsonNode)
-                }
+        return nodes.entries.joinToString(separator = ",", prefix = "{", postfix = "}") { (key, jsonNode) ->
+            buildString {
+                append(key.toQuotedString())
+                append(':')
+                append(jsonNode)
             }
-        )
+        }
     }
 
     override fun equals(other: Any?): Boolean {

@@ -4,36 +4,48 @@ import br.com.guiabolso.events.json.ArrayNode
 import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
-import br.com.guiabolso.events.json.fromJson
-import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
+import br.com.guiabolso.events.json.moshi.jsonReader
+import br.com.guiabolso.events.json.moshi.jsonWriter
+import br.com.guiabolso.events.json.moshi.moshi
+import br.com.guiabolso.events.json.moshi.toJson
+import com.squareup.moshi.JsonDataException
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import java.io.ByteArrayOutputStream
 
 class TreeNodeAdapterTest : StringSpec({
-    val adapter = MoshiJsonAdapter()
+    val treeNodeAdapter = TreeNodeAdapter(moshi)
+    val json = """{"one":1,"boolean":true,"nullable":null,"array":["string"]}"""
+    val treeNode = TreeNode(
+        "one" to PrimitiveNode(1),
+        "boolean" to PrimitiveNode(true),
+        "nullable" to JsonNull,
+        "array" to ArrayNode(PrimitiveNode("string"))
+    )
 
-    "serialize and then deserialize a array node back again should give the same input source" {
-        val arrayNode = ArrayNode(
-            JsonNull,
-            PrimitiveNode("bla"),
-            PrimitiveNode(42),
-            PrimitiveNode(42.42),
-            PrimitiveNode(true),
-            TreeNode("key" to PrimitiveNode("value"), "other" to JsonNull)
-        )
-
-        val json = adapter.toJson(arrayNode)
-        adapter.fromJson<ArrayNode>(json) shouldBe arrayNode
+    "should deserialize a TreeNode successfully" {
+        treeNodeAdapter.fromJson(json.jsonReader()) shouldBe treeNode
     }
 
-    "serialize and then deserialize a tree node back again should give the same input source" {
-        val treeNode = TreeNode(
-            "key" to PrimitiveNode("value"),
-            "other" to TreeNode("array" to ArrayNode()),
-            "nullNode" to JsonNull
-        )
-
-        val json = adapter.toJson(treeNode)
-        adapter.fromJson<TreeNode>(json) shouldBe treeNode
+    "should throw for duplicate key on json" {
+        val invalidJson = """ {"any":"first", "any": "second"} """
+        val ex = shouldThrow<JsonDataException> {
+            treeNodeAdapter.fromJson(invalidJson.jsonReader())
+        }
+        ex.message shouldBe """JsonNode key 'any' has multiple values at path $.any, values "first" and "second""""
     }
+
+    "should write null values" {
+        val output = ByteArrayOutputStream()
+        output.jsonWriter().use { treeNodeAdapter.toJson(it, null) }
+        output.toJson() shouldBe "null"
+    }
+
+    "should write tree node successfully" {
+        val output = ByteArrayOutputStream()
+        output.jsonWriter().use { treeNodeAdapter.toJson(it, treeNode) }
+        output.toJson() shouldBe json
+    }
+
 })
