@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.json
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -25,8 +26,11 @@ class ArrayNodeTest {
     @Test
     fun testEqualsAndHashCode() {
         val firstArrayNode = ArrayNode(entries)
-        val otherArrayNode = ArrayNode(entries)
 
+        assertFalse(firstArrayNode.equals(null))
+        assertFalse(firstArrayNode == Any())
+
+        val otherArrayNode = ArrayNode(entries)
         assertTrue(firstArrayNode == otherArrayNode)
         assertEquals(firstArrayNode.hashCode(), otherArrayNode.hashCode())
     }
