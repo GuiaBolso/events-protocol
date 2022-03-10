@@ -114,5 +114,4 @@ class PrimitiveNodeExtensionsTest : StringSpec({
             it.value shouldBe "true"
         }
     }
-
 })

@@ -27,7 +27,7 @@ class ArrayNodeTest {
     fun testEqualsAndHashCode() {
         val firstArrayNode = ArrayNode(entries)
 
-        assertFalse(firstArrayNode.equals(null))
+        assertFalse(firstArrayNode == null)
         assertFalse(firstArrayNode == Any())
 
         val otherArrayNode = ArrayNode(entries)

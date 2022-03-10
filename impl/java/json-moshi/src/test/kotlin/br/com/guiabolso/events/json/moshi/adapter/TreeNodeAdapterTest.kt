@@ -47,5 +47,4 @@ class TreeNodeAdapterTest : StringSpec({
         output.jsonWriter().use { treeNodeAdapter.toJson(it, treeNode) }
         output.toJson() shouldBe json
     }
-
 })

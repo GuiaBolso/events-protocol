@@ -73,5 +73,4 @@ class PrimitiveNodeAdapterTest : StringSpec({
         node.isNumber shouldBe false
         node.value shouldBe "null"
     }
-
 })

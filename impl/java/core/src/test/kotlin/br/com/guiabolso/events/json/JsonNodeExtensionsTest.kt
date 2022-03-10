@@ -68,5 +68,4 @@ class JsonNodeExtensionsTest : StringSpec({
         val ex = shouldThrow<IllegalArgumentException> { TreeNode().arrayNode }
         ex.message shouldContain "JsonNode is not a ${ArrayNode::class.java}"
     }
-
 })

@@ -25,4 +25,3 @@ fun ByteArrayOutputStream.toJson() = toByteArray().toUtf8String()
 fun ByteArrayOutputStream.jsonWriter(): JsonWriter = JsonWriter.of(sink().buffer())
 
 fun ByteArray.toUtf8String() = this.toString(Charsets.UTF_8)
-
