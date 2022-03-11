@@ -20,7 +20,7 @@ class EventProtocolAdapterTest : StringSpec({
         jsonNodeAdapter = JsonNodeAdapter(moshi)
     )
 
-    "should throws when try to serialize a null event"{
+    "should throws when try to serialize a null event" {
         shouldThrow<IllegalStateException> { requestEventAdapter.toJson(null) }
             .shouldHaveMessage("Bad protocol message, trying to serialize a null Event")
     }

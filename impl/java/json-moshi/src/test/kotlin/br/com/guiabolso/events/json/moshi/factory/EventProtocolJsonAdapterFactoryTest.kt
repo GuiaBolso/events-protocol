@@ -4,7 +4,6 @@ import br.com.guiabolso.events.json.moshi.adapter.EventProtocolAdapter
 import br.com.guiabolso.events.json.moshi.factory.EventProtocolJsonAdapterFactory
 import br.com.guiabolso.events.json.moshi.moshi
 import br.com.guiabolso.events.model.Event
-import br.com.guiabolso.events.model.ResponseEvent
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.inspectors.forAll
