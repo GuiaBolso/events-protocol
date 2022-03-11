@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.json
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -29,6 +30,7 @@ class TreeNodeTest {
         val firstTreeNode = TreeNode(entries)
         val otherTreeNode = TreeNode(entries)
 
+        assertFalse(firstTreeNode == Any())
         assertTrue(firstTreeNode == otherTreeNode)
         assertEquals(firstTreeNode.hashCode(), otherTreeNode.hashCode())
     }
