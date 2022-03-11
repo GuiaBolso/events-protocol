@@ -1,5 +1,3 @@
-package br.com.guiabolso.events
-
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import io.kotest.core.config.AbstractProjectConfig

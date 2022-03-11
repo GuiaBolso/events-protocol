@@ -1,6 +1,6 @@
 package br.com.guiabolso.events
 
-import br.com.guiabolso.events.json.JsonLiteral
+import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -13,7 +13,7 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonLiteral(42),
+        payload = PrimitiveNode(42),
         identity = TreeNode(),
         auth = TreeNode(),
         metadata = TreeNode()
@@ -24,7 +24,7 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonLiteral(42),
+        payload = PrimitiveNode(42),
         identity = TreeNode(),
         auth = TreeNode(),
         metadata = TreeNode()
@@ -35,7 +35,7 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonLiteral("42"),
+        payload = PrimitiveNode(42),
         identity = TreeNode(),
         auth = TreeNode(),
         metadata = TreeNode()
@@ -47,7 +47,7 @@ object EventBuilderForTest {
         id = "id",
         flowId = "flowId",
         payload = TreeNode().apply {
-            this["url"] = JsonLiteral("https://www.google.com")
+            this["url"] = PrimitiveNode("https://www.google.com")
             this["queryParameters"] = TreeNode()
         },
         identity = TreeNode(),

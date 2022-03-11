@@ -55,40 +55,40 @@ fun haveFlowId(flowId: String) = object : Matcher<Event> {
 }
 
 inline fun <reified T> Event.shouldContainPayload(key: String, value: T) =
-    payload.toJson().shouldContainJsonKeyValue(key, value)
+    payload.toString().shouldContainJsonKeyValue(key, value)
 
 inline fun <reified T> Event.shouldNotContainPayload(key: String, value: T) =
-    payload.toJson().shouldNotContainJsonKeyValue(key, value)
+    payload.toString().shouldNotContainJsonKeyValue(key, value)
 
-infix fun Event.shouldHavePayload(map: Map<String, Any?>) = payload.toJson().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHavePayload(map: Map<String, Any?>) = payload.toJson().shouldNotMatchJson(map.toJson())
+infix fun Event.shouldHavePayload(map: Map<String, Any?>) = payload.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHavePayload(map: Map<String, Any?>) = payload.toString().shouldNotMatchJson(map.toJson())
 
 inline fun <reified T> Event.shouldContainIdentity(key: String, value: T) =
-    identity.toJson().shouldContainJsonKeyValue(key, value)
+    identity.toString().shouldContainJsonKeyValue(key, value)
 
 inline fun <reified T> Event.shouldNotContainIdentity(key: String, value: T) =
-    identity.toJson().shouldNotContainJsonKeyValue(key, value)
+    identity.toString().shouldNotContainJsonKeyValue(key, value)
 
-infix fun Event.shouldHaveIdentity(map: Map<String, Any?>) = identity.toJson().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHaveIdentity(map: Map<String, Any?>) = identity.toJson().shouldNotMatchJson(map.toJson())
+infix fun Event.shouldHaveIdentity(map: Map<String, Any?>) = identity.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHaveIdentity(map: Map<String, Any?>) = identity.toString().shouldNotMatchJson(map.toJson())
 
 inline fun <reified T> Event.shouldContainAuth(key: String, value: T) =
-    auth.toJson().shouldContainJsonKeyValue(key, value)
+    auth.toString().shouldContainJsonKeyValue(key, value)
 
 inline fun <reified T> Event.shouldNotContainAuth(key: String, value: T) =
-    auth.toJson().shouldNotContainJsonKeyValue(key, value)
+    auth.toString().shouldNotContainJsonKeyValue(key, value)
 
-infix fun Event.shouldHaveAuth(map: Map<String, Any?>) = auth.toJson().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHaveAuth(map: Map<String, Any?>) = auth.toJson().shouldNotMatchJson(map.toJson())
+infix fun Event.shouldHaveAuth(map: Map<String, Any?>) = auth.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHaveAuth(map: Map<String, Any?>) = auth.toString().shouldNotMatchJson(map.toJson())
 
 inline fun <reified T> Event.shouldContainMetadata(key: String, value: T) =
-    metadata.toJson().shouldContainJsonKeyValue(key, value)
+    metadata.toString().shouldContainJsonKeyValue(key, value)
 
 inline fun <reified T> Event.shouldNotContainMetadata(key: String, value: T) =
-    metadata.toJson().shouldNotContainJsonKeyValue(key, value)
+    metadata.toString().shouldNotContainJsonKeyValue(key, value)
 
-infix fun Event.shouldHaveMetadata(map: Map<String, Any?>) = metadata.toJson().shouldMatchJson(map.toJson())
-infix fun Event.shouldNotHaveMetadata(map: Map<String, Any?>) = metadata.toJson().shouldNotMatchJson(map.toJson())
+infix fun Event.shouldHaveMetadata(map: Map<String, Any?>) = metadata.toString().shouldMatchJson(map.toJson())
+infix fun Event.shouldNotHaveMetadata(map: Map<String, Any?>) = metadata.toString().shouldNotMatchJson(map.toJson())
 
 infix fun Event.shouldHaveUserId(userId: Long) = this should haveUserId(userId)
 infix fun Event.shouldNotHaveUserId(userId: Long) = this shouldNot haveUserId(userId)

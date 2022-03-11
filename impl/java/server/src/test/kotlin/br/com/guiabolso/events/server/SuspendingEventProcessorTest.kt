@@ -38,7 +38,7 @@ class SuspendingEventProcessorTest {
 
         val response = processor.processEvent("{}")
         assertEquals(
-            "{\"name\":\"event:name:response\",\"version\":1,\"id\":\"id\",\"flowId\":\"flowId\",\"payload\":\"42\",\"identity\":{},\"auth\":{},\"metadata\":{}}",
+            "{\"name\":\"event:name:response\",\"version\":1,\"id\":\"id\",\"flowId\":\"flowId\",\"payload\":42,\"identity\":{},\"auth\":{},\"metadata\":{}}",
             response
         )
     }
