@@ -24,11 +24,13 @@ object EventProtocolJsonAdapterFactory : JsonAdapter.Factory {
                     jsonNodeAdapter = jsonNodeAdapter
                 )
             }
+
             ResponseEvent::class.java.isAssignableFrom(rawType) ->
                 EventProtocolAdapter<ResponseEvent>(
                     delegate = moshi.nextAdapter(this, type, annotations),
                     jsonNodeAdapter = jsonNodeAdapter
                 )
+
             else -> error("Unmapped event protocol class ${rawType.name}")
         }
     }

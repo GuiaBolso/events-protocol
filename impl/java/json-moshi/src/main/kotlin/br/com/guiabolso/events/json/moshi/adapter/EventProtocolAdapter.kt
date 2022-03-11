@@ -17,7 +17,7 @@ class EventProtocolAdapter<T : Event?>(
 
     override fun toJson(writer: JsonWriter, value: T?) {
         if (value == null) {
-            throw IllegalStateException("Bad protocol message, trying to serialize a null Event")
+            error("Bad protocol message, trying to serialize a null Event")
         }
 
         val serializeNulls = writer.serializeNulls
