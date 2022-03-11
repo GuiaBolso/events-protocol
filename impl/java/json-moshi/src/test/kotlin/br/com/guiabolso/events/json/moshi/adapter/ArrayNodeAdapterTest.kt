@@ -5,13 +5,9 @@ import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.moshi.adapter.ArrayNodeAdapter
-import br.com.guiabolso.events.json.moshi.jsonReader
-import br.com.guiabolso.events.json.moshi.jsonWriter
 import br.com.guiabolso.events.json.moshi.moshi
-import br.com.guiabolso.events.json.moshi.toJson
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import java.io.ByteArrayOutputStream
 
 class ArrayNodeAdapterTest : StringSpec({
     val adapter = ArrayNodeAdapter(moshi = moshi)
@@ -27,18 +23,14 @@ class ArrayNodeAdapterTest : StringSpec({
     )
 
     "should serialize array node successfully" {
-        val output = ByteArrayOutputStream()
-        output.jsonWriter().use { adapter.toJson(it, arrayNode) }
-        output.toJson() shouldBe json
+        adapter.toJson(arrayNode) shouldBe json
     }
 
     "should write null array node" {
-        val output = ByteArrayOutputStream()
-        output.jsonWriter().use { adapter.toJson(it, null) }
-        output.toJson() shouldBe "null"
+        adapter.toJson(null) shouldBe "null"
     }
 
     "should deserialize from json successfully" {
-        adapter.fromJson(json.jsonReader()) shouldBe arrayNode
+        adapter.fromJson(json) shouldBe arrayNode
     }
 })

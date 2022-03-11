@@ -17,7 +17,7 @@ import com.squareup.moshi.JsonReader.Token.STRING
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 
-class JsonNodeAdapter(val moshi: Moshi) : JsonAdapter<JsonNode>() {
+class JsonNodeAdapter(private val moshi: Moshi) : JsonAdapter<JsonNode>() {
 
     override fun fromJson(reader: JsonReader): JsonNode {
         return adapterFor(reader.peek())?.fromJson(reader) ?: JsonNull
