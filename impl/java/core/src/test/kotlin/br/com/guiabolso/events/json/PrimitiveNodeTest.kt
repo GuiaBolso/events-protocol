@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 
 class PrimitiveNodeTest : StringSpec({
 
-
     "toString should generate a valid json string" {
         PrimitiveNode(42).toString() shouldBe "42"
         PrimitiveNode(42.42).toString() shouldBe "42.42"
@@ -13,5 +12,4 @@ class PrimitiveNodeTest : StringSpec({
         PrimitiveNode("string").toString() shouldBe "\"string\""
         JsonNull.toString() shouldBe "null"
     }
-
 })

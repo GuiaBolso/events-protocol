@@ -41,7 +41,6 @@ class JsonNodeExtensionsTest : StringSpec({
     "treeNode extension should successfully cast" {
         val jsonNode: JsonNode = TreeNode()
         jsonNode.treeNode.shouldBeInstanceOf<TreeNode>()
-        jsonNode.treeNodeOrNull.shouldBeInstanceOf<TreeNode>()
     }
 
     "treeNode extension should throws when can't cast successfully" {
