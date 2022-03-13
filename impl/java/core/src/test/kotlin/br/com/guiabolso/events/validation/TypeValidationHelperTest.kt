@@ -1,18 +1,14 @@
 package br.com.guiabolso.events.validation
 
-import br.com.guiabolso.events.MapperHolderSetup
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.TreeNode
-import br.com.guiabolso.events.json.primitiveNode
 import br.com.guiabolso.events.json.long
-
+import br.com.guiabolso.events.json.primitiveNode
 import br.com.guiabolso.events.json.withCheckedJsonNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MapperHolderSetup::class)
 class TypeValidationHelperTest {
 
     @Test
