@@ -1,16 +1,17 @@
 package br.com.guiabolso.events.json
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
-class PrimitiveNodeTest {
+class PrimitiveNodeTest : StringSpec({
 
-    @Test
-    fun toStringShouldGenerateValidJsonString() {
-        assertEquals("42", PrimitiveNode(42).toString())
-        assertEquals("42.42", PrimitiveNode(42.42).toString())
-        assertEquals("true", PrimitiveNode(true).toString())
-        assertEquals("\"string\"", PrimitiveNode("string").toString())
-        assertEquals("null", JsonNull.toString())
+
+    "toString should generate a valid json string" {
+        PrimitiveNode(42).toString() shouldBe "42"
+        PrimitiveNode(42.42).toString() shouldBe "42.42"
+        PrimitiveNode(true).toString() shouldBe "true"
+        PrimitiveNode("string").toString() shouldBe "\"string\""
+        JsonNull.toString() shouldBe "null"
     }
-}
+
+})
