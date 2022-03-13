@@ -37,7 +37,7 @@ class EventExceptionExceptionHandlerTest {
         val responseEvent = handleException(exception, requestEvent, tracer)
         assertEquals(EventErrorType.Generic, responseEvent.getErrorType())
 
-        val message = responseEvent.payloadAs(EventMessage::class.java)
+        val message = responseEvent.payloadAs<EventMessage>()
         assertEquals("CODE", message.code)
         assertEquals(mapOf("some" to "parameter"), message.parameters)
 

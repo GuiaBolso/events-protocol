@@ -3,7 +3,6 @@ dependencies {
     api(project(":server"))
     testImplementation(project(":test"))
     testImplementation(project(":json-moshi"))
-    testImplementation(project(":core").dependencyProject.sourceSets.test.get().output)
 
     // Ktor
     implementation("io.ktor:ktor-server-core:1.6.7")

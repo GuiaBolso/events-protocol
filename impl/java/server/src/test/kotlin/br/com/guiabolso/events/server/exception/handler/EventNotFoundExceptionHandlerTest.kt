@@ -33,7 +33,7 @@ class EventNotFoundExceptionHandlerTest {
         val responseEvent = handleException(exception, requestEvent, tracer)
         assertEquals(EventErrorType.EventNotFound, responseEvent.getErrorType())
 
-        val message = responseEvent.payloadAs(EventMessage::class.java)
+        val message = responseEvent.payloadAs<EventMessage>()
         assertEquals("NO_EVENT_HANDLER_FOUND", message.code)
         assertEquals(mapOf("event" to "eventName", "version" to 1.0), message.parameters)
 
