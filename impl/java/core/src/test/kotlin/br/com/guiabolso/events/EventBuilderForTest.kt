@@ -46,10 +46,7 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = TreeNode().apply {
-            this["url"] = PrimitiveNode("https://www.google.com")
-            this["queryParameters"] = TreeNode()
-        },
+        payload = TreeNode("url" to PrimitiveNode("https://www.google.com"), "queryParameters" to TreeNode()),
         identity = TreeNode(),
         auth = TreeNode(),
         metadata = TreeNode()
