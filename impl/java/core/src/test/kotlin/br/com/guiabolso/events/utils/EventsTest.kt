@@ -6,6 +6,7 @@ import br.com.guiabolso.events.json.ArrayNode
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -63,9 +64,25 @@ class EventsTest {
     }
 
     @Test
+    fun testGetUserIdWithObjectAsStringFromIdentityWhenItIsNumber() {
+        val event = buildRequestEvent().copy(
+            identity = TreeNode("user" to TreeNode("id" to PrimitiveNode(42)))
+        )
+        assertEquals("42", event.userIdAsString)
+    }
+
+    @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsString() {
         val event = buildRequestEvent().copy(
             identity = TreeNode("userId" to PrimitiveNode("42"))
+        )
+        assertEquals("42", event.userIdAsString)
+    }
+
+    @Test
+    fun testGetUserIdWithObjectAsStringFromIdentityWhenItIsString() {
+        val event = buildRequestEvent().copy(
+            identity = TreeNode("user" to TreeNode("id" to PrimitiveNode("42")))
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -78,6 +95,43 @@ class EventsTest {
             identity = TreeNode("userId" to PrimitiveNode(42))
         )
         assertEquals(42L, responseEvent.userId)
+    }
+
+    @Test
+    fun testGetUserIdWithObjectFromIdentity() {
+        assertNull(buildRequestEvent().userId)
+
+        val responseEvent = buildRequestEvent().copy(
+            identity = TreeNode(
+                "user" to TreeNode("id" to PrimitiveNode(42))
+            )
+        )
+        assertEquals(42L, responseEvent.userId)
+    }
+
+    @Test
+    fun testGetUserFromIdentity() {
+        val userId = 42L
+        val userType = "CONSUMER"
+
+        assertNull(buildRequestEvent().userId)
+
+        val responseEvent = buildRequestEvent().copy(
+            identity = TreeNode(
+                "user" to TreeNode(
+                    "id" to PrimitiveNode(userId),
+                    "type" to PrimitiveNode(userType)
+                )
+            )
+        )
+
+        assertEquals(User(id = userId, type = userType), responseEvent.user)
+    }
+
+    @Test
+    fun testGetUserFromIdentityWhenIsNull() {
+        val responseEvent = buildRequestEvent()
+        assertNull(responseEvent.user)
     }
 
     @Test

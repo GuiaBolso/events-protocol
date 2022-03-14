@@ -3,9 +3,11 @@ package br.com.guiabolso.events.model
 import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.json.TreeNode
-import br.com.guiabolso.events.json.primitiveNodeOrNull
+import br.com.guiabolso.events.json.fromJsonOrNull
 import br.com.guiabolso.events.json.longOrNull
+import br.com.guiabolso.events.json.primitiveNodeOrNull
 import br.com.guiabolso.events.json.stringOrNull
+import br.com.guiabolso.events.json.treeNodeOrNull
 import br.com.guiabolso.events.json.withCheckedJsonNull
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.typeOf
@@ -32,14 +34,21 @@ sealed class Event {
 
     inline fun <reified T> authAs(): T = this.auth.convertTo()
 
+    val user: User?
+        get() = this.identity.withCheckedJsonNull("user") { node ->
+            node.getValue("user").treeNodeOrNull?.run {
+                mapper.fromJsonOrNull<User>(this)
+            }
+        }
+
     val userId: Long?
-        get() = this.identity.withCheckedJsonNull("userId") { node ->
-            node.getValue("userId").primitiveNodeOrNull?.longOrNull
+        get() = with(this.identity) {
+            longOrNull("userId") ?: user?.id
         }
 
     val userIdAsString: String?
-        get() = this.identity.withCheckedJsonNull("userId") { node ->
-            node.getValue("userId").primitiveNodeOrNull?.stringOrNull
+        get() = with(this.identity) {
+            stringOrNull("userId") ?: this["user"]?.treeNodeOrNull?.stringOrNull("id")
         }
 
     val origin: String?
@@ -50,6 +59,10 @@ sealed class Event {
     inline fun <reified T> JsonNode.convertTo(): T = mapper.fromJson(this, typeOf<T>().javaType)
 
     private fun <T> JsonNode.convertTo(clazz: Class<T>): T = mapper.fromJson(this, clazz)
+
+    private fun TreeNode.longOrNull(key: String?) = this[key]?.primitiveNodeOrNull?.longOrNull
+
+    private fun TreeNode.stringOrNull(key: String?) = this[key]?.primitiveNodeOrNull?.stringOrNull
 }
 
 data class ResponseEvent(
@@ -93,3 +106,5 @@ data class RequestEvent(
 
     override val metadata: TreeNode
 ) : Event()
+
+data class User(val id: Long?, val type: String?)
