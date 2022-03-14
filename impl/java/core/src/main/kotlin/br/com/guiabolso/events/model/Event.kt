@@ -53,7 +53,7 @@ sealed class Event {
 
     val origin: String?
         get() = this.metadata.withCheckedJsonNull("origin") { node ->
-            node.getValue("origin").primitiveNodeOrNull?.stringOrNull
+            node.stringOrNull("origin")
         }
 
     inline fun <reified T> JsonNode.convertTo(): T = mapper.fromJson(this, typeOf<T>().javaType)
