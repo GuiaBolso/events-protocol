@@ -13,8 +13,8 @@ import java.util.UUID
 
 val moshi: Moshi =
     Moshi.Builder()
-        .add(JsonNodeFactory)
-        .add(EventProtocolJsonAdapterFactory)
+        .addLast(JsonNodeFactory)
+        .addLast(EventProtocolJsonAdapterFactory)
         .addLast(KotlinJsonAdapterFactory())
         .build()
 

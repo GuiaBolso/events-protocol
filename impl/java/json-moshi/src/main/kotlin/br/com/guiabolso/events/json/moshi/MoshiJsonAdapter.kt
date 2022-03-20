@@ -14,10 +14,10 @@ import com.squareup.moshi.JsonAdapter as MoshiJsonAdapter
 class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = {}) : JsonAdapter {
     private val moshi =
         Moshi.Builder()
-            .apply(builder)
-            .add(JsonNodeFactory)
-            .add(EventProtocolJsonAdapterFactory)
+            .addLast(JsonNodeFactory)
+            .addLast(EventProtocolJsonAdapterFactory)
             .addLast(KotlinJsonAdapterFactory())
+            .apply(builder)
             .build()
 
     override fun toJson(any: Any?): String {
