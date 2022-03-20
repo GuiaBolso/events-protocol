@@ -33,7 +33,7 @@ class JsonNodeAdapter(private val moshi: Moshi) : JsonAdapter<JsonNode>() {
     private inline fun <reified T> adapterOf() = moshi.adapter(T::class.java).nullSafe()
 
     override fun toJson(writer: JsonWriter, value: JsonNode?) {
-        if (value == null) writer.nullValue()
-        else moshi.adapter<JsonNode>(value::class.java).toJson(writer, value)
+        if (value != null) moshi.adapter<JsonNode>(value::class.java).toJson(writer, value)
+        else writer.nullValue()
     }
 }

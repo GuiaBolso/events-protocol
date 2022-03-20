@@ -20,10 +20,10 @@ object JsonNodeFactory : JsonAdapter.Factory {
         if (!JsonNode::class.java.isAssignableFrom(rawType)) return null
 
         return when {
-            PrimitiveNode::class.java.isAssignableFrom(rawType) -> PrimitiveNodeAdapter().serializeNulls()
-            ArrayNode::class.java.isAssignableFrom(rawType) -> ArrayNodeAdapter(moshi).serializeNulls()
-            TreeNode::class.java.isAssignableFrom(rawType) -> TreeNodeAdapter(moshi).serializeNulls()
-            else -> JsonNodeAdapter(moshi).serializeNulls()
+            PrimitiveNode::class.java.isAssignableFrom(rawType) -> PrimitiveNodeAdapter()
+            ArrayNode::class.java.isAssignableFrom(rawType) -> ArrayNodeAdapter(moshi)
+            TreeNode::class.java.isAssignableFrom(rawType) -> TreeNodeAdapter(moshi)
+            else -> JsonNodeAdapter(moshi)
         }
     }
 }

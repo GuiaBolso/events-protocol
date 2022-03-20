@@ -10,7 +10,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 
 class ArrayNodeAdapter(moshi: Moshi) : JsonAdapter<ArrayNode>() {
-    private val jsonNodeAdapter = moshi.nullSafeAdapterFor<JsonNode>()
+    private val jsonNodeAdapter = moshi.nullSafeAdapterFor<JsonNode>().serializeNulls()
 
     override fun fromJson(reader: JsonReader): ArrayNode {
         return ArrayNode().apply {
@@ -23,15 +23,10 @@ class ArrayNodeAdapter(moshi: Moshi) : JsonAdapter<ArrayNode>() {
     }
 
     override fun toJson(writer: JsonWriter, value: ArrayNode?) {
-        if (value == null) {
-            writer.nullValue()
-            return
-        }
-
-        writer.beginArray()
-        for (element in value) {
-            jsonNodeAdapter.toJson(writer, element)
-        }
-        writer.endArray()
+        if (value != null) {
+            writer.beginArray()
+            value.forEach { element -> jsonNodeAdapter.toJson(writer, element) }
+            writer.endArray()
+        } else writer.nullValue()
     }
 }

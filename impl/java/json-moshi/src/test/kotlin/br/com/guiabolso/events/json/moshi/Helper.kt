@@ -31,7 +31,7 @@ fun createRequestEvent() = RequestEvent(
     identity = TreeNode("userId" to PrimitiveNode(42)),
     metadata = TreeNode("origin" to PrimitiveNode("test")),
     auth = TreeNode("token" to PrimitiveNode(UUID.randomUUID().toString())),
-    payload = TreeNode("key" to PrimitiveNode("value"), "nullable" to PrimitiveNode(null as? String?))
+    payload = TreeNode("key" to PrimitiveNode("value"))
 )
 
 fun createResponseEvent() = with(createRequestEvent()) {

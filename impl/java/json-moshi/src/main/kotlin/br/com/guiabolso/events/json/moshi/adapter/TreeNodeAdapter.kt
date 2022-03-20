@@ -37,16 +37,10 @@ class TreeNodeAdapter(moshi: Moshi) : JsonAdapter<TreeNode>() {
     }
 
     override fun toJson(writer: JsonWriter, value: TreeNode?) {
-        if (value == null) {
-            writer.nullValue()
-            return
-        }
-
-        writer.beginObject()
-        for (entry in value) {
-            writer.name(entry.key)
-            jsonNodeAdapter.toJson(writer, entry.value)
-        }
-        writer.endObject()
+        if (value != null) {
+            writer.beginObject()
+            value.forEach { (key, node) -> writer.name(key).run { jsonNodeAdapter.toJson(this, node) } }
+            writer.endObject()
+        } else writer.nullValue()
     }
 }

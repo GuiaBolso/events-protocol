@@ -8,6 +8,7 @@ import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import br.com.guiabolso.events.json.moshi.Sample
+import br.com.guiabolso.events.json.moshi.factory.SerializeNullAdapterFactory
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -15,9 +16,9 @@ import io.kotest.matchers.throwable.shouldHaveCauseInstanceOf
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 
 class MoshiJsonAdapterTest : StringSpec({
-    val jsonString = """
-        {"list":[42.42,{"nested":[]},true,"string"],"string":"string","int":42,"boolean":false,"map":{"bla":"bla"}}
-        """.trimIndent()
+    val jsonString =
+        """{"list":[42.42,{"nested":[]},true,"string"],"string":"string","int":42,"boolean":false,""" +
+                """"map":{"bla":"bla"},"any":null}"""
 
     val sample = Sample(
         int = 42,
@@ -42,7 +43,9 @@ class MoshiJsonAdapterTest : StringSpec({
         )
     )
 
-    val adapter = MoshiJsonAdapter()
+    val adapter = MoshiJsonAdapter {
+        add(SerializeNullAdapterFactory)
+    }
 
     "should serialize object successfully" {
         adapter.toJson(sample) shouldBe jsonString

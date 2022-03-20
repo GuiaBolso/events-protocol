@@ -20,28 +20,15 @@ class EventProtocolAdapter<T : Event?>(
             error("Bad protocol message, trying to serialize a null Event")
         }
 
-        val serializeNulls = writer.serializeNulls
-        writer.serializeNulls = true
-
         writer.beginObject()
         writer.name("name").value(value.name)
         writer.name("version").value(value.version)
         writer.name("id").value(value.id)
         writer.name("flowId").value(value.flowId)
-
-        writer.name("payload")
-        jsonNodeAdapter.toJson(writer, value.payload)
-
-        writer.name("identity")
-        jsonNodeAdapter.toJson(writer, value.identity)
-
-        writer.name("auth")
-        jsonNodeAdapter.toJson(writer, value.auth)
-
-        writer.name("metadata")
-        jsonNodeAdapter.toJson(writer, value.metadata)
+        writer.name("payload").run { jsonNodeAdapter.toJson(this, value.payload) }
+        writer.name("identity").run { jsonNodeAdapter.toJson(this, value.identity) }
+        writer.name("auth").run { jsonNodeAdapter.toJson(this, value.auth) }
+        writer.name("metadata").run { jsonNodeAdapter.toJson(this, value.metadata) }
         writer.endObject()
-
-        writer.serializeNulls = serializeNulls
     }
 }

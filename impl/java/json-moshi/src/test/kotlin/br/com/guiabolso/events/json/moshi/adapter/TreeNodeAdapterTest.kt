@@ -32,11 +32,11 @@ class TreeNodeAdapterTest : StringSpec({
         ex.message shouldBe """JsonNode key 'any' has multiple values at path $.any, values "first" and "second""""
     }
 
-    "should write null values" {
-        treeNodeAdapter.toJson(null) shouldBe "null"
+    "should write null values into writer" {
+        treeNodeAdapter.serializeNulls().toJson(null) shouldBe "null"
     }
 
     "should write tree node successfully" {
-        treeNodeAdapter.toJson(treeNode) shouldBe json
+        treeNodeAdapter.serializeNulls().toJson(treeNode) shouldBe json
     }
 })
