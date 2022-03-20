@@ -20,7 +20,7 @@ import com.squareup.moshi.Moshi
 class JsonNodeAdapter(private val moshi: Moshi) : JsonAdapter<JsonNode>() {
 
     override fun fromJson(reader: JsonReader): JsonNode {
-        return adapterFor(reader.peek())?.fromJson(reader) ?: JsonNull
+        return adapterFor(reader.peek()).fromJson(reader) ?: JsonNull
     }
 
     private fun adapterFor(token: Token) = when (token) {
