@@ -66,7 +66,7 @@ object DatadogUtils {
 
     @JvmStatic
     fun notifyError(span: Span, exception: Throwable, expected: Boolean) {
-        span.setTag(Tags.ERROR.key, (!expected).toString())
+        span.setTag(Tags.ERROR.key, !expected)
         span.setTag(ERROR_MSG, exception.message ?: "Empty message")
         span.setTag(ERROR_TYPE, exception.javaClass.name)
         span.setTag(ERROR_STACK, ExceptionUtils.getStackTrace(exception))
@@ -74,7 +74,7 @@ object DatadogUtils {
 
     @JvmStatic
     fun notifyError(span: Span, message: String, params: Map<String, String?>, expected: Boolean) {
-        span.setTag(Tags.ERROR.key, (!expected).toString())
+        span.setTag(Tags.ERROR.key, !expected)
         span.setTag(ERROR_MSG, message)
         params.forEach { entry -> span.setTag(entry.key, entry.value) }
     }
