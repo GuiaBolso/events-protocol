@@ -51,6 +51,10 @@ class MoshiJsonAdapterTest : StringSpec({
         adapter.toJson(sample) shouldBe jsonString
     }
 
+    "should successfully serialize nulls" {
+        adapter.toJson(null) shouldBe "null"
+    }
+
     "should serialize array successfully" {
         adapter.toJson(arrayOf(1, 2, 3, 4)) shouldBe "[1,2,3,4]"
     }

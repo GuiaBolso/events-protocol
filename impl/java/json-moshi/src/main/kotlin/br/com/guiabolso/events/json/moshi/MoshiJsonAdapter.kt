@@ -21,7 +21,7 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = {}) : JsonAdapter {
             .build()
 
     override fun toJson(any: Any?): String {
-        return nonNullAdapterFor(Any::class.java).execute { toJson(any) }
+        return moshi.adapter(Any::class.java).nullSafe().execute { toJson(any) }
     }
 
     override fun toJsonTree(any: Any?): JsonNode {
