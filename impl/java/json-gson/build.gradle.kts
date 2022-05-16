@@ -1,9 +1,7 @@
 dependencies {
-    // Projects
-    api(project(":tracing"))
-    
-    testApi(project(":json-moshi"))
-    testApi(project(":json-gson"))
+    api(project(":core"))
+
+    api("com.google.code.gson:gson:2.9.0")
 
     // Kotest
     testImplementation("io.kotest:kotest-assertions-api:5.0.1")
