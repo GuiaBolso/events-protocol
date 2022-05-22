@@ -11,7 +11,9 @@ class TreeNodeTest {
         "string" to PrimitiveNode("bla"),
         "int" to PrimitiveNode(42),
         "float" to PrimitiveNode(42.42),
-        "boolean" to PrimitiveNode(true)
+        "boolean" to PrimitiveNode(true),
+        "tab" to PrimitiveNode("\t"),
+        "\r" to PrimitiveNode("cr")
     )
 
     @Test
@@ -19,7 +21,7 @@ class TreeNodeTest {
 
         val treeNode = TreeNode(entries)
 
-        val json = """{"nullNode":null,"string":"bla","int":42,"float":42.42,"boolean":true}"""
+        val json = """{"nullNode":null,"string":"bla","int":42,"float":42.42,"boolean":true,"tab":"\\t","\\r":"cr"}"""
 
         assertEquals(json, treeNode.toString())
         assertEquals("{}", TreeNode().toString())

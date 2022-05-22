@@ -11,5 +11,7 @@ class PrimitiveNodeTest : StringSpec({
         PrimitiveNode(true).toString() shouldBe "true"
         PrimitiveNode("string").toString() shouldBe "\"string\""
         JsonNull.toString() shouldBe "null"
+        val escapedString = PrimitiveNode("Text with special character / \" \b \t \r \n \u000C").toString()
+        escapedString shouldBe """"Text with special character / \" \b \t \r \n \f""""
     }
 })

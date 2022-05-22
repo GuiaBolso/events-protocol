@@ -11,7 +11,7 @@ class TreeNode(
     override fun toString(): String {
         return nodes.entries.joinToString(separator = ",", prefix = "{", postfix = "}") { (key, jsonNode) ->
             buildString {
-                append(key.toQuotedString())
+                append(JsonString.escape(key).toQuotedString())
                 append(':')
                 append(jsonNode)
             }
@@ -25,7 +25,7 @@ class TreeNode(
     override fun hashCode() = nodes.hashCode()
 }
 
-private fun String.toQuotedString() = """"$this""""
+private fun String.toQuotedString() = "\"${this}\""
 
 class ArrayNode(
     private val elements: MutableList<JsonNode> = ArrayList()
@@ -57,7 +57,7 @@ data class JsonLiteral internal constructor(
     constructor(boolean: Boolean) : this(boolean.toString(), isBoolean = true)
 
     override fun toString(): String {
-        return if (isString) value.toQuotedString() else value
+        return if (isString) JsonString.escape(value).toQuotedString() else value
     }
 }
 
