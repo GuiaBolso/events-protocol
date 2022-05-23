@@ -8,6 +8,8 @@ interface JsonAdapter {
 
     fun toJsonTree(any: Any?): JsonNode
 
+    fun <T> toJson(any: T?, type: Type): String
+
     fun <T> fromJson(json: String, clazz: Class<T>): T
 
     fun <T> fromJson(json: String, type: Type): T

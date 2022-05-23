@@ -21,7 +21,7 @@ class TreeNodeTest {
 
         val treeNode = TreeNode(entries)
 
-        val json = """{"nullNode":null,"string":"bla","int":42,"float":42.42,"boolean":true,"tab":"\\t","\\r":"cr"}"""
+        val json = """{"nullNode":null,"string":"bla","int":42,"float":42.42,"boolean":true,"tab":"\t","\r":"cr"}"""
 
         assertEquals(json, treeNode.toString())
         assertEquals("{}", TreeNode().toString())

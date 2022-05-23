@@ -14,14 +14,29 @@ import com.squareup.moshi.JsonAdapter as MoshiJsonAdapter
 class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = {}) : JsonAdapter {
     private val moshi =
         Moshi.Builder()
-            .addLast(JsonNodeFactory)
-            .addLast(EventProtocolJsonAdapterFactory)
-            .addLast(KotlinJsonAdapterFactory())
+            .add(JsonNodeFactory)
+            .add(EventProtocolJsonAdapterFactory)
             .apply(builder)
+            .addLast(KotlinJsonAdapterFactory())
             .build()
 
+    override fun <T> toJson(any: T?, type: Type): String {
+        return moshi.adapter<T>(type).nullSafe().toJson(any)
+    }
+
     override fun toJson(any: Any?): String {
-        return moshi.adapter(Any::class.java).nullSafe().execute { toJson(any) }
+        return if (any == null) "null"
+        else moshi.adapter<Any>(jsonTypeOf(any)).nullSafe().execute { this.toJson(any) }
+    }
+
+    private fun jsonTypeOf(any: Any): Class<out Any> {
+        val javaClass = any.javaClass
+        return when {
+            JsonNode::class.java.isAssignableFrom(javaClass) -> javaClass
+            Map::class.java.isAssignableFrom(javaClass) -> Map::class.java
+            Collection::class.java.isAssignableFrom(javaClass) -> Collection::class.java
+            else -> javaClass
+        }
     }
 
     override fun toJsonTree(any: Any?): JsonNode {
@@ -29,32 +44,32 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = {}) : JsonAdapter {
             null -> JsonNull
             is JsonNode -> any
             else -> {
-                val adapter = moshi.adapter(Any::class.java)
+                val adapter = moshi.adapter<Any>(jsonTypeOf(any))
                 val jsonValue = adapter.execute { toJsonValue(any) }
-                nonNullAdapterFor(JsonNode::class.java).execute { fromJsonValue(jsonValue)!! }
+                moshi.adapter(JsonNode::class.java).nonNull().execute { fromJsonValue(jsonValue)!! }
             }
         }
     }
 
     override fun <T> fromJson(json: String, clazz: Class<T>): T {
-        return nonNullAdapterFor(clazz).execute { fromJson(json)!! }
+        return moshi.adapter(clazz).nonNull().execute { fromJson(json)!! }
     }
 
     override fun <T> fromJson(json: String, type: Type): T {
-        val adapter = nonNullAdapterFor<T>(type)
+        val adapter = moshi.adapter<T>(type).nonNull()
         return adapter.execute { fromJson(json)!! }
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {
         val jsonValue = jsonNodeAdapter().execute { toJsonValue(jsonNode) }
 
-        return nonNullAdapterFor<T>(type).execute { fromJsonValue(jsonValue)!! }
+        return moshi.adapter<T>(type).nonNull().execute { fromJsonValue(jsonValue)!! }
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, clazz: Class<T>): T {
         val jsonValue = jsonNodeAdapter().execute { toJsonValue(jsonNode) }
 
-        return nonNullAdapterFor(clazz).execute { fromJsonValue(jsonValue)!! }
+        return moshi.adapter(clazz).nonNull().execute { fromJsonValue(jsonValue)!! }
     }
 
     private fun <T, R> MoshiJsonAdapter<T>.execute(block: MoshiJsonAdapter<T>.() -> R): R {
@@ -66,8 +81,4 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = {}) : JsonAdapter {
     }
 
     private fun jsonNodeAdapter() = moshi.adapter(JsonNode::class.java)
-
-    private fun <T> nonNullAdapterFor(type: Type) = moshi.adapter<T>(type).nonNull()
-
-    private fun <T> nonNullAdapterFor(clazz: Class<T>) = moshi.adapter(clazz).nonNull()
 }
