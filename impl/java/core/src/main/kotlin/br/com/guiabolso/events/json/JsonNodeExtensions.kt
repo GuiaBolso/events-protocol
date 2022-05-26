@@ -16,13 +16,13 @@ private inline fun <reified T> JsonNode.castOrError(): T {
     return this as? T ?: throw IllegalArgumentException("JsonNode is not a ${T::class.java}")
 }
 
-val JsonNode.string get() = castOrError<PrimitiveNode>().value
-val JsonNode.stringOrNull get() = castOrError<PrimitiveNode>().run { if (this is JsonNull) null else value }
-val JsonNode.boolean get() = castOrError<PrimitiveNode>().value.toBooleanStrict()
-val JsonNode.booleanOrNull get() = castOrError<PrimitiveNode>().value.toBooleanStrictOrNull()
-val JsonNode.int get() = castOrError<PrimitiveNode>().value.toInt()
-val JsonNode.intOrNull get() = castOrError<PrimitiveNode>().value.toIntOrNull()
-val JsonNode.long get() = castOrError<PrimitiveNode>().value.toLong()
-val JsonNode.longOrNull get() = castOrError<PrimitiveNode>().value.toLongOrNull()
-val JsonNode.double get() = castOrError<PrimitiveNode>().value.toDouble()
-val JsonNode.doubleOrNull get() = castOrError<PrimitiveNode>().value.toDoubleOrNull()
+val JsonNode.string get() = primitiveNode.value
+val JsonNode.stringOrNull get() = primitiveNodeOrNull?.run { if (this is JsonNull) null else value }
+val JsonNode.boolean get() = primitiveNode.value.toBooleanStrict()
+val JsonNode.booleanOrNull get() = primitiveNodeOrNull?.value?.toBooleanStrictOrNull()
+val JsonNode.int get() = primitiveNode.value.toInt()
+val JsonNode.intOrNull get() = primitiveNodeOrNull?.value?.toIntOrNull()
+val JsonNode.long get() = primitiveNode.value.toLong()
+val JsonNode.longOrNull get() = primitiveNodeOrNull?.value?.toLongOrNull()
+val JsonNode.double get() = primitiveNode.value.toDouble()
+val JsonNode.doubleOrNull get() = primitiveNodeOrNull?.value?.toDoubleOrNull()

@@ -5,7 +5,6 @@ import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.fromJsonOrNull
 import br.com.guiabolso.events.json.longOrNull
-import br.com.guiabolso.events.json.primitiveNodeOrNull
 import br.com.guiabolso.events.json.stringOrNull
 import br.com.guiabolso.events.json.treeNodeOrNull
 import br.com.guiabolso.events.json.withCheckedJsonNull
@@ -36,33 +35,29 @@ sealed class Event {
 
     val user: User?
         get() = this.identity.withCheckedJsonNull("user") { node ->
-            node.getValue("user").treeNodeOrNull?.run {
+            node["user"]?.treeNodeOrNull?.run {
                 mapper.fromJsonOrNull<User>(this)
             }
         }
 
     val userId: Long?
         get() = with(this.identity) {
-            longOrNull("userId") ?: user?.id
+            this["userId"]?.longOrNull ?: user?.id
         }
 
     val userIdAsString: String?
         get() = with(this.identity) {
-            stringOrNull("userId") ?: this["user"]?.treeNodeOrNull?.stringOrNull("id")
+            this["userId"]?.stringOrNull ?: this["user"]?.treeNodeOrNull?.get("id")?.stringOrNull
         }
 
     val origin: String?
         get() = this.metadata.withCheckedJsonNull("origin") { node ->
-            node.stringOrNull("origin")
+            node["origin"]?.stringOrNull
         }
 
     inline fun <reified T> JsonNode.convertTo(): T = mapper.fromJson(this, typeOf<T>().javaType)
 
     private fun <T> JsonNode.convertTo(clazz: Class<T>): T = mapper.fromJson(this, clazz)
-
-    private fun TreeNode.longOrNull(key: String?) = this[key]?.primitiveNodeOrNull?.longOrNull
-
-    private fun TreeNode.stringOrNull(key: String?) = this[key]?.primitiveNodeOrNull?.stringOrNull
 }
 
 data class ResponseEvent(
