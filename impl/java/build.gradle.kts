@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.6.0"
+
     `maven-publish`
     signing
     id("org.jetbrains.dokka") version "1.6.0"
@@ -15,7 +16,7 @@ allprojects {
     apply(plugin = "signing")
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
-    version = System.getenv("RELEASE_VERSION") ?: "local"
+    version = System.getenv("RELEASE_VERSION") ?: "7.0.0-RC0"
     group = "br.com.guiabolso"
 
     repositories {
@@ -127,15 +128,15 @@ allprojects {
 
     }
 
-    signing {
-        val signingKey: String? by project
-        val signingPassword: String? by project
-
-        useGpgCmd()
-        if (signingKey != null && signingPassword != null) {
-            useInMemoryPgpKeys(signingKey, signingPassword)
-        }
-
-        sign((extensions.getByName("publishing") as PublishingExtension).publications)
-    }
+//    signing {
+//        val signingKey: String? by project
+//        val signingPassword: String? by project
+//
+//        useGpgCmd()
+//        if (signingKey != null && signingPassword != null) {
+//            useInMemoryPgpKeys(signingKey, signingPassword)
+//        }
+//
+//        sign((extensions.getByName("publishing") as PublishingExtension).publications)
+//    }
 }

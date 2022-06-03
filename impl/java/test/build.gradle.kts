@@ -3,6 +3,7 @@ dependencies {
     api(project(":core"))
     api(project(":server"))
     testImplementation(project(":json-moshi"))
+    testImplementation(project(":json-kserialization"))
 
     // Kotest
     api("io.kotest:kotest-assertions-api:5.0.1")
