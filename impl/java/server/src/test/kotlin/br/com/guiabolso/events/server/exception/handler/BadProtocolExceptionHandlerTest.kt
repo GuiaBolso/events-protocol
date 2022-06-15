@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.server.exception.handler
 
 import br.com.guiabolso.events.exception.EventValidationException
+import br.com.guiabolso.events.json.toPrimitiveNode
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
@@ -35,7 +36,7 @@ class BadProtocolExceptionHandlerTest {
 
         val message = responseEvent.payloadAs<EventMessage>()
         assertEquals("INVALID_COMMUNICATION_PROTOCOL", message.code)
-        assertEquals(mapOf("propertyName" to "someProperty"), message.parameters)
+        assertEquals(mapOf("propertyName" to "someProperty".toPrimitiveNode()), message.parameters)
 
         verify { tracer.notifyError(exception, false) }
     }

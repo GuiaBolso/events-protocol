@@ -4,6 +4,7 @@ import br.com.guiabolso.events.exception.MissingEventInformationException
 import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.toPrimitiveNode
 import br.com.guiabolso.events.json.treeNodeOrNull
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
@@ -85,7 +86,13 @@ class EventBuilder {
             builder.id = builder.id ?: event.id
             builder.flowId = builder.flowId ?: event.flowId
             builder.payload =
-                EventMessage("NO_EVENT_HANDLER_FOUND", mapOf("event" to event.name, "version" to event.version))
+                EventMessage(
+                    code = "NO_EVENT_HANDLER_FOUND",
+                    parameters = mapOf(
+                        "event" to event.name.toPrimitiveNode(),
+                        "version" to event.version.toPrimitiveNode()
+                    )
+                )
             return builder.buildResponseEvent()
         }
 

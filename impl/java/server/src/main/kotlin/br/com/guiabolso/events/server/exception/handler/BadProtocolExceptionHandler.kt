@@ -2,6 +2,7 @@ package br.com.guiabolso.events.server.exception.handler
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
 import br.com.guiabolso.events.exception.EventValidationException
+import br.com.guiabolso.events.json.toPrimitiveNode
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -18,7 +19,7 @@ object BadProtocolExceptionHandler : EventExceptionHandler<EventValidationExcept
         return badProtocol(
             EventMessage(
                 "INVALID_COMMUNICATION_PROTOCOL",
-                mapOf("propertyName" to exception.propertyName)
+                mapOf("propertyName" to exception.propertyName.toPrimitiveNode())
             )
         )
     }

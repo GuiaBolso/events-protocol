@@ -2,6 +2,7 @@ package br.com.guiabolso.events.tracer.propagation
 
 import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.toPrimitiveNode
 import br.com.guiabolso.events.model.Event
 import io.opentracing.propagation.TextMap
 import kotlin.collections.MutableMap.MutableEntry
@@ -21,7 +22,7 @@ class EventTextMapAdapter(private val event: Event) : TextMap {
     }
 
     override fun put(key: String, value: String?) {
-        traceElement()[key] = mapper.toJsonTree(value)
+        traceElement()[key] = value.toPrimitiveNode()
     }
 
     private fun traceElement(): TreeNode {

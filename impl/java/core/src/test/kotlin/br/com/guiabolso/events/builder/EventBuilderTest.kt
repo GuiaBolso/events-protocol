@@ -14,8 +14,9 @@ import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.int
-import br.com.guiabolso.events.json.treeNode
 import br.com.guiabolso.events.json.primitiveNode
+import br.com.guiabolso.events.json.toPrimitiveNode
+import br.com.guiabolso.events.json.treeNode
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.EventMessage
@@ -365,8 +366,11 @@ class EventBuilderTest {
         assertEquals(
             mapper.toJsonTree(
                 EventMessage(
-                    "NO_EVENT_HANDLER_FOUND",
-                    mapOf("event" to event.name, "version" to event.version)
+                    code = "NO_EVENT_HANDLER_FOUND",
+                    parameters = mapOf(
+                        "event" to event.name.toPrimitiveNode(),
+                        "version" to event.version.toPrimitiveNode()
+                    )
                 )
             ),
             response.payload

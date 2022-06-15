@@ -147,55 +147,49 @@ class EventsTest {
     @Test
     fun testGetPayload() {
         val request = buildRequestEvent().copy(
-            payload = TreeNode("a" to PrimitiveNode("someString"), "b" to PrimitiveNode(60))
+            payload = TreeNode("type" to PrimitiveNode("someString"), "id" to PrimitiveNode(60))
         )
 
-        val vo = request.payloadAs(VO::class.java)
-        val vo2: VO = request.payloadAs()
+        val user = request.payloadAs(User::class.java)
+        val user2: User = request.payloadAs()
 
-        assertEquals("someString", vo.a)
-        assertEquals(60L, vo.b)
-
-        assertEquals("someString", vo2.a)
-        assertEquals(60L, vo2.b)
+        assertEquals(user, user2)
+        assertEquals("someString", user.type)
+        assertEquals(60L, user.id)
     }
 
     @Test
     fun testGetIdentity() {
         val request = buildRequestEvent().copy(
             identity = TreeNode(
-                "a" to PrimitiveNode("someString"),
-                "b" to PrimitiveNode(60)
+                "type" to PrimitiveNode("someString"),
+                "id" to PrimitiveNode(60)
             )
         )
 
-        val vo = request.identityAs(VO::class.java)
-        val vo2: VO = request.identityAs()
+        val user = request.identityAs(User::class.java)
+        val user2: User = request.identityAs()
 
-        assertEquals("someString", vo.a)
-        assertEquals(60L, vo.b)
-
-        assertEquals("someString", vo2.a)
-        assertEquals(60L, vo2.b)
+        assertEquals(user, user2)
+        assertEquals("someString", user.type)
+        assertEquals(60L, user.id)
     }
 
     @Test
     fun testGetAuth() {
         val request = buildRequestEvent().copy(
             auth = TreeNode(
-                "a" to PrimitiveNode("someString"),
-                "b" to PrimitiveNode(60)
+                "type" to PrimitiveNode("someString"),
+                "id" to PrimitiveNode(60)
             )
         )
 
-        val vo = request.authAs(VO::class.java)
-        val vo2: VO = request.authAs()
+        val user = request.authAs(User::class.java)
+        val user2: User = request.authAs()
 
-        assertEquals("someString", vo.a)
-        assertEquals(60L, vo.b)
-
-        assertEquals("someString", vo2.a)
-        assertEquals(60L, vo2.b)
+        assertEquals(user, user2)
+        assertEquals("someString", user.type)
+        assertEquals(60L, user.id)
     }
 
     @Test
@@ -204,27 +198,25 @@ class EventsTest {
             payload = ArrayNode().apply {
                 this.add(
                     TreeNode(
-                        "a" to PrimitiveNode("someString"),
-                        "b" to PrimitiveNode(60)
+                        "type" to PrimitiveNode("someString"),
+                        "id" to PrimitiveNode(60)
                     )
                 )
                 this.add(
                     TreeNode(
-                        "a" to PrimitiveNode("someOtherString"),
-                        "b" to PrimitiveNode(120)
+                        "type" to PrimitiveNode("someOtherString"),
+                        "id" to PrimitiveNode(120)
                     )
                 )
             }
         )
 
-        val voList: List<VO> = request.payloadAs()
+        val userList: List<User> = request.payloadAs()
 
-        assertEquals("someString", voList[0].a)
-        assertEquals(60L, voList[0].b)
+        assertEquals("someString", userList[0].type)
+        assertEquals(60L, userList[0].id)
 
-        assertEquals("someOtherString", voList[1].a)
-        assertEquals(120L, voList[1].b)
+        assertEquals("someOtherString", userList[1].type)
+        assertEquals(120L, userList[1].id)
     }
-
-    private data class VO(val a: String? = null, val b: Long? = null)
 }

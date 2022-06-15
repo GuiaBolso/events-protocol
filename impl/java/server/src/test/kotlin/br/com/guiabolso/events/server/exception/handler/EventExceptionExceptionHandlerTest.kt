@@ -1,6 +1,8 @@
 package br.com.guiabolso.events.server.exception.handler
 
 import br.com.guiabolso.events.exception.EventException
+import br.com.guiabolso.events.json.PrimitiveNode
+import br.com.guiabolso.events.json.toPrimitiveNode
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
@@ -30,7 +32,7 @@ class EventExceptionExceptionHandlerTest {
         }
         val tracer: Tracer = mockk()
 
-        every { tracer.notifyRootError("CODE", mapOf("some" to "parameter"), false) } just Runs
+        every { tracer.notifyRootError("CODE", mapOf("some" to "\"parameter\""), false) } just Runs
         every { tracer.addRootProperty(DDTags.ERROR_TYPE, "CODE") } just Runs
         every { tracer.addRootProperty(DDTags.ERROR_STACK, ExceptionUtils.getStackTrace(exception)) } just Runs
 
@@ -39,15 +41,15 @@ class EventExceptionExceptionHandlerTest {
 
         val message = responseEvent.payloadAs<EventMessage>()
         assertEquals("CODE", message.code)
-        assertEquals(mapOf("some" to "parameter"), message.parameters)
+        assertEquals(mapOf("some" to "parameter".toPrimitiveNode()), message.parameters)
 
-        verify { tracer.notifyRootError("CODE", mapOf("some" to "parameter"), false) }
+        verify { tracer.notifyRootError("CODE", mapOf("some" to "\"parameter\""), false) }
         verify { tracer.addRootProperty(DDTags.ERROR_TYPE, "CODE") }
         verify { tracer.addRootProperty(DDTags.ERROR_STACK, ExceptionUtils.getStackTrace(exception)) }
     }
 
     private class TestException : EventException(
         code = "CODE",
-        parameters = mapOf("some" to "parameter")
+        parameters = mapOf("some" to PrimitiveNode("parameter"))
     )
 }

@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.server.exception.handler
 
+import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
@@ -35,7 +36,10 @@ class EventNotFoundExceptionHandlerTest {
 
         val message = responseEvent.payloadAs<EventMessage>()
         assertEquals("NO_EVENT_HANDLER_FOUND", message.code)
-        assertEquals(mapOf("event" to "eventName", "version" to 1.0), message.parameters)
+        assertEquals(
+            mapOf("event" to PrimitiveNode("eventName"), "version" to PrimitiveNode(1)),
+            message.parameters
+        )
 
         verify { tracer.notifyError(exception, false) }
     }
