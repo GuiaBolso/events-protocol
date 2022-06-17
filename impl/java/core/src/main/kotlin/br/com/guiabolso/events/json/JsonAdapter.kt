@@ -4,9 +4,9 @@ import java.lang.reflect.Type
 
 interface JsonAdapter {
 
-    fun toJson(any: Any?): String
+    fun <T> toJson(any: T?): String
 
-    fun toJsonTree(any: Any?): JsonNode
+    fun <T> toJsonTree(any: T?): JsonNode
 
     fun <T> toJson(any: T?, type: Type): String
 

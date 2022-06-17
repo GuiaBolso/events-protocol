@@ -6,7 +6,7 @@ import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.http.FuelHttpClient
 import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.json.fromJsonOrNull
+import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
@@ -72,7 +72,7 @@ constructor(
 
     private fun parseEvent(rawResponse: String): ResponseEvent {
         try {
-            val rawEvent = mapper.fromJsonOrNull<RawEvent>(rawResponse)
+            val rawEvent = mapper.fromJson<RawEvent>(rawResponse)
             return eventValidator.validateAsResponseEvent(rawEvent)
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)
