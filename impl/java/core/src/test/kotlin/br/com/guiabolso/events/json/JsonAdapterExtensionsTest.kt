@@ -16,7 +16,7 @@ class JsonAdapterExtensionsTest : StringSpec({
     }
 
     "fromJsonOrNull should return null when cant parse from string" {
-        mapper.fromJsonOrNull<Data>("{}").shouldBeNull()
+        mapper.fromJsonOrNull<Data>("null").shouldBeNull()
     }
 
     "fromJsonOrNull should parse successfully from JsonNode" {
@@ -27,7 +27,7 @@ class JsonAdapterExtensionsTest : StringSpec({
     }
 
     "fromJsonOrNull should return null when cant parse from JsonNode" {
-        mapper.fromJsonOrNull<Data>(TreeNode()).shouldBeNull()
+        mapper.fromJsonOrNull<Data>(JsonNull).shouldBeNull()
     }
 
     "fromJson should parse successfully from string" {
@@ -35,7 +35,7 @@ class JsonAdapterExtensionsTest : StringSpec({
     }
 
     "fromJson should throws when can't parse from string" {
-        shouldThrow<JsonDataException> { mapper.fromJson<Data>("{}") }
+        shouldThrow<JsonDataException> { mapper.fromJson<Data>("null") }
     }
 
     "fromJson should parse successfully from JsonNode" {
@@ -46,7 +46,7 @@ class JsonAdapterExtensionsTest : StringSpec({
     }
 
     "fromJson should throws when can't parse from JsonNode" {
-        shouldThrow<JsonDataException> { mapper.fromJson<Data>(TreeNode()) }
+        shouldThrow<JsonDataException> { mapper.fromJson<Data>(JsonNull) }
     }
 })
 
