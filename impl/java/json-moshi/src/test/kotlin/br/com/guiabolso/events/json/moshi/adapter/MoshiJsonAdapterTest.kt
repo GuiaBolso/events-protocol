@@ -43,9 +43,7 @@ class MoshiJsonAdapterTest : StringSpec({
         )
     )
 
-    val adapter = MoshiJsonAdapter {
-        add(SerializeNullAdapterFactory)
-    }
+    val adapter = MoshiJsonAdapter()
 
     "should serialize object successfully" {
         adapter.toJson(sample) shouldBe jsonString
