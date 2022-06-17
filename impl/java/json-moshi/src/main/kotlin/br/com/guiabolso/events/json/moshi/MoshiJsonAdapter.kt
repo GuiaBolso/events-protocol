@@ -6,12 +6,13 @@ import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.moshi.factory.EventProtocolJsonAdapterFactory
 import br.com.guiabolso.events.json.moshi.factory.JsonNodeFactory
+import br.com.guiabolso.events.json.moshi.factory.SerializeNullAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.lang.reflect.Type
 import com.squareup.moshi.JsonAdapter as MoshiJsonAdapter
 
-class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = {}) : JsonAdapter {
+class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = { add(SerializeNullAdapterFactory) }) : JsonAdapter {
     private val moshi =
         Moshi.Builder()
             .add(JsonNodeFactory)
