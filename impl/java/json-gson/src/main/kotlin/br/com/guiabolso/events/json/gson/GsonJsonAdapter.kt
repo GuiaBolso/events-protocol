@@ -10,7 +10,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.lang.reflect.Type
 
-class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = {}) : JsonAdapter {
+class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = { serializeNulls() }) : JsonAdapter {
     private val gson =
         GsonBuilder()
             .apply(configure)
@@ -18,7 +18,7 @@ class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = {}) : JsonAdapter {
             .registerTypeAdapterFactory(EventTypeAdapterFactory)
             .create()
 
-    override fun toJson(any: Any?): String {
+    override fun <T> toJson(any: T?): String {
         return gson.toJson(any)!!
     }
 

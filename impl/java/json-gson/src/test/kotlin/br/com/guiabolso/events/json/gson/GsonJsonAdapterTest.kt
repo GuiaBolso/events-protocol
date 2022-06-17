@@ -44,7 +44,7 @@ class GsonJsonAdapterTest : StringSpec({
         )
     )
 
-    val adapter = GsonJsonAdapter { serializeNulls() }
+    val adapter = GsonJsonAdapter()
 
     "should serialize object successfully" {
         adapter.toJson(sample) shouldBe jsonString

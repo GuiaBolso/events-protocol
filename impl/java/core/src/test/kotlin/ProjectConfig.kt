@@ -16,7 +16,7 @@ object MapperHolderInitializer : BeforeProjectListener {
     override suspend fun beforeProject() {
         MapperHolder.mapper = listOf(
             MoshiJsonAdapter(),
-            GsonJsonAdapter { serializeNulls() }
+            GsonJsonAdapter()
         ).random()
     }
 }
