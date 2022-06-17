@@ -25,9 +25,9 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = { add(SerializeNullAd
         return moshi.adapter<T>(type).nullSafe().toJson(any)
     }
 
-    override fun toJson(any: Any?): String {
+    override fun <T> toJson(any: T?): String {
         return if (any == null) "null"
-        else moshi.adapter<Any>(jsonTypeOf(any)).nullSafe().execute { this.toJson(any) }
+        else moshi.adapter<T>(jsonTypeOf(any)).nullSafe().execute { this.toJson(any) }
     }
 
     private fun jsonTypeOf(any: Any): Class<out Any> {
@@ -40,7 +40,7 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = { add(SerializeNullAd
         }
     }
 
-    override fun toJsonTree(any: Any?): JsonNode {
+    override fun <T> toJsonTree(any: T?): JsonNode {
         return when (any) {
             null -> JsonNull
             is JsonNode -> any
