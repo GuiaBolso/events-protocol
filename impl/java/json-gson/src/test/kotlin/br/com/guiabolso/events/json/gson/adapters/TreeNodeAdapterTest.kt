@@ -6,6 +6,8 @@ import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.gson.jsonWriter
 import br.com.guiabolso.events.json.gson.toJsonReader
+import com.squareup.moshi.JsonDataException
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.io.StringWriter
@@ -37,5 +39,12 @@ class TreeNodeAdapterTest : StringSpec({
         TreeNodeAdapter.write(jsonWriter(output), treeNode)
 
         output.toString() shouldBe treeNode.toString()
+    }
+
+    "should throw for duplicate key on json" {
+        val ex = shouldThrow<JsonDataException> {
+            TreeNodeAdapter.read(""" {"any":"first", "any": "second"} """.toJsonReader())
+        }
+        ex.message shouldBe """JsonNode key 'any' has multiple values at path $.any, values "first" and "second""""
     }
 })

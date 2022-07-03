@@ -1,9 +1,11 @@
 package br.com.guiabolso.events.json.gson.adapters
 
+import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.TreeNode
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import com.squareup.moshi.JsonDataException
 
 object TreeNodeAdapter : TypeAdapter<TreeNode>() {
 
@@ -23,14 +25,24 @@ object TreeNodeAdapter : TypeAdapter<TreeNode>() {
     }
 
     private fun JsonReader.deserialize(): TreeNode {
-        val treeNode = TreeNode()
-        beginObject()
-        while (hasNext()) {
-            val key = nextName()
-            treeNode[key] = readJsonNode()
+        return TreeNode().apply {
+            beginObject()
+            while (hasNext()) {
+                val key = nextName()
+                val jsonNode = readJsonNode()
+                ensureNotExists(key, jsonNode, path)
+                this[key] = jsonNode
+            }
+            endObject()
         }
-        endObject()
+    }
 
-        return treeNode
+    private fun TreeNode.ensureNotExists(name: String, current: JsonNode, path: String) {
+        if (contains(name)) {
+            val existent = this[name]
+            throw JsonDataException(
+                "JsonNode key '$name' has multiple values at path $path, values $existent and $current"
+            )
+        }
     }
 }
