@@ -8,6 +8,8 @@ import br.com.guiabolso.events.json.gson.adapters.EventTypeAdapterFactory
 import br.com.guiabolso.events.json.gson.adapters.JsonNodeAdapter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonParseException
+import com.google.gson.stream.MalformedJsonException
 import java.lang.reflect.Type
 
 class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = { serializeNulls() }) : JsonAdapter {
@@ -64,8 +66,12 @@ class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = { serializeNulls() }) 
     private fun <T> Gson.execute(block: Gson.() -> T): T {
         val result = try {
             this.block()
-        } catch (e: RuntimeException) {
-            throw JsonDataException(message = e.message, cause = e)
+        } catch (e: Exception) {
+            throw when (e) {
+                is JsonParseException,
+                is MalformedJsonException -> JsonDataException(e.message, e)
+                else -> e
+            }
         }
 
         return result ?: throw JsonDataException(message = "Unexpected null as a result from deserialization")
