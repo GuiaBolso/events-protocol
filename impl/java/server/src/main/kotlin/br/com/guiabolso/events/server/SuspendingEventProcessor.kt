@@ -38,7 +38,7 @@ class SuspendingEventProcessor(private val processor: RawEventProcessor) {
 
     private fun parseEvent(payload: String?): RawEvent {
         return try {
-            mapper.fromJson(payload ?: throw EventParsingException(null))
+            mapper.fromJson(payload!!)
         } catch (e: Throwable) {
             throw EventParsingException(e)
         }
