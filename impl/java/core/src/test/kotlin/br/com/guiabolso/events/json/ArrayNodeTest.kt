@@ -11,13 +11,15 @@ class ArrayNodeTest {
         PrimitiveNode("42"),
         PrimitiveNode(42),
         PrimitiveNode(42.42),
-        PrimitiveNode(true)
+        PrimitiveNode(true),
+        TreeNode("string" to PrimitiveNode("any string")),
+        ArrayNode(JsonNull, PrimitiveNode("42"))
     )
 
     @Test
     fun toStringShouldGenerateValidJson() {
         val arrayNode = ArrayNode(entries)
-        val json = """[null,"42",42,42.42,true]"""
+        val json = """[null,"42",42,42.42,true,{"string":"any string"},[null,"42"]]"""
 
         assertEquals(json, arrayNode.toString())
         assertEquals("[]", ArrayNode().toString())
