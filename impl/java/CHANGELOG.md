@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] 
 
+## Warning
+There are several breaking changes in this version caused by the replacement of the core data structure used to support the json types, and the abstraction introduced to support others json parse implementations.
+In this version, you MUST pick up an implementation of [JsonAdapter](/core/src/main/kotlin/br/com/guiabolso/events/json/JsonAdapter.kt) api. Currently there are available
+implementation for [moshi](https://github.com/square/moshi), [br.com.guiabolso:events-json-moshi](/json-moshi) and [br.com.guiabolso:events-json-gson](/json-gson).
+
+### Added
+- Abstraction for json parsers, now this library don`t have a hard dependency with Gson anymore.
+- Tree data structure to represent json
+- New module events-json-moshi to support [moshi](https://github.com/square/moshi) as the json parser.
+
+### Removed
+- Dependency with Gson data structure, JsonElement, JsonObject etc
+
 ## 4.0.0
 
 ### Warning
