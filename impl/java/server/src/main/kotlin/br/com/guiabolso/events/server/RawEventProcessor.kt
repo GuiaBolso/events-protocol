@@ -3,6 +3,7 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventCoroutineContextForwarder.withCoroutineContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -15,7 +16,6 @@ import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
-import com.google.gson.JsonObject
 import java.util.UUID
 
 open class RawEventProcessor
@@ -67,9 +67,9 @@ constructor(
         version = version ?: 1,
         id = id ?: UUID.randomUUID().toString(),
         flowId = flowId ?: UUID.randomUUID().toString(),
-        payload = payload ?: JsonObject(),
-        identity = identity ?: JsonObject(),
-        auth = auth ?: JsonObject(),
-        metadata = metadata ?: JsonObject()
+        payload = payload ?: TreeNode(),
+        identity = identity ?: TreeNode(),
+        auth = auth ?: TreeNode(),
+        metadata = metadata ?: TreeNode()
     )
 }

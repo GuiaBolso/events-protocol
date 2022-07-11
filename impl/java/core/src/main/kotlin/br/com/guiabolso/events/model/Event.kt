@@ -1,25 +1,25 @@
 package br.com.guiabolso.events.model
 
+import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.validation.jsonObject
-import br.com.guiabolso.events.validation.long
-import br.com.guiabolso.events.validation.string
-import br.com.guiabolso.events.validation.withCheckedJsonNull
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonSyntaxException
-import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
+import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.fromJsonOrNull
+import br.com.guiabolso.events.json.longOrNull
+import br.com.guiabolso.events.json.stringOrNull
+import br.com.guiabolso.events.json.treeNodeOrNull
+import br.com.guiabolso.events.json.withCheckedJsonNull
+import kotlin.reflect.jvm.javaType
+import kotlin.reflect.typeOf
 
 sealed class Event {
     abstract val name: String
     abstract val version: Int
     abstract val id: String
     abstract val flowId: String
-    abstract val payload: JsonElement
-    abstract val identity: JsonObject
-    abstract val auth: JsonObject
-    abstract val metadata: JsonObject
+    abstract val payload: JsonNode
+    abstract val identity: TreeNode
+    abstract val auth: TreeNode
+    abstract val metadata: TreeNode
 
     fun <T> payloadAs(clazz: Class<T>): T = this.payload.convertTo(clazz)
 
@@ -34,37 +34,30 @@ sealed class Event {
     inline fun <reified T> authAs(): T = this.auth.convertTo()
 
     val user: User?
-        get() = with(this.identity) {
-            jsonObject("user")?.convertToOrNull(User::class.java)
+        get() = this.identity.withCheckedJsonNull("user") { node ->
+            node["user"]?.treeNodeOrNull?.run {
+                mapper.fromJsonOrNull<User>(this)
+            }
         }
 
     val userId: Long?
         get() = with(this.identity) {
-            long("userId") ?: jsonObject("user")?.long("id")
+            this["userId"]?.longOrNull ?: user?.id
         }
 
     val userIdAsString: String?
         get() = with(this.identity) {
-            string("userId") ?: jsonObject("user")?.string("id")
+            this["userId"]?.stringOrNull ?: this["user"]?.treeNodeOrNull?.get("id")?.stringOrNull
         }
 
     val origin: String?
-        get() = this.metadata.withCheckedJsonNull("origin") {
-            it.getAsJsonPrimitive("origin")?.asString
+        get() = this.metadata.withCheckedJsonNull("origin") { node ->
+            node["origin"]?.stringOrNull
         }
 
-    inline fun <reified T> JsonElement.convertTo(): T = mapper.fromJson(this, object : TypeToken<T>() {}.type)
+    inline fun <reified T> JsonNode.convertTo(): T = mapper.fromJson(this, typeOf<T>().javaType)
 
-    private fun <T> JsonElement.convertTo(clazz: Class<T>): T = mapper.fromJson(this, clazz)
-
-    @Suppress("SwallowedException")
-    private fun <T> JsonElement.convertToOrNull(clazz: Class<T>): T? {
-        return try {
-            this.convertTo(clazz)
-        } catch (e: JsonSyntaxException) {
-            null
-        }
-    }
+    private fun <T> JsonNode.convertTo(clazz: Class<T>): T = mapper.fromJson(this, clazz)
 }
 
 data class ResponseEvent(
@@ -72,10 +65,10 @@ data class ResponseEvent(
     override val version: Int,
     override val id: String,
     override val flowId: String,
-    override val payload: JsonElement,
-    override val identity: JsonObject,
-    override val auth: JsonObject,
-    override val metadata: JsonObject
+    override val payload: JsonNode,
+    override val identity: TreeNode,
+    override val auth: TreeNode,
+    override val metadata: TreeNode
 ) : Event() {
 
     fun isSuccess() = this.name.endsWith(":response")
@@ -91,29 +84,22 @@ data class ResponseEvent(
 }
 
 data class RequestEvent(
-    @SerializedName("name")
+
     override val name: String,
 
-    @SerializedName("version")
     override val version: Int,
 
-    @SerializedName("id")
     override val id: String,
 
-    @SerializedName("flowId")
     override val flowId: String,
 
-    @SerializedName("payload")
-    override val payload: JsonElement,
+    override val payload: JsonNode,
 
-    @SerializedName("identity")
-    override val identity: JsonObject,
+    override val identity: TreeNode,
 
-    @SerializedName("auth")
-    override val auth: JsonObject,
+    override val auth: TreeNode,
 
-    @SerializedName("metadata")
-    override val metadata: JsonObject
+    override val metadata: TreeNode
 ) : Event()
 
 data class User(val id: Long?, val type: String?)

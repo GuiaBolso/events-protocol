@@ -1,8 +1,8 @@
 package br.com.guiabolso.events.test
 
 import br.com.guiabolso.events.builder.EventBuilder
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.treeNode
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
@@ -157,4 +157,4 @@ private val complexMap = mapOf(
     "c" to mapOf("a" to "b")
 )
 
-private fun Map<String, Any?>.toJsonObject(): JsonObject = Gson().toJsonTree(this).asJsonObject
+private fun Map<String, Any?>.toJsonObject() = mapper.toJsonTree(this).treeNode

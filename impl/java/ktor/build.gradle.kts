@@ -2,7 +2,8 @@ dependencies {
     // Projects
     api(project(":server"))
     testImplementation(project(":test"))
-    
+    testImplementation(project(":json-moshi"))
+
     // Ktor
     implementation("io.ktor:ktor-server-core:1.6.7")
     testImplementation("io.ktor:ktor-server-tests:1.6.7")

@@ -2,7 +2,9 @@ package br.com.guiabolso.events
 
 import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
 import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
+import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import br.com.guiabolso.events.model.EventErrorType.BadRequest
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.ResponseEvent
@@ -27,6 +29,10 @@ import java.util.UUID.randomUUID
 
 class EventsTest : ShouldSpec({
 
+    beforeSpec {
+        MapperHolder.mapper = MoshiJsonAdapter()
+    }
+
     should("Have the same response for /events and /events/") {
         withTestApplication({ testModule() }) {
             val response = handleRequest(Post, "/events/") { setBody(testEvent) }.response
@@ -40,7 +46,7 @@ class EventsTest : ShouldSpec({
         withTestApplication({ testModule() }) {
             val response = handleRequest(Post, "/events/") { setBody(testEvent) }.response
 
-            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:event:response"
                 it shouldHavePayload mapOf("answer" to 42)
@@ -52,7 +58,7 @@ class EventsTest : ShouldSpec({
         withTestApplication({ testModule() }) {
             val response = handleRequest(Post, "/events/") { setBody(testEncodingEvent) }.response
 
-            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:event:encoding:response"
                 it shouldHavePayload mapOf("answer" to mapOf("text" to "éàçãõ£¥ÄĀ"))
@@ -67,7 +73,7 @@ class EventsTest : ShouldSpec({
                 addHeader("Content-Type", "application/json; charset=ISO_8859_1")
             }.response
 
-            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:event:encoding:response"
                 it shouldNotHavePayload mapOf("answer" to mapOf("text" to "éàçãõ£¥ÄĀ"))
@@ -78,7 +84,7 @@ class EventsTest : ShouldSpec({
     should("Respond to an unregistered event with failure") {
         withTestApplication({ testModule() }) {
             val response = handleRequest(Post, "/events/") { setBody(eventNotFound) }.response
-            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
                 it should beError()
                 it shouldHaveName "eventNotFound"
             }
@@ -88,7 +94,7 @@ class EventsTest : ShouldSpec({
     should("Respond when an error occurs in the event") {
         withTestApplication({ testModule() }) {
             val response = handleRequest(Post, "/events/") { setBody(testEventErr) }.response
-            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
                 it should beError()
                 it shouldHaveName "test:err:event:badRequest"
                 it shouldHaveErrorType BadRequest
@@ -100,7 +106,7 @@ class EventsTest : ShouldSpec({
     should("Capture registered exceptions") {
         withTestApplication({ testModule() }) {
             val response = handleRequest(Post, "/events/") { setBody(testEventHandledErr) }.response
-            assertSoftly(mapper.fromJson(response.content, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:err:event:with:exception:response"
                 it shouldHavePayload mapOf("OK" to "all is fine!")

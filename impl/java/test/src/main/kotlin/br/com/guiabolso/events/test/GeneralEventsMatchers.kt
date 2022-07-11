@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.test
 
+import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.Event
-import com.google.gson.GsonBuilder
 import io.kotest.assertions.json.shouldContainJsonKeyValue
 import io.kotest.assertions.json.shouldMatchJson
 import io.kotest.assertions.json.shouldNotContainJsonKeyValue
@@ -110,4 +110,4 @@ fun haveOrigin(origin: String) = object : Matcher<Event> {
     )
 }
 
-private fun Map<String, Any?>.toJson() = GsonBuilder().serializeNulls().create().toJson(this)
+inline fun <reified T> T?.toJson() = MapperHolder.mapper.toJson(this)

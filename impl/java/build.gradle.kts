@@ -49,6 +49,9 @@ allprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        options {
+            systemProperty("junit.jupiter.extensions.autodetection.enabled", true)
+        }
     }
 
     tasks.withType<KotlinCompile> {

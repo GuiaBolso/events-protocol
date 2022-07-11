@@ -1,6 +1,8 @@
 package br.com.guiabolso.events.server
 
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -12,7 +14,6 @@ import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
-import com.google.gson.JsonObject
 import java.util.UUID
 
 class SuspendingEventProcessor(private val processor: RawEventProcessor) {
@@ -37,10 +38,10 @@ class SuspendingEventProcessor(private val processor: RawEventProcessor) {
 
     private fun parseEvent(payload: String?): RawEvent {
         return try {
-            MapperHolder.mapper.fromJson(payload, RawEvent::class.java)
+            mapper.fromJson(payload!!)
         } catch (e: Throwable) {
             throw EventParsingException(e)
-        } ?: throw EventParsingException(null)
+        }
     }
 
     private fun badProtocol() = RequestEvent(
@@ -48,11 +49,11 @@ class SuspendingEventProcessor(private val processor: RawEventProcessor) {
         version = 1,
         id = UUID.randomUUID().toString(),
         flowId = UUID.randomUUID().toString(),
-        payload = JsonObject(),
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        payload = TreeNode(),
+        identity = TreeNode(),
+        auth = TreeNode(),
+        metadata = TreeNode()
     )
 
-    private fun ResponseEvent.json() = MapperHolder.mapper.toJson(this)
+    private fun ResponseEvent.json() = mapper.toJson(this)
 }

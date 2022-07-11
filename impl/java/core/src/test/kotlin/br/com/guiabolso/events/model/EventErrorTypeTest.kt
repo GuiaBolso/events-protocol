@@ -2,6 +2,7 @@ package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.EventBuilderForTest
 import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType.Companion.getErrorType
 import br.com.guiabolso.events.model.EventErrorType.Expired
 import br.com.guiabolso.events.model.EventErrorType.Forbidden
@@ -11,7 +12,6 @@ import br.com.guiabolso.events.model.EventErrorType.ResourceDenied
 import br.com.guiabolso.events.model.EventErrorType.Unauthorized
 import br.com.guiabolso.events.model.EventErrorType.Unknown
 import br.com.guiabolso.events.model.EventErrorType.UserDenied
-import com.google.gson.JsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -53,7 +53,7 @@ class EventErrorTypeTest {
                 "userId": null
             }
             """.trimIndent(),
-            JsonObject::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
@@ -69,7 +69,7 @@ class EventErrorTypeTest {
                 "origin": null
             }
             """.trimIndent(),
-            JsonObject::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)
@@ -85,7 +85,7 @@ class EventErrorTypeTest {
                 "userId": 123987
             }
             """.trimIndent(),
-            JsonObject::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(identity = identity)
@@ -101,7 +101,7 @@ class EventErrorTypeTest {
                 "origin": "east"
             }
             """.trimIndent(),
-            JsonObject::class.java
+            TreeNode::class.java
         )
 
         val event = EventBuilderForTest.buildRequestEvent().copy(metadata = metadata)

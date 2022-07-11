@@ -1,10 +1,10 @@
 package br.com.guiabolso.events
 
+import br.com.guiabolso.events.json.PrimitiveNode
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 
 object EventBuilderForTest {
 
@@ -13,10 +13,10 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonPrimitive(42),
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        payload = PrimitiveNode(42),
+        identity = TreeNode(),
+        auth = TreeNode(),
+        metadata = TreeNode()
     )
 
     fun buildRequestEvent() = RequestEvent(
@@ -24,10 +24,10 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonPrimitive(42),
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        payload = PrimitiveNode(42),
+        identity = TreeNode(),
+        auth = TreeNode(),
+        metadata = TreeNode()
     )
 
     fun buildResponseEvent() = ResponseEvent(
@@ -35,10 +35,10 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonPrimitive(42),
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        payload = PrimitiveNode(42),
+        identity = TreeNode(),
+        auth = TreeNode(),
+        metadata = TreeNode()
     )
 
     fun buildRedirectEvent() = ResponseEvent(
@@ -46,12 +46,9 @@ object EventBuilderForTest {
         version = 1,
         id = "id",
         flowId = "flowId",
-        payload = JsonObject().apply {
-            addProperty("url", "https://www.google.com")
-            add("queryParameters", JsonObject())
-        },
-        identity = JsonObject(),
-        auth = JsonObject(),
-        metadata = JsonObject()
+        payload = TreeNode("url" to PrimitiveNode("https://www.google.com"), "queryParameters" to TreeNode()),
+        identity = TreeNode(),
+        auth = TreeNode(),
+        metadata = TreeNode()
     )
 }

@@ -2,11 +2,11 @@ package br.com.guiabolso.events.utils
 
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
+import br.com.guiabolso.events.json.ArrayNode
+import br.com.guiabolso.events.json.PrimitiveNode
+import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.User
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -58,7 +58,7 @@ class EventsTest {
     @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsNumber() {
         val event = buildRequestEvent().copy(
-            identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+            identity = TreeNode("userId" to PrimitiveNode(42))
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -66,11 +66,7 @@ class EventsTest {
     @Test
     fun testGetUserIdWithObjectAsStringFromIdentityWhenItIsNumber() {
         val event = buildRequestEvent().copy(
-            identity = JsonObject().apply {
-                this.add("user", JsonObject().apply {
-                    this.add("id", JsonPrimitive(42))
-                })
-            }
+            identity = TreeNode("user" to TreeNode("id" to PrimitiveNode(42)))
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -78,7 +74,7 @@ class EventsTest {
     @Test
     fun testGetUserIdAsStringFromIdentityWhenItIsString() {
         val event = buildRequestEvent().copy(
-            identity = JsonObject().apply { this.add("userId", JsonPrimitive("42")) }
+            identity = TreeNode("userId" to PrimitiveNode("42"))
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -86,11 +82,7 @@ class EventsTest {
     @Test
     fun testGetUserIdWithObjectAsStringFromIdentityWhenItIsString() {
         val event = buildRequestEvent().copy(
-            identity = JsonObject().apply {
-                this.add("user", JsonObject().apply {
-                    this.add("id", JsonPrimitive("42"))
-                })
-            }
+            identity = TreeNode("user" to TreeNode("id" to PrimitiveNode("42")))
         )
         assertEquals("42", event.userIdAsString)
     }
@@ -100,7 +92,7 @@ class EventsTest {
         assertNull(buildRequestEvent().userId)
 
         val responseEvent = buildRequestEvent().copy(
-            identity = JsonObject().apply { this.add("userId", JsonPrimitive(42)) }
+            identity = TreeNode("userId" to PrimitiveNode(42))
         )
         assertEquals(42L, responseEvent.userId)
     }
@@ -110,11 +102,9 @@ class EventsTest {
         assertNull(buildRequestEvent().userId)
 
         val responseEvent = buildRequestEvent().copy(
-            identity = JsonObject().apply {
-                this.add("user", JsonObject().apply {
-                    this.add("id", JsonPrimitive(42))
-                })
-            }
+            identity = TreeNode(
+                "user" to TreeNode("id" to PrimitiveNode(42))
+            )
         )
         assertEquals(42L, responseEvent.userId)
     }
@@ -127,12 +117,12 @@ class EventsTest {
         assertNull(buildRequestEvent().userId)
 
         val responseEvent = buildRequestEvent().copy(
-            identity = JsonObject().apply {
-                this.add("user", JsonObject().apply {
-                    this.add("id", JsonPrimitive(userId))
-                    this.add("type", JsonPrimitive(userType))
-                })
-            }
+            identity = TreeNode(
+                "user" to TreeNode(
+                    "id" to PrimitiveNode(userId),
+                    "type" to PrimitiveNode(userType)
+                )
+            )
         )
 
         assertEquals(User(id = userId, type = userType), responseEvent.user)
@@ -149,7 +139,7 @@ class EventsTest {
         assertNull(buildRequestEvent().origin)
 
         val responseEvent = buildRequestEvent().copy(
-            metadata = JsonObject().apply { this.add("origin", JsonPrimitive("batata")) }
+            metadata = TreeNode("origin" to PrimitiveNode("batata"))
         )
         assertEquals("batata", responseEvent.origin)
     }
@@ -157,10 +147,7 @@ class EventsTest {
     @Test
     fun testGetPayload() {
         val request = buildRequestEvent().copy(
-            payload = JsonObject().apply {
-                this.add("a", JsonPrimitive("someString"))
-                this.add("b", JsonPrimitive(60))
-            }
+            payload = TreeNode("a" to PrimitiveNode("someString"), "b" to PrimitiveNode(60))
         )
 
         val vo = request.payloadAs(VO::class.java)
@@ -176,10 +163,10 @@ class EventsTest {
     @Test
     fun testGetIdentity() {
         val request = buildRequestEvent().copy(
-            identity = JsonObject().apply {
-                this.add("a", JsonPrimitive("someString"))
-                this.add("b", JsonPrimitive(60))
-            }
+            identity = TreeNode(
+                "a" to PrimitiveNode("someString"),
+                "b" to PrimitiveNode(60)
+            )
         )
 
         val vo = request.identityAs(VO::class.java)
@@ -195,10 +182,10 @@ class EventsTest {
     @Test
     fun testGetAuth() {
         val request = buildRequestEvent().copy(
-            auth = JsonObject().apply {
-                this.add("a", JsonPrimitive("someString"))
-                this.add("b", JsonPrimitive(60))
-            }
+            auth = TreeNode(
+                "a" to PrimitiveNode("someString"),
+                "b" to PrimitiveNode(60)
+            )
         )
 
         val vo = request.authAs(VO::class.java)
@@ -214,18 +201,18 @@ class EventsTest {
     @Test
     fun testCanParseJsonArrays() {
         val request = buildRequestEvent().copy(
-            payload = JsonArray().apply {
+            payload = ArrayNode().apply {
                 this.add(
-                    JsonObject().apply {
-                        this.add("a", JsonPrimitive("someString"))
-                        this.add("b", JsonPrimitive(60))
-                    }
+                    TreeNode(
+                        "a" to PrimitiveNode("someString"),
+                        "b" to PrimitiveNode(60)
+                    )
                 )
                 this.add(
-                    JsonObject().apply {
-                        this.add("a", JsonPrimitive("someOtherString"))
-                        this.add("b", JsonPrimitive(120))
-                    }
+                    TreeNode(
+                        "a" to PrimitiveNode("someOtherString"),
+                        "b" to PrimitiveNode(120)
+                    )
                 )
             }
         )
