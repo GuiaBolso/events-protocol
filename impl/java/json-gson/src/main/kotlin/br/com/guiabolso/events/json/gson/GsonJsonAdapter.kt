@@ -32,35 +32,24 @@ class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = { serializeNulls() }) 
         return when (any) {
             null -> JsonNull
             is JsonNode -> any
-            else -> {
-                gson.execute {
-                    val jsonElement = toJsonTree(any)
-                    fromJson(jsonElement, JsonNode::class.java)
-                }
-            }
+            else -> gson.execute { this.fromJson(toJsonTree(any), JsonNode::class.java) }
         }
     }
 
     override fun <T> fromJson(json: String, clazz: Class<T>): T {
-        return gson.execute { fromJson(json, clazz) }
+        return gson.execute { this.fromJson(json, clazz) }
     }
 
     override fun <T> fromJson(json: String, type: Type): T {
-        return gson.execute { fromJson<T>(json, type) }
+        return gson.execute { this.fromJson<T>(json, type) }
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {
-        return gson.execute {
-            val jsonElement = toJsonTree(jsonNode)
-            fromJson<T>(jsonElement, type)
-        }
+        return gson.execute { this.fromJson<T>(toJsonTree(jsonNode), type) }
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, clazz: Class<T>): T {
-        return gson.execute {
-            val jsonElement = toJsonTree(jsonNode)
-            fromJson(jsonElement, clazz)
-        }
+        return gson.execute { this.fromJson(toJsonTree(jsonNode), clazz) }
     }
 
     private fun <T> Gson.execute(block: Gson.() -> T): T {
