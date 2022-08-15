@@ -8,6 +8,7 @@ import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.json.moshi.MoshiJsonAdapter
 import br.com.guiabolso.events.json.moshi.Sample
+import br.com.guiabolso.events.json.moshi.factory.SerializeNullAdapterFactory
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -42,10 +43,17 @@ class MoshiJsonAdapterTest : StringSpec({
         )
     )
 
-    val adapter = MoshiJsonAdapter()
+    val adapter = MoshiJsonAdapter {
+        add(SerializeNullAdapterFactory)
+    }
 
     "should serialize object successfully" {
         adapter.toJson(sample) shouldBe jsonString
+    }
+
+    "should serialize JsonNode successfully" {
+        adapter.toJson(jsonNode) shouldBe """{"int":42,"any":null,"boolean":false,"string":"string",""" +
+                """"map":{"bla":"bla"},"list":[42.42,{"nested":[]},true,"string"]}"""
     }
 
     "should successfully serialize nulls" {
@@ -64,7 +72,7 @@ class MoshiJsonAdapterTest : StringSpec({
         adapter.fromJson(jsonString, Sample::class.java) shouldBe sample
     }
 
-    "should deserialize successfully using JsonNodeAndTypeArgument" {
+    "should deserialize successfully using JsonNode and Type argument" {
         adapter.fromJson<Sample>(jsonNode) shouldBe sample
     }
 
@@ -80,7 +88,7 @@ class MoshiJsonAdapterTest : StringSpec({
         adapter.toJsonTree(jsonNode) shouldBeSameInstanceAs jsonNode
     }
 
-    "should create a JsonNodeTree" {
+    "should create a JsonNode tree" {
         val toJsonTree = adapter.toJsonTree(sample)
         toJsonTree shouldBe jsonNode
     }

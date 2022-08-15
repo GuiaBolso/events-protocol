@@ -15,9 +15,9 @@ import com.squareup.moshi.JsonAdapter as MoshiJsonAdapter
 class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = { add(SerializeNullAdapterFactory) }) : JsonAdapter {
     private val moshi =
         Moshi.Builder()
+            .apply(builder)
             .add(JsonNodeFactory)
             .add(EventProtocolJsonAdapterFactory)
-            .apply(builder)
             .addLast(KotlinJsonAdapterFactory())
             .build()
 
