@@ -8,20 +8,31 @@ Events Protocol
 Dependencias
 ---------------
 
-A biblioteca é composta de 4 modulos. Server, Client, Core e Test.
+A biblioteca é composta pelos modulos: Server, Client, Core, Tracking, Ktor, Test e um módulo para cada serializador de json suportado.
+
+### Serializadores de Json:
+- json-moshi - Implementa suporte para usar o [Moshi](https://github.com/square/moshi) como serializador de Json
+
 
 ```
  implementation("br.com.guiabolso:events-client:{version}")
  implementation("br.com.guiabolso:events-server:{version}")
  implementation("br.com.guiabolso:events-core:{version}")
+ implementation("br.com.guiabolso:events-tracing:{version}")
+ implementation("br.com.guiabolso:events-ktor:{version}")
+ 
+ //Json adapters
+ implementation("br.com.guiabolso:events-json-moshi:{version}")
  
  testImplementation("br.com.guiabolso:events-test:{version}")
 ```
+
 Geralmente as dependências a serem importadas são:
 
 * Server: Quando é necessário tratar requisições de eventos;
 * Client: Quando é necessário realizar requisições de evento;
 * Core: Quando é necessário acessar alguma classe específica usada pelo Server ou pelo Client, a partir de um modulo separado.
+* Json-Moshi: Suporte para usar o Moshi como parser de json.
 * Test: Quando você for escrever testes específicos para validação dos eventos. Mais informação na [documentação de testes](doc/test.md)
 
 
@@ -43,7 +54,7 @@ Arquitetura
 ----------------
 
 ### Evento
-Toda informação é transmitida utilizando um JSON padronizado com o seguinte formato.
+Toda informação que é transmitida utilizando um JSON padronizado com o seguinte formato.
 Qualquer comunicação entre sistemas é considerado um evento.
 
 #### Exemplo:
@@ -74,28 +85,62 @@ Qualquer comunicação entre sistemas é considerado um evento.
 
 Como usar
 ------------------
+## Serializador de Json
+A partir da versão 7.0.0 é obrigatório configurar um serializador de json a ser usado na biblioteca, para tanto basta incluir um dos módulos`events-json-*` disponíveis e configurar a implementação de `JsonAdapter` no `MapperHolder.mapper`, veja o exemplo a seguir:
+
+Configurando o moshi como serializador de json.
+```kts
+implementation("br.com.guiabolso:events-json-moshi:{version}")
+
+// Ao iniciar a aplicação
+MapperHolder.mapper = MoshiJsonAdapter {
+    // Aqui você pode configurar seus adapters customizados
+}
+```
 
 ## Cliente
+A classe `EventClient` está disponível para ser usada quando for necessário enviar eventos para outros sistemas, veja
+um exemplo abaixo:
 
-```TODO```
+```kt
+val requestEvent = EventBuilder.event {
+    name = "event:name"
+    version = 1
+    payload = mapOf("someKey" to "someValue")
+    auth = mapOf("token" to "some-token-value")
+    identity = mapOf("userId" to 1)
+    metadata = mapOf("origin" to "some origin")
+}
+
+EventClient().sendEvent(
+    url = "https://system.api/events",
+    requestEvent = requestEvent,
+    headers = emptyMap(),
+    timeout = Duration.ofSeconds(30).toMillis().toInt()
+)
+```
 
 ## Servidor
 
-O protocolo foi desenhado para ser facilmente acoplado em qualquer estrutura para receber requisições: sockets, chamadas HTTP. Para tanto, dois tipos de objetos precisam ser cadastrados na sua aplicação para que tudo funcione.
+O protocolo foi desenhado para ser facilmente acoplado em qualquer estrutura para receber requisições: 
+sockets, chamadas HTTP. Para tanto, dois tipos de objetos precisam ser cadastrados na sua aplicação para que tudo funcione.
 
 ### ```EventHandlerDiscovery```
 
 É o responsável por avaliar se, dado o nome e versão de um evento, o sistema é capaz de fazer o tratamento do mesmo. A implementação padrão da interface é ```SimpleEventHandlerRegistry``` que cadastra uma série de ```EventHandler```'s (ou lambdas) para fazer o tratamento de um determinado evento pelo seu nome e versão. Em ambos os casos, um ```RequestEvent``` é recebido e um ```ResponseEvent``` é gerado baseado na requisição e a resposta do processamento realizado (se necessário).
 
 #### Exemplo:
-```groovy
-simpleEventHandlerRegistry.add("say:hello", 13, (EventHandler) { RequestEvent event ->
-	def firstname = event.payload.asJsonObject.get("firstname").asString
-	def lastname = event.payload.asJsonObject.get("lastname").asString
-	def eventBuilder = EventBuilder.javaResponseFor(event)
-	eventBuilder.payload = helloService.to(firstname, lastname)
-	eventBuilder.buildResponseEvent()
-})
+```kt
+    SimpleEventHandlerRegistry().apply {
+        add("say:hello", 13) {  requestEvent ->
+            val  firstname = requestEvent.payload.treeNode["firstname"]?.string
+            val lastname = requestEvent.payload.treeNode["lastname"]?.string
+    
+            EventBuilder.responseFor(requestEvent) {
+                payload = helloService.greeting(firstname, lastname)
+            }
+        }
+}
 ```
 
 ### ```EventProcessor```
@@ -105,7 +150,10 @@ Responsável por efetivamente processar os eventos. O evento nessa classe é rep
 #### Exemplo:
 ```groovy
 post("/events", { request, response ->
-	eventProcessor.processEvent(req.body())
+	response.body(
+        eventProcessor.processEvent(request.body()),
+        ...
+    )
 })
 ```
 
