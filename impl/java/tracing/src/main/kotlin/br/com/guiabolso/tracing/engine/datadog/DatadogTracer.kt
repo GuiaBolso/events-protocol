@@ -84,8 +84,7 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
                 val rootSpan = span.localRootSpan
                 rootSpan.isError = !expected
                 DatadogUtils.notifyError(rootSpan, exception, expected)
-            }
-            DatadogUtils.notifyError(span, exception, expected)
+            } else DatadogUtils.notifyError(span, exception, expected)
         }
     }
 
