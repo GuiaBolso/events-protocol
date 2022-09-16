@@ -5,6 +5,7 @@ import datadog.trace.api.DDTags.ERROR_MSG
 import datadog.trace.api.DDTags.ERROR_STACK
 import datadog.trace.api.DDTags.ERROR_TYPE
 import datadog.trace.api.DDTags.SPAN_TYPE
+import datadog.trace.api.interceptor.MutableSpan
 import io.opentracing.Span
 import io.opentracing.tag.Tags
 import io.opentracing.util.GlobalTracer
@@ -66,6 +67,14 @@ object DatadogUtils {
 
     @JvmStatic
     fun notifyError(span: Span, exception: Throwable, expected: Boolean) {
+        span.setTag(Tags.ERROR.key, !expected)
+        span.setTag(ERROR_MSG, exception.message ?: "Empty message")
+        span.setTag(ERROR_TYPE, exception.javaClass.name)
+        span.setTag(ERROR_STACK, ExceptionUtils.getStackTrace(exception))
+    }
+
+    @JvmStatic
+    fun notifyError(span: MutableSpan, exception: Throwable, expected: Boolean) {
         span.setTag(Tags.ERROR.key, !expected)
         span.setTag(ERROR_MSG, exception.message ?: "Empty message")
         span.setTag(ERROR_TYPE, exception.javaClass.name)
