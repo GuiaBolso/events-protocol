@@ -87,4 +87,11 @@ object DatadogUtils {
         span.setTag(ERROR_MSG, message)
         params.forEach { entry -> span.setTag(entry.key, entry.value) }
     }
+
+    @JvmStatic
+    fun notifyError(span: MutableSpan, message: String, params: Map<String, String?>, expected: Boolean) {
+        span.setTag(Tags.ERROR.key, !expected)
+        span.setTag(ERROR_MSG, message)
+        params.forEach { entry -> span.setTag(entry.key, entry.value) }
+    }
 }
