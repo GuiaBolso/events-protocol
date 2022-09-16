@@ -79,8 +79,12 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun notifyRootError(exception: Throwable, expected: Boolean) {
-        tracer.activeSpan()?.let { span ->
-            if (span is MutableSpan) span.localRootSpan.isError = !expected
+        tracer.activeSpan()?.let { span: Span ->
+            if (span is MutableSpan) {
+                val rootSpan = span.localRootSpan
+                rootSpan.isError = !expected
+                DatadogUtils.notifyError(rootSpan, exception, expected)
+            }
             DatadogUtils.notifyError(span, exception, expected)
         }
     }
