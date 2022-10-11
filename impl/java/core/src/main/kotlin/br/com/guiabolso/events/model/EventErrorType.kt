@@ -9,6 +9,8 @@ sealed class EventErrorType(open val typeName: String) {
             "notFound" -> NotFound
             "badRequest" -> BadRequest
             "badProtocol" -> BadProtocol
+            "gone" -> Gone
+            "unprocessable" -> Unprocessable
             "eventNotFound" -> EventNotFound
             "unauthorized" -> Unauthorized
             "forbidden" -> Forbidden
