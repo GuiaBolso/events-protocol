@@ -11,6 +11,8 @@ import br.com.guiabolso.events.model.EventErrorType.ResourceDenied
 import br.com.guiabolso.events.model.EventErrorType.Unauthorized
 import br.com.guiabolso.events.model.EventErrorType.Unknown
 import br.com.guiabolso.events.model.EventErrorType.UserDenied
+import br.com.guiabolso.events.model.EventErrorType.Unprocessable
+import br.com.guiabolso.events.model.EventErrorType.Gone
 import com.google.gson.JsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -31,6 +33,12 @@ class EventErrorTypeTest {
 
         assertEquals(Forbidden, getErrorType("forbidden"))
         assertEquals("forbidden", getErrorType("forbidden").typeName)
+
+        assertEquals(Unprocessable, getErrorType("unprocessable"))
+        assertEquals("unprocessable", getErrorType("unprocessable").typeName)
+
+        assertEquals(Gone, getErrorType("gone"))
+        assertEquals("gone", getErrorType("gone").typeName)
 
         assertEquals(UserDenied, getErrorType("userDenied"))
         assertEquals("userDenied", getErrorType("userDenied").typeName)
