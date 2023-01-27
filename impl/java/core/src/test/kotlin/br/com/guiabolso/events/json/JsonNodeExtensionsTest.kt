@@ -4,10 +4,12 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.inspectors.forAll
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 
 class JsonNodeExtensionsTest : StringSpec({
 
@@ -149,5 +151,19 @@ class JsonNodeExtensionsTest : StringSpec({
         PrimitiveNode("42").stringOrNull shouldBe "42"
         PrimitiveNode(true).stringOrNull shouldBe "true"
         PrimitiveNode(false).stringOrNull shouldBe "false"
+    }
+
+    "should copy the entire node graph" {
+        val primitive = PrimitiveNode("a")
+        val tree = TreeNode("a" to primitive)
+        val arrayNode = ArrayNode(tree)
+
+        val copy: ArrayNode = arrayNode.deepCopy()
+
+        copy shouldNotBeSameInstanceAs arrayNode
+        copy.first().should {
+            it shouldNotBeSameInstanceAs tree
+            it.treeNode["a"] shouldBeSameInstanceAs primitive
+        }
     }
 })

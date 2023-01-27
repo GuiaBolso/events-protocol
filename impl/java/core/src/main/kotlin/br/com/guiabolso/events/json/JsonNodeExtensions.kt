@@ -30,3 +30,28 @@ val JsonNode.longOrNull get() = primitiveNodeOrNull?.value?.toLongOrNull()
 
 val JsonNode.double get() = primitiveNode.value.toDouble()
 val JsonNode.doubleOrNull get() = primitiveNodeOrNull?.value?.toDoubleOrNull()
+
+@Suppress("UNCHECKED_CAST")
+fun <T : JsonNode> T.deepCopy(): T {
+    val copy =
+        when (this) {
+            is PrimitiveNode -> this
+            is TreeNode -> this.deepCopy()
+            is ArrayNode -> this.deepCopy()
+            else -> error("Unknown JsonNode type ${this::class.qualifiedName}")
+        }
+
+    return copy as T
+}
+
+private fun TreeNode.deepCopy(): TreeNode {
+    return TreeNode(
+        nodes = map { (k, v) -> k to v.deepCopy() }.toMap(mutableMapOf())
+    )
+}
+
+private fun ArrayNode.deepCopy(): ArrayNode {
+    return ArrayNode(
+        elements = mapTo(mutableListOf()) { it.deepCopy() }
+    )
+}
