@@ -1,12 +1,12 @@
 package br.com.guiabolso.events.json.gson.adapters
 
 import br.com.guiabolso.events.json.ArrayNode
+import br.com.guiabolso.events.json.JsonDataException
 import br.com.guiabolso.events.json.JsonNull
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.gson.jsonWriter
 import br.com.guiabolso.events.json.gson.toJsonReader
-import com.squareup.moshi.JsonDataException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
