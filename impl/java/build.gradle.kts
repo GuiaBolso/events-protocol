@@ -8,7 +8,6 @@ plugins {
     signing
     id("org.jetbrains.dokka") version "1.8.10"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
-    id("com.github.ben-manes.versions") version "0.46.0"
 }
 
 allprojects {
@@ -30,7 +29,7 @@ allprojects {
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
         // SLF4J
-        implementation("org.slf4j:slf4j-api:1.7.36")
+        implementation("org.slf4j:slf4j-api:2.0.7")
 
         // Logback
         testImplementation("ch.qos.logback:logback-classic:1.4.6")
@@ -138,25 +137,4 @@ allprojects {
 
         sign((extensions.getByName("publishing") as PublishingExtension).publications)
     }
-}
-
-tasks.withType<DependencyUpdatesTask> {
-    rejectVersionIf {
-        isNonStable(candidate.version) && !isNonStable(currentVersion)
-    }
-}
-
-tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
-    // optional parameters
-    checkForGradleUpdate = true
-    outputFormatter = "csv"
-    outputDir = "build/dependencyUpdates"
-    reportfileName = "report"
-}
-
-fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(version)
-    return isStable.not()
 }
