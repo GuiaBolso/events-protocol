@@ -8,8 +8,11 @@ import com.google.gson.stream.JsonWriter
 object JsonNodeAdapter : TypeAdapter<JsonNode>() {
 
     override fun write(writer: JsonWriter, value: JsonNode?) {
-        if (value != null) writer.write(value)
-        else writer.nullValue()
+        if (value != null) {
+            writer.write(value)
+        } else {
+            writer.nullValue()
+        }
     }
 
     override fun read(reader: JsonReader): JsonNode {

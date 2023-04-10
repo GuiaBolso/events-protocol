@@ -41,6 +41,8 @@ class TreeNodeAdapter(moshi: Moshi) : JsonAdapter<TreeNode>() {
             writer.beginObject()
             value.forEach { (key, node) -> writer.name(key).run { jsonNodeAdapter.toJson(this, node) } }
             writer.endObject()
-        } else writer.nullValue()
+        } else {
+            writer.nullValue()
+        }
     }
 }

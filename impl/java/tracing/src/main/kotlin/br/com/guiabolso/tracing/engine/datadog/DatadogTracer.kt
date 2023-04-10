@@ -28,8 +28,11 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
 
     override fun addRootProperty(key: String, value: String?) {
         tracer.activeSpan()?.let { span ->
-            if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
-            else span.setTag(key, value)
+            if (span is MutableSpan) {
+                span.localRootSpan?.run { this.setTag(key, value) as Any }
+            } else {
+                span.setTag(key, value)
+            }
         }
     }
 
@@ -39,8 +42,11 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
 
     override fun addRootProperty(key: String, value: Number?) {
         tracer.activeSpan()?.let { span ->
-            if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
-            else span.setTag(key, value)
+            if (span is MutableSpan) {
+                span.localRootSpan?.run { this.setTag(key, value) as Any }
+            } else {
+                span.setTag(key, value)
+            }
         }
     }
 
@@ -52,8 +58,11 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
     override fun addRootProperty(key: String, value: Boolean?) {
         if (value != null) {
             tracer.activeSpan()?.let { span ->
-                if (span is MutableSpan) span.localRootSpan?.run { this.setTag(key, value) as Any }
-                else span.setTag(key, value)
+                if (span is MutableSpan) {
+                    span.localRootSpan?.run { this.setTag(key, value) as Any }
+                } else {
+                    span.setTag(key, value)
+                }
             }
         }
     }
@@ -84,7 +93,9 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
                 val rootSpan = span.localRootSpan
                 rootSpan.isError = !expected
                 DatadogUtils.notifyError(rootSpan, exception, expected)
-            } else DatadogUtils.notifyError(span, exception, expected)
+            } else {
+                DatadogUtils.notifyError(span, exception, expected)
+            }
         }
     }
 
@@ -101,7 +112,9 @@ open class DatadogTracer : TracerEngine, ThreadContextManager<Span> {
                 val rootSpan = span.localRootSpan
                 rootSpan.isError = !expected
                 DatadogUtils.notifyError(rootSpan, message, params, expected)
-            } else DatadogUtils.notifyError(span, message, params, expected)
+            } else {
+                DatadogUtils.notifyError(span, message, params, expected)
+            }
         }
     }
 

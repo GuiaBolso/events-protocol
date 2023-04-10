@@ -10,8 +10,11 @@ import com.squareup.moshi.JsonDataException
 object TreeNodeAdapter : TypeAdapter<TreeNode>() {
 
     override fun write(writer: JsonWriter, value: TreeNode?) {
-        if (value != null) writer.serialize(value)
-        else writer.nullValue()
+        if (value != null) {
+            writer.serialize(value)
+        } else {
+            writer.nullValue()
+        }
     }
 
     private fun JsonWriter.serialize(value: TreeNode) {
