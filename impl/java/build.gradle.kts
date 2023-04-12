@@ -56,14 +56,14 @@ allprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "17"
+            jvmTarget = "11"
             apiVersion = KotlinVersion.KOTLIN_1_8.version
             languageVersion = KotlinVersion.KOTLIN_1_8.version
         }
     }
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(11)
     }
 
     val sourcesJar by tasks.registering(Jar::class) {
