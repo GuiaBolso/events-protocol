@@ -20,11 +20,12 @@ import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.throwable.shouldHaveMessage
-import io.ktor.application.Application
-import io.ktor.http.HttpMethod.Companion.Post
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
-import io.ktor.server.testing.withTestApplication
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.server.application.Application
+import io.ktor.server.testing.testApplication
 import java.util.UUID.randomUUID
 
 class EventsTest : ShouldSpec({
@@ -34,19 +35,21 @@ class EventsTest : ShouldSpec({
     }
 
     should("Have the same response for /events and /events/") {
-        withTestApplication({ testModule() }) {
-            val response = handleRequest(Post, "/events/") { setBody(testEvent) }.response
-            val response2 = handleRequest(Post, "/events") { setBody(testEvent) }.response
+        testApplication {
+            application { testModule() }
+            val response = client.post("/events/") { setBody(testEvent) }
+            val response2 = client.post("/events") { setBody(testEvent) }
 
-            response.content!! shouldBe response2.content!!
+            response.bodyAsText() shouldBe response2.bodyAsText()
         }
     }
 
     should("Handle a successful event request->response") {
-        withTestApplication({ testModule() }) {
-            val response = handleRequest(Post, "/events/") { setBody(testEvent) }.response
+        testApplication {
+            application { testModule() }
+            val response = client.post("/events/") { setBody(testEvent) }
 
-            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.bodyAsText(), ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:event:response"
                 it shouldHavePayload mapOf("answer" to 42)
@@ -55,10 +58,11 @@ class EventsTest : ShouldSpec({
     }
 
     should("Handle a successful event with default UTF-8 charset request->response") {
-        withTestApplication({ testModule() }) {
-            val response = handleRequest(Post, "/events/") { setBody(testEncodingEvent) }.response
+        testApplication {
+            application { testModule() }
+            val response = client.post("/events/") { setBody(testEncodingEvent) }
 
-            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.bodyAsText(), ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:event:encoding:response"
                 it shouldHavePayload mapOf("answer" to mapOf("text" to "éàçãõ£¥ÄĀ"))
@@ -67,13 +71,14 @@ class EventsTest : ShouldSpec({
     }
 
     should("Handle a successful event with non default charset request") {
-        withTestApplication({ testModule() }) {
-            val response = handleRequest(Post, "/events/") {
+        testApplication {
+            application { testModule() }
+            val response = client.post("/events/") {
                 setBody(testEncodingEvent)
-                addHeader("Content-Type", "application/json; charset=ISO_8859_1")
-            }.response
+                header("Content-Type", "application/json; charset=ISO_8859_1")
+            }
 
-            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
+            assertSoftly(mapper.fromJson(response.bodyAsText(), ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:event:encoding:response"
                 it shouldNotHavePayload mapOf("answer" to mapOf("text" to "éàçãõ£¥ÄĀ"))
@@ -82,9 +87,10 @@ class EventsTest : ShouldSpec({
     }
 
     should("Respond to an unregistered event with failure") {
-        withTestApplication({ testModule() }) {
-            val response = handleRequest(Post, "/events/") { setBody(eventNotFound) }.response
-            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
+        testApplication {
+            application { testModule() }
+            val response = client.post("/events/") { setBody(eventNotFound) }
+            assertSoftly(mapper.fromJson(response.bodyAsText(), ResponseEvent::class.java)) {
                 it should beError()
                 it shouldHaveName "eventNotFound"
             }
@@ -92,9 +98,10 @@ class EventsTest : ShouldSpec({
     }
 
     should("Respond when an error occurs in the event") {
-        withTestApplication({ testModule() }) {
-            val response = handleRequest(Post, "/events/") { setBody(testEventErr) }.response
-            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
+        testApplication {
+            application { testModule() }
+            val response = client.post("/events/") { setBody(testEventErr) }
+            assertSoftly(mapper.fromJson(response.bodyAsText(), ResponseEvent::class.java)) {
                 it should beError()
                 it shouldHaveName "test:err:event:badRequest"
                 it shouldHaveErrorType BadRequest
@@ -104,9 +111,10 @@ class EventsTest : ShouldSpec({
     }
 
     should("Capture registered exceptions") {
-        withTestApplication({ testModule() }) {
-            val response = handleRequest(Post, "/events/") { setBody(testEventHandledErr) }.response
-            assertSoftly(mapper.fromJson(response.content!!, ResponseEvent::class.java)) {
+        testApplication {
+            application { testModule() }
+            val response = client.post("/events/") { setBody(testEventHandledErr) }
+            assertSoftly(mapper.fromJson(response.bodyAsText(), ResponseEvent::class.java)) {
                 it should beSuccess()
                 it shouldHaveName "test:err:event:with:exception:response"
                 it shouldHavePayload mapOf("OK" to "all is fine!")
@@ -116,7 +124,7 @@ class EventsTest : ShouldSpec({
 
     should("Break when tries to register events feature twice") {
         val e = shouldThrow<IllegalStateException> {
-            withTestApplication({ brokenTestModule() }) {}
+            testApplication { application { brokenTestModule() } }
         }
 
         e shouldHaveMessage "Cannot initialize Events more than once!"
