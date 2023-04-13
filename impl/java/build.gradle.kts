@@ -1,13 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.8.20"
     `maven-publish`
     signing
-    id("org.jetbrains.dokka") version "1.6.0"
-    id("io.gitlab.arturbosch.detekt") version "1.19.0"
+    id("org.jetbrains.dokka") version "1.8.10"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
 }
-
 
 allprojects {
     apply(plugin = "kotlin")
@@ -25,22 +25,22 @@ allprojects {
     dependencies {
         // Kotlin
         implementation(kotlin("reflect"))
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
         // SLF4J
-        implementation("org.slf4j:slf4j-api:1.7.32")
+        implementation("org.slf4j:slf4j-api:2.0.7")
 
         // Logback
-        testImplementation("ch.qos.logback:logback-classic:1.2.7")
+        testImplementation("ch.qos.logback:logback-classic:1.4.6")
 
         // JUnit
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
         // Mockk
-        testImplementation("io.mockk:mockk:1.12.1")
+        testImplementation("io.mockk:mockk:1.13.4")
 
-        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0")
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
     }
 
     detekt {
@@ -55,17 +55,15 @@ allprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        sourceCompatibility = "1.8"
-        targetCompatibility = "1.8"
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = "11"
+            apiVersion = KotlinVersion.KOTLIN_1_8.version
+            languageVersion = KotlinVersion.KOTLIN_1_8.version
         }
     }
 
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(8))
-        }
+    kotlin {
+        jvmToolchain(11)
     }
 
     val sourcesJar by tasks.registering(Jar::class) {

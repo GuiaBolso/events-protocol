@@ -27,6 +27,8 @@ class ArrayNodeAdapter(moshi: Moshi) : JsonAdapter<ArrayNode>() {
             writer.beginArray()
             value.forEach { element -> jsonNodeAdapter.toJson(writer, element) }
             writer.endArray()
-        } else writer.nullValue()
+        } else {
+            writer.nullValue()
+        }
     }
 }

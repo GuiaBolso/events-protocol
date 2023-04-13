@@ -1,17 +1,20 @@
 package br.com.guiabolso.events.json.gson.adapters
 
+import br.com.guiabolso.events.json.JsonDataException
 import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.TreeNode
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import com.squareup.moshi.JsonDataException
 
 object TreeNodeAdapter : TypeAdapter<TreeNode>() {
 
     override fun write(writer: JsonWriter, value: TreeNode?) {
-        if (value != null) writer.serialize(value)
-        else writer.nullValue()
+        if (value != null) {
+            writer.serialize(value)
+        } else {
+            writer.nullValue()
+        }
     }
 
     private fun JsonWriter.serialize(value: TreeNode) {

@@ -5,10 +5,9 @@ dependencies {
     testImplementation(project(":json-moshi"))
 
     // Ktor
-    implementation("io.ktor:ktor-server-core:1.6.7")
-    testImplementation("io.ktor:ktor-server-tests:1.6.7")
-    
+    implementation("io.ktor:ktor-server-core:2.2.4")
+    testImplementation("io.ktor:ktor-server-tests:2.2.4")
+
     // Kotest
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.0.1")
-    testImplementation("io.kotest:kotest-assertions-ktor:4.4.3")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:5.5.5")
 }
