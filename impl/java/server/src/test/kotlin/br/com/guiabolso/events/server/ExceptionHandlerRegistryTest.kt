@@ -1,17 +1,14 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest
-import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.MapperHolder.mapper
-import br.com.guiabolso.events.json.treeNode
+import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.primitiveNode
-import br.com.guiabolso.events.server.exception.BypassedException
-import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.bypassExceptionHandler
+import br.com.guiabolso.events.json.treeNode
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.exceptionHandler
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class ExceptionHandlerRegistryTest {
@@ -86,38 +83,5 @@ class ExceptionHandlerRegistryTest {
         )
 
         assertEquals("UNHANDLED_ERROR", response.payload.treeNode["code"]!!.primitiveNode.value)
-    }
-
-    @Test
-    fun testBypassExceptionHandler() {
-        val exceptionHandlerRegistry = bypassExceptionHandler()
-
-        val cause = RuntimeException("Some error")
-        val event = EventBuilderForTest.buildRequestEvent()
-
-        val exception = assertThrows(BypassedException::class.java) {
-            runBlocking {
-                exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
-            }
-        }
-
-        assertEquals(cause, exception.exception)
-        assertEquals(event, exception.request)
-    }
-
-    @Test
-    fun testBypassExceptionHandlerWithoutWrappingException() {
-        val exceptionHandlerRegistry = bypassExceptionHandler(false)
-
-        val cause = RuntimeException("Some error")
-        val event = EventBuilderForTest.buildRequestEvent()
-
-        val exception = assertThrows(RuntimeException::class.java) {
-            runBlocking {
-                exceptionHandlerRegistry.handleException(cause, event, mockk(relaxed = true))
-            }
-        }
-
-        assertEquals(cause, exception)
     }
 }
