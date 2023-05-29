@@ -1,0 +1,79 @@
+package br.com.guiabolso.events.json.jackson
+
+import br.com.guiabolso.events.json.JsonAdapter
+import br.com.guiabolso.events.json.JsonDataException
+import br.com.guiabolso.events.json.JsonNode
+import br.com.guiabolso.events.json.JsonNull
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.core.exc.StreamReadException
+import com.fasterxml.jackson.databind.DatabindException
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.databind.type.TypeFactory
+import java.lang.reflect.Type
+
+class JacksonJsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAdapter {
+    private val mapper =
+        JsonMapper.builder()
+            .addModule(GuiabolsoJsonNodeModule)
+            .apply(configuration)
+            .build()
+
+    override fun <T> toJson(any: T?): String {
+        return mapper.writeValueAsString(any)
+    }
+
+    override fun <T> toJson(any: T?, type: Type): String {
+        return toJson(any)
+    }
+
+    override fun <T> toJsonTree(any: T?): JsonNode {
+        return when (any) {
+            null -> JsonNull
+            is JsonNode -> any
+            else -> mapper.wrapException { fromJson(toJsonTree(any), JsonNode::class.java) }
+        }
+    }
+
+    override fun <T> fromJson(json: String, clazz: Class<T>): T {
+        return mapper.wrapException {
+            readValue(json, clazz)
+        }
+    }
+
+    override fun <T> fromJson(json: String, type: Type): T {
+        return mapper.wrapException {
+            readValue(
+                json,
+                TypeFactory.defaultInstance().constructType(type),
+            )
+        }
+    }
+
+    override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {
+        return mapper.wrapException {
+            fromJson(toJsonTree(jsonNode), type)
+        }
+    }
+
+    override fun <T> fromJson(jsonNode: JsonNode, clazz: Class<T>): T {
+        return mapper.wrapException {
+            fromJson(toJsonTree(jsonNode), clazz)
+        }
+    }
+
+    private fun <T> JsonMapper.wrapException(block: JsonMapper.() -> T): T {
+        val result = try {
+            this.block()
+        } catch (e: Exception) {
+            throw when (e) {
+                is StreamReadException,
+                is DatabindException,
+                is JsonProcessingException -> JsonDataException(e.message, e)
+
+                else -> e
+            }
+        }
+
+        return result ?: throw JsonDataException(message = "Unexpected null as a result from deserialization")
+    }
+}

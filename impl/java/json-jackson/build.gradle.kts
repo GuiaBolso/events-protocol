@@ -1,10 +1,8 @@
 dependencies {
-    // Projects
-    api(project(":tracing"))
-    
-    testApi(project(":json-moshi"))
-    testApi(project(":json-gson"))
-    testApi(project(":json-jackson"))
+    api(project(":core"))
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    api("com.fasterxml.jackson.core:jackson-databind:2.15.1")
 
     // Kotest
     testImplementation("io.kotest:kotest-assertions-api:5.5.5")
