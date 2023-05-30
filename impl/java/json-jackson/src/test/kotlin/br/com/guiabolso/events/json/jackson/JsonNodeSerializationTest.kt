@@ -5,6 +5,8 @@ import br.com.guiabolso.events.json.JsonLiteral
 import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.arrayNode
+import br.com.guiabolso.events.json.primitiveNode
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.inspectors.shouldForAll
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -69,10 +71,10 @@ class JsonNodeSerializationTest : StringSpec({
             it.shouldBeInstanceOf<PrimitiveNode>()
         }
 
-        (result[0] as PrimitiveNode).isString.shouldBeTrue()
-        (result[1] as PrimitiveNode).isNumber.shouldBeTrue()
-        (result[2] as PrimitiveNode).isNumber.shouldBeTrue()
-        (result[3] as PrimitiveNode).isBoolean.shouldBeTrue()
+        result[0].primitiveNode.isString.shouldBeTrue()
+        result[1].primitiveNode.isNumber.shouldBeTrue()
+        result[2].primitiveNode.isNumber.shouldBeTrue()
+        result[3].primitiveNode.isBoolean.shouldBeTrue()
     }
 
     "serialize array" {
@@ -90,9 +92,9 @@ class JsonNodeSerializationTest : StringSpec({
 
         result.shouldBeInstanceOf<TreeNode>()
 
-        (result["nome"] as PrimitiveNode).isString.shouldBeTrue()
-        (result["idade"] as PrimitiveNode).isNumber.shouldBeTrue()
-        (result["filhos"] as ArrayNode)
+        result["nome"]!!.primitiveNode.isString.shouldBeTrue()
+        result["idade"]!!.primitiveNode.isNumber.shouldBeTrue()
+        result["filhos"]!!.arrayNode
             .toList().shouldContainInOrder(PrimitiveNode("ana"), PrimitiveNode("juquinha"))
     }
 

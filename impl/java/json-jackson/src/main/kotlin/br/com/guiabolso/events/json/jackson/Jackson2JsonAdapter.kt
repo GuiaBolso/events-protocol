@@ -32,7 +32,7 @@ class Jackson2JsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAd
         return when (any) {
             null -> JsonNull
             is JsonNode -> any
-            else -> mapper.wrapException { fromJson(toJsonTree(any), JsonNode::class.java) }
+            else -> mapper.wrapException { treeToValue(valueToTree(any), JsonNode::class.java) }
         }
     }
 
@@ -53,13 +53,16 @@ class Jackson2JsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAd
 
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {
         return mapper.wrapException {
-            fromJson(toJsonTree(jsonNode), type)
+            treeToValue(
+                valueToTree(jsonNode),
+                TypeFactory.defaultInstance().constructType(type),
+            )
         }
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, clazz: Class<T>): T {
         return mapper.wrapException {
-            fromJson(toJsonTree(jsonNode), clazz)
+            treeToValue(valueToTree(jsonNode), clazz)
         }
     }
 
