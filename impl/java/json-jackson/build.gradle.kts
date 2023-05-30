@@ -1,8 +1,9 @@
 dependencies {
     api(project(":core"))
 
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    api("com.fasterxml.jackson.core:jackson-databind:2.15.1")
+    api("com.fasterxml.jackson.core:jackson-databind:2.14.0")
+
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0")
 
     // Kotest
     testImplementation("io.kotest:kotest-assertions-api:5.5.5")

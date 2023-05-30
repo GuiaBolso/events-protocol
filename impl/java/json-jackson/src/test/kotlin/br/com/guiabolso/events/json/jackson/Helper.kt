@@ -5,9 +5,12 @@ import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import java.util.*
 
-val testAdapter = JacksonJsonAdapter {}
+val testAdapter = Jackson2JsonAdapter {
+    addModule(kotlinModule())
+}
 
 val Event.json
     get() =

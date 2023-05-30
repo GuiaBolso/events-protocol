@@ -4,6 +4,7 @@ import br.com.guiabolso.events.json.JsonAdapter
 import br.com.guiabolso.events.json.JsonDataException
 import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.JsonNull
+import br.com.guiabolso.events.model.Event
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.exc.StreamReadException
 import com.fasterxml.jackson.databind.DatabindException
@@ -11,10 +12,11 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import java.lang.reflect.Type
 
-class JacksonJsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAdapter {
+class Jackson2JsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAdapter {
     private val mapper =
         JsonMapper.builder()
             .addModule(GuiabolsoJsonNodeModule)
+            .addMixIn(Event::class.java, IgnoreEventGetters::class.java)
             .apply(configuration)
             .build()
 

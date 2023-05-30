@@ -1,4 +1,4 @@
-package br.com.guiabolso.events.json.gson
+package br.com.guiabolso.events.json.jackson
 
 data class Sample(
     val list: List<Any>,
