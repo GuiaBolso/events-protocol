@@ -1,9 +1,5 @@
 package br.com.guiabolso.events.json.jackson
 
-/**
- * Contains the appropriate serializers and deserializers for [br.com.guiabolso.events.json.JsonNode]
- */
-
 import br.com.guiabolso.events.json.ArrayNode
 import br.com.guiabolso.events.json.JsonNode
 import br.com.guiabolso.events.json.JsonNull
