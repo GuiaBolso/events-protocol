@@ -6,7 +6,7 @@ import br.com.guiabolso.events.model.Event
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import com.fasterxml.jackson.module.kotlin.kotlinModule
-import java.util.*
+import java.util.UUID
 
 val testAdapter = Jackson2JsonAdapter {
     addModule(kotlinModule())
