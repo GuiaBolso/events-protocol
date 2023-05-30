@@ -30,11 +30,9 @@ internal object JsonNodeDeserializer : JsonDeserializer<JsonNode>() {
 
     private fun parse(p: JsonParser): JsonNode? {
 
-        val node = parsePrimitive(p)
+        return parsePrimitive(p)
             ?: parseArray(p)
             ?: parseObject(p)
-
-        return node
     }
 
     private fun parsePrimitive(p: JsonParser): PrimitiveNode? {
