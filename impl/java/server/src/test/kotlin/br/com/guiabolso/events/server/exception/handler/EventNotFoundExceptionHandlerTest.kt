@@ -37,7 +37,7 @@ class EventNotFoundExceptionHandlerTest {
         assertEquals("NO_EVENT_HANDLER_FOUND", message.code)
         assertEquals(setOf("event", "version"), message.parameters.keys)
         assertEquals("eventName", message.parameters["event"])
-        assertEquals(1, message.parameters["version"].toString().toInt())
+        assertEquals(1, message.parameters["version"].toString().toDouble().toInt())
 
         verify { tracer.notifyError(exception, false) }
     }
