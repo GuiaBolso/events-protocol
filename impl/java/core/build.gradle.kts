@@ -6,7 +6,7 @@ dependencies {
     testApi(project(":json-gson"))
     testApi(project(":json-jackson"))
 
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0")
+    testApi("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0")
 
     // Kotest
     testImplementation("io.kotest:kotest-assertions-api:5.5.5")
