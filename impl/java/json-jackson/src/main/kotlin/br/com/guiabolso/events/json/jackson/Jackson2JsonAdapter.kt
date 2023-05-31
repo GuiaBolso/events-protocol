@@ -13,12 +13,20 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import java.lang.reflect.Type
 
 class Jackson2JsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAdapter {
-    private val mapper =
-        JsonMapper.builder()
+
+    private var mapper: JsonMapper
+
+    init {
+        mapper = JsonMapper.builder()
             .addModule(GuiabolsoJsonNodeModule)
             .addMixIn(Event::class.java, IgnoreEventGetters::class.java)
             .apply(configuration)
             .build()
+    }
+
+    constructor(mapper: JsonMapper) : this({}) {
+        this.mapper = mapper
+    }
 
     override fun <T> toJson(any: T?): String {
         return mapper.writeValueAsString(any)
