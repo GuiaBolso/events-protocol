@@ -40,6 +40,10 @@ allprojects {
         // Mockk
         testImplementation("io.mockk:mockk:1.13.4")
 
+        testRuntimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0") {
+            because("sem esse runtime configurado aqui, MapperHolderSetup não funciona")
+        }
+
         detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0")
     }
 

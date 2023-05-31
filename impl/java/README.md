@@ -1,3 +1,4 @@
+
 Events Protocol
 =================
 
@@ -11,9 +12,11 @@ Dependencias
 A biblioteca é composta pelos modulos: Server, Client, Core, Tracking, Ktor, Test e um módulo para cada serializador de json suportado.
 
 ### Serializadores de Json:
-- json-moshi - Implementa suporte para usar o [Moshi](https://github.com/square/moshi) como serializador de Json
+- json-gson
+- json-moshi
+- json-jackson
 
-
+Exemplo Moshi:
 ```
  implementation("br.com.guiabolso:events-client:{version}")
  implementation("br.com.guiabolso:events-server:{version}")
