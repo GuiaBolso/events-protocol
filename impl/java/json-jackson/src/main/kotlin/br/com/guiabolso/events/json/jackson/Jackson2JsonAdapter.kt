@@ -18,13 +18,13 @@ class Jackson2JsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAd
 
     init {
         mapper = JsonMapper.builder()
+            .apply(configuration)
             .addModule(GuiabolsoJsonNodeModule)
             .addMixIn(Event::class.java, IgnoreEventGetters::class.java)
-            .apply(configuration)
             .build()
     }
 
-    constructor(mapper: JsonMapper) : this({}) {
+    internal constructor(mapper: JsonMapper) : this({}) {
         this.mapper = mapper
     }
 
