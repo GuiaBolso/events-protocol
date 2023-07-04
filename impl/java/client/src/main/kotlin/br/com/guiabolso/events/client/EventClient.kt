@@ -5,7 +5,7 @@ import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.http.FuelHttpClient
 import br.com.guiabolso.events.client.model.Response
-import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.JsonAdapter
 import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.model.RawEvent
 import br.com.guiabolso.events.model.RequestEvent
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
 class EventClient
 @JvmOverloads
 constructor(
+    private val jsonAdapter: JsonAdapter,
     private val httpClient: HttpClientAdapter = FuelHttpClient(),
     private val eventValidator: EventValidator = StrictEventValidator(),
     private val defaultTimeout: Int = 60000
@@ -39,7 +40,7 @@ constructor(
             val rawResponse = httpClient.post(
                 url,
                 customHeaders,
-                mapper.toJson(requestEvent),
+                jsonAdapter.toJson(requestEvent),
                 Charsets.UTF_8,
                 timeout ?: defaultTimeout
             )
@@ -49,10 +50,12 @@ constructor(
                     logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
                     Response.Success(event)
                 }
+
                 event.isRedirect() -> {
                     logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
                     Response.Redirect(event)
                 }
+
                 else -> {
                     logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
                     Response.Error(event, event.getErrorType())
@@ -72,7 +75,7 @@ constructor(
 
     private fun parseEvent(rawResponse: String): ResponseEvent {
         try {
-            val rawEvent = mapper.fromJson<RawEvent>(rawResponse)
+            val rawEvent = jsonAdapter.fromJson<RawEvent>(rawResponse)
             return eventValidator.validateAsResponseEvent(rawEvent)
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)

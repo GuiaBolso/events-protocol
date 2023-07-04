@@ -1,21 +1,14 @@
 package br.com.guiabolso.events.builder
 
-import br.com.guiabolso.events.builder.EventBuilder.Companion.badProtocol
-import br.com.guiabolso.events.builder.EventBuilder.Companion.errorFor
-import br.com.guiabolso.events.builder.EventBuilder.Companion.event
-import br.com.guiabolso.events.builder.EventBuilder.Companion.eventNotFound
-import br.com.guiabolso.events.builder.EventBuilder.Companion.redirectFor
-import br.com.guiabolso.events.builder.EventBuilder.Companion.responseEvent
-import br.com.guiabolso.events.builder.EventBuilder.Companion.responseFor
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
 import br.com.guiabolso.events.exception.MissingEventInformationException
-import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.int
-import br.com.guiabolso.events.json.treeNode
 import br.com.guiabolso.events.json.primitiveNode
+import br.com.guiabolso.events.json.treeNode
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.EventMessage
@@ -28,10 +21,11 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class EventBuilderTest {
+    private val eventBuilder = EventBuilder(jsonAdapter = mapper)
 
     @Test
     fun testCreateEvent() {
-        val event = event {
+        val event = eventBuilder.event {
             id = "id"
             flowId = "flowId"
             name = "event"
@@ -53,7 +47,7 @@ class EventBuilderTest {
     @Test
     fun testCreateEventWithIdAndFlowIdForward() {
         val event = withContext(EventContext("id", "flowId")).use {
-            event {
+            eventBuilder.event {
                 name = "event"
                 version = 1
                 payload = 42
@@ -74,7 +68,7 @@ class EventBuilderTest {
     @Test
     fun testCreateEventWithIdAndFlowIdForwardOverwritten() {
         val event = withContext(EventContext("id", "flowId")).use {
-            event {
+            eventBuilder.event {
                 name = "event"
                 id = "otherId"
                 flowId = "otherFlowId"
@@ -97,7 +91,7 @@ class EventBuilderTest {
     @Test
     fun testCreateEventWithoutIdAndFlowId() {
         assertThrows(MissingEventInformationException::class.java) {
-            event {
+            eventBuilder.event {
                 name = "event"
                 version = 1
                 payload = 42
@@ -108,7 +102,7 @@ class EventBuilderTest {
     @Test
     fun testCreateWithoutName() {
         assertThrows(MissingEventInformationException::class.java) {
-            event {
+            eventBuilder.event {
                 id = "id"
                 flowId = "flowId"
                 version = 1
@@ -120,7 +114,7 @@ class EventBuilderTest {
     @Test
     fun testCreateWithoutVersion() {
         assertThrows(MissingEventInformationException::class.java) {
-            event {
+            eventBuilder.event {
                 id = "id"
                 flowId = "flowId"
                 name = "event"
@@ -132,7 +126,7 @@ class EventBuilderTest {
     @Test
     fun testCreateWithoutPayload() {
         assertThrows(MissingEventInformationException::class.java) {
-            event {
+            eventBuilder.event {
                 id = "id"
                 flowId = "flowId"
                 name = "event"
@@ -142,7 +136,7 @@ class EventBuilderTest {
 
     @Test
     fun testResponseEvent() {
-        val response = responseEvent {
+        val response = eventBuilder.responseEvent {
             id = "id"
             flowId = "flowId"
             name = "event:response"
@@ -163,14 +157,14 @@ class EventBuilderTest {
 
     @Test
     fun testResponseForEvent() = runBlocking {
-        val event = event {
+        val event = eventBuilder.event {
             id = "id"
             flowId = "flowId"
             name = "event"
             version = 1
             payload = 42
         }
-        val response = responseFor(event) {
+        val response = eventBuilder.responseFor(event) {
             payload = 84
         }
 
@@ -188,13 +182,13 @@ class EventBuilderTest {
     @Test
     fun testResponseForEventWithIdAndFlowIdForward() = runBlocking {
         val event = withContext(EventContext("id", "flowId")).use {
-            event {
+            eventBuilder.event {
                 name = "event"
                 version = 1
                 payload = 42
             }
         }
-        val response = responseFor(event) {
+        val response = eventBuilder.responseFor(event) {
             payload = 84
         }
 
@@ -211,14 +205,14 @@ class EventBuilderTest {
 
     @Test
     fun testResponseForEventWithIdAndFlowIdForwardOverwritten() = runBlocking {
-        val event = event {
+        val event = eventBuilder.event {
             id = "id"
             flowId = "flowId"
             name = "event"
             version = 1
             payload = 42
         }
-        val response = responseFor(event) {
+        val response = eventBuilder.responseFor(event) {
             id = "otherId"
             flowId = "otherFlowId"
             payload = 84
@@ -238,13 +232,13 @@ class EventBuilderTest {
     @Test
     fun testResponseForEventWithoutIdAndFlowId(): Unit = runBlocking {
         assertThrows(MissingEventInformationException::class.java) {
-            val event = event {
+            val event = eventBuilder.event {
                 name = "event"
                 version = 1
                 payload = 42
             }
             runBlocking {
-                responseFor(event) {
+                eventBuilder.responseFor(event) {
                     id = null
                     flowId = null
                     payload = 84
@@ -256,13 +250,13 @@ class EventBuilderTest {
     @Test
     fun testResponseForEventWithoutName() {
         assertThrows(MissingEventInformationException::class.java) {
-            val event = event {
+            val event = eventBuilder.event {
                 name = "event"
                 version = 1
                 payload = 42
             }
             runBlocking {
-                responseFor(event) {
+                eventBuilder.responseFor(event) {
                     name = null
                     payload = 84
                 }
@@ -273,13 +267,13 @@ class EventBuilderTest {
     @Test
     fun testResponseForEventWithoutVersion() {
         assertThrows(MissingEventInformationException::class.java) {
-            val event = event {
+            val event = eventBuilder.event {
                 name = "event"
                 version = 1
                 payload = 42
             }
             runBlocking {
-                responseFor(event) {
+                eventBuilder.responseFor(event) {
                     version = null
                     payload = 84
                 }
@@ -290,13 +284,13 @@ class EventBuilderTest {
     @Test
     fun testResponseForEventWithoutPayload() {
         assertThrows(MissingEventInformationException::class.java) {
-            val event = event {
+            val event = eventBuilder.event {
                 name = "event"
                 version = 1
                 payload = 42
             }
             runBlocking {
-                responseFor(event) {
+                eventBuilder.responseFor(event) {
                 }
             }
         }
@@ -304,14 +298,14 @@ class EventBuilderTest {
 
     @Test
     fun testCreateErrorResponseEvent() {
-        val event = event {
+        val event = eventBuilder.event {
             id = "id"
             flowId = "flowId"
             name = "event"
             version = 1
             payload = 42
         }
-        val response = errorFor(event, EventErrorType.Generic, EventMessage("code", emptyMap()))
+        val response = eventBuilder.errorFor(event, EventErrorType.Generic, EventMessage("code", emptyMap()))
 
         assertEquals("id", response.id)
         assertEquals("flowId", response.flowId)
@@ -325,7 +319,7 @@ class EventBuilderTest {
 
     @Test
     fun `test create redirect event`() {
-        val event = event {
+        val event = eventBuilder.event {
             id = "id"
             flowId = "flowId"
             name = "event"
@@ -335,7 +329,7 @@ class EventBuilderTest {
 
         val redirectURL = "https://www.google.com.br"
         val redirectPayload = RedirectPayload(url = redirectURL)
-        val response = redirectFor(event, redirectPayload)
+        val response = eventBuilder.redirectFor(event, redirectPayload)
 
         assertEquals("id", response.id)
         assertEquals("flowId", response.flowId)
@@ -349,14 +343,14 @@ class EventBuilderTest {
 
     @Test
     fun testCreateEventNotFoundResponseEvent() {
-        val event = event {
+        val event = eventBuilder.event {
             id = "id"
             flowId = "flowId"
             name = "event"
             version = 1
             payload = 42
         }
-        val response = eventNotFound(event)
+        val response = eventBuilder.eventNotFound(event)
 
         assertEquals("id", response.id)
         assertEquals("flowId", response.flowId)
@@ -378,7 +372,7 @@ class EventBuilderTest {
 
     @Test
     fun testCreateBadProtocolResponseEvent() {
-        val response = badProtocol(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap()))
+        val response = eventBuilder.badProtocol(EventMessage("INVALID_COMMUNICATION_PROTOCOL", emptyMap()))
 
         assertNotNull(response.id)
         assertNotNull(response.flowId)

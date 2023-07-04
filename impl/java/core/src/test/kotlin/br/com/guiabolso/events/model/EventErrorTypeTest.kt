@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.model
 
 import br.com.guiabolso.events.EventBuilderForTest
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType.Companion.getErrorType
 import br.com.guiabolso.events.model.EventErrorType.Expired
@@ -55,7 +55,7 @@ class EventErrorTypeTest {
 
     @Test
     fun testJsonNullUserIdEvent() {
-        val identity = MapperHolder.mapper.fromJson(
+        val identity = mapper.fromJson(
             """
             {
                 "userId": null
@@ -71,7 +71,7 @@ class EventErrorTypeTest {
 
     @Test
     fun testJsonNullOriginEvent() {
-        val metadata = MapperHolder.mapper.fromJson(
+        val metadata = mapper.fromJson(
             """
             {
                 "origin": null
@@ -87,7 +87,7 @@ class EventErrorTypeTest {
 
     @Test
     fun testNotNullUserIdEvent() {
-        val identity = MapperHolder.mapper.fromJson(
+        val identity = mapper.fromJson(
             """
             {
                 "userId": 123987
@@ -103,7 +103,7 @@ class EventErrorTypeTest {
 
     @Test
     fun testNotNullOriginEvent() {
-        val metadata = MapperHolder.mapper.fromJson(
+        val metadata = mapper.fromJson(
             """
             {
                 "origin": "east"

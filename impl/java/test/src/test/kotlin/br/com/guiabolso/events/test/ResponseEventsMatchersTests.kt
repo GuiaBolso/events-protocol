@@ -1,6 +1,7 @@
 package br.com.guiabolso.events.test
 
 import br.com.guiabolso.events.builder.EventBuilder
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RedirectPayload
@@ -9,10 +10,25 @@ import io.kotest.core.spec.style.FunSpec
 import kotlinx.coroutines.runBlocking
 
 class ResponseEventsMatchersTests : FunSpec({
+    val builder = EventBuilder(mapper)
+    val complexMap = mapOf(
+        "a" to "b",
+        "c" to mapOf("a" to "b")
+    )
+    val event = builder.event {
+        name = "a:b"
+        version = 3
+        id = "id"
+        flowId = "flowId"
+        payload = complexMap
+        identity = complexMap
+        auth = complexMap
+        metadata = complexMap
+    }
 
-    val successResponse = runBlocking { EventBuilder.responseFor(event) { } }
-    val redirectResponse = EventBuilder.redirectFor(event, RedirectPayload("a"))
-    val errorResponse = EventBuilder.errorFor(event, EventErrorType.BadRequest, EventMessage("code", emptyMap()))
+    val successResponse = runBlocking { builder.responseFor(event) { } }
+    val redirectResponse = builder.redirectFor(event, RedirectPayload("a"))
+    val errorResponse = builder.errorFor(event, EventErrorType.BadRequest, EventMessage("code", emptyMap()))
 
     test("Should be success") {
         successResponse.shouldBeSuccess()
@@ -52,19 +68,3 @@ class ResponseEventsMatchersTests : FunSpec({
         shouldThrow<AssertionError> { errorResponse shouldHaveErrorType EventErrorType.Expired }
     }
 })
-
-private val event = EventBuilder.event {
-    name = "a:b"
-    version = 3
-    id = "id"
-    flowId = "flowId"
-    payload = complexMap
-    identity = complexMap
-    auth = complexMap
-    metadata = complexMap
-}
-
-private val complexMap = mapOf(
-    "a" to "b",
-    "c" to mapOf("a" to "b")
-)

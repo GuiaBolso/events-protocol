@@ -6,22 +6,29 @@ import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.client.exception.FailedDependencyException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.model.Response
-import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.model.EventErrorType
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class EventClientTest {
+    private val httpClient = mockk<HttpClientAdapter>()
+    private val eventClient = EventClient(mapper, httpClient)
+
+    @AfterEach
+    fun after() {
+        clearMocks(httpClient)
+    }
 
     @Test
     fun testSuccessResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent()
@@ -44,9 +51,6 @@ class EventClientTest {
 
     @Test
     fun testSuccessResponseWithCustomHeader() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent()
 
@@ -78,9 +82,6 @@ class EventClientTest {
 
     @Test
     fun testRedirectResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildRedirectEvent()
 
@@ -102,9 +103,6 @@ class EventClientTest {
 
     @Test
     fun testErrorResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent().copy(name = "${event.name}:error")
 
@@ -127,9 +125,6 @@ class EventClientTest {
 
     @Test
     fun testTimeout() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
 
         every {
@@ -150,9 +145,6 @@ class EventClientTest {
 
     @Test
     fun testInvalidResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
 
         every {
@@ -174,9 +166,6 @@ class EventClientTest {
 
     @Test
     fun testCannotConnect() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
 
         every {

@@ -5,11 +5,14 @@ import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventCoroutineContextForwarder
 import br.com.guiabolso.events.context.EventThreadContextManager
 import br.com.guiabolso.events.exception.EventValidationException
+import br.com.guiabolso.events.json.JsonAdapter
+import br.com.guiabolso.events.json.JsonAdapterProducer
 import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.exception.EventNotFoundException
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandler
+import br.com.guiabolso.events.server.handler.RequestEventContext
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.StrictEventValidator
@@ -31,14 +34,21 @@ class RawEventProcessorTest {
     private lateinit var exceptionHandlerRegistry: ExceptionHandlerRegistry
     private lateinit var eventValidator: StrictEventValidator
     private lateinit var processor: RawEventProcessor
+    private lateinit var jsonAdapter: JsonAdapter
 
     @BeforeEach
     fun setup() {
         eventHandlerRegistry = mockk()
         exceptionHandlerRegistry = mockk()
         eventValidator = mockk()
+        jsonAdapter = JsonAdapterProducer.mapper
 
-        processor = RawEventProcessor(eventHandlerRegistry, exceptionHandlerRegistry, eventValidator = eventValidator)
+        processor = RawEventProcessor(
+            eventHandlerRegistry,
+            exceptionHandlerRegistry,
+            eventValidator = eventValidator,
+            jsonAdapter = jsonAdapter
+        )
     }
 
     @Test
@@ -54,10 +64,11 @@ class RawEventProcessorTest {
         }
         val response = mockk<ResponseEvent>()
         val handler = mockk<EventHandler>()
+        val eventContext = RequestEventContext(request, jsonAdapter)
 
         every { eventValidator.validateAsRequestEvent(rawEvent) } returns request
         every { eventHandlerRegistry.eventHandlerFor("eventName", 1) } returns handler
-        coEvery { handler.handle(request) } answers {
+        coEvery { handler.handle(eventContext) } answers {
             assertEquals(EventContext("id", "flowId"), EventThreadContextManager.current)
             assertEquals(EventContext("id", "flowId"), EventCoroutineContextForwarder.current)
             response
@@ -67,14 +78,14 @@ class RawEventProcessorTest {
 
         verify(exactly = 1) { eventValidator.validateAsRequestEvent(rawEvent) }
         verify(exactly = 1) { eventHandlerRegistry.eventHandlerFor("eventName", 1) }
-        coVerify(exactly = 1) { handler.handle(request) }
+        coVerify(exactly = 1) { handler.handle(eventContext) }
     }
 
     @Test
     fun `should route validation exceptions to the ExceptionHandler`(): Unit = runBlocking {
         val rawEvent = buildRawRequestEvent()
         val exception = EventValidationException("")
-        val fakeEvent = slot<RequestEvent>()
+        val fakeEvent = slot<RequestEventContext>()
 
         every { eventValidator.validateAsRequestEvent(rawEvent) } throws exception
         coEvery {
@@ -101,7 +112,7 @@ class RawEventProcessorTest {
             every { origin } returns "origin"
         }
         val exception = EventNotFoundException()
-        val fakeEvent = slot<RequestEvent>()
+        val fakeEvent = slot<RequestEventContext>()
 
         every { eventValidator.validateAsRequestEvent(rawEvent) } returns request
         every { eventHandlerRegistry.eventHandlerFor("eventName", 1) } throws exception

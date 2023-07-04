@@ -1,6 +1,6 @@
 package br.com.guiabolso.events.validation
 
-import br.com.guiabolso.events.json.MapperHolder
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.json.long
 import br.com.guiabolso.events.json.primitiveNode
@@ -14,7 +14,7 @@ class TypeValidationHelperTest {
     @Test
     fun testWithCheckedJsonNullWithNullInput() {
 
-        val jsonObj = MapperHolder.mapper.fromJson(
+        val jsonObj = mapper.fromJson(
             """
         {
             "userId": null
@@ -33,7 +33,7 @@ class TypeValidationHelperTest {
     @Test
     fun testWithCheckedJsonNullWithValidInput() {
 
-        val identityJsonObj = MapperHolder.mapper.fromJson(
+        val identityJsonObj = mapper.fromJson(
             """
             {
                 "userId": 123987

@@ -1,11 +1,13 @@
 package br.com.guiabolso.events
 
-import br.com.guiabolso.events.model.RequestEvent
+import br.com.guiabolso.events.builder.EventBuilder
+import br.com.guiabolso.events.json.JsonAdapter
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.SuspendingEventProcessor
 import br.com.guiabolso.events.server.exception.handler.EventExceptionHandler
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistryFactory.exceptionHandler
 import br.com.guiabolso.events.server.handler.EventHandler
+import br.com.guiabolso.events.server.handler.RequestEventContext
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
 import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.tracing.Tracer
@@ -29,11 +31,14 @@ class Events(configuration: TraceConfiguration) {
 
     private val eventProcessor = with(configuration) {
         SuspendingEventProcessor(
-            registry, exceptionHandler, tracer
+            registry, exceptionHandler, tracer, jsonAdapter = jsonAdapter
         )
     }
 
-    class TraceConfiguration internal constructor(config: TraceConfiguration.() -> Unit) : Configuration() {
+    class TraceConfiguration internal constructor(
+        jsonAdapter: JsonAdapter,
+        config: TraceConfiguration.() -> Unit,
+    ) : Configuration(jsonAdapter) {
         internal lateinit var tracer: Tracer
 
         init {
@@ -46,9 +51,9 @@ class Events(configuration: TraceConfiguration) {
         }
     }
 
-    open class Configuration {
+    open class Configuration(internal val jsonAdapter: JsonAdapter) {
         internal val registry = SimpleEventHandlerRegistry()
-        internal val exceptionHandler = exceptionHandler()
+        internal val exceptionHandler = exceptionHandler(EventBuilder(jsonAdapter))
 
         @KtorDsl
         fun event(handler: EventHandler) {
@@ -56,7 +61,7 @@ class Events(configuration: TraceConfiguration) {
         }
 
         @KtorDsl
-        fun event(name: String, version: Int, handler: suspend (RequestEvent) -> ResponseEvent) {
+        fun event(name: String, version: Int, handler: suspend (RequestEventContext) -> ResponseEvent) {
             registry.add(name, version, handler)
         }
 
@@ -69,7 +74,7 @@ class Events(configuration: TraceConfiguration) {
         @KtorDsl
         fun <T : Throwable> exception(
             klass: KClass<T>,
-            handler: suspend (exception: T, event: RequestEvent, tracer: Tracer) -> ResponseEvent
+            handler: suspend (exception: T, event: RequestEventContext, tracer: Tracer) -> ResponseEvent,
         ) = exceptionHandler.register(klass.java) { e, evt, tracer ->
             handler(e, evt, tracer)
         }
@@ -77,39 +82,49 @@ class Events(configuration: TraceConfiguration) {
 
     private suspend fun processEvent(rawEvent: String?): String = eventProcessor.processEvent(rawEvent)
 
-    companion object Feature : BaseApplicationPlugin<ApplicationCallPipeline, TraceConfiguration, Events> {
-        override val key: AttributeKey<Events> = AttributeKey("Events-Protocol")
+    companion object {
 
-        override fun install(
-            pipeline: ApplicationCallPipeline,
-            configure: TraceConfiguration.() -> Unit
-        ): Events {
-            val events = Events(TraceConfiguration(configure))
+        fun with(jsonAdapter: JsonAdapter) =
+            object : BaseApplicationPlugin<ApplicationCallPipeline, TraceConfiguration, Events> {
+                override val key: AttributeKey<Events> = AttributeKey("Events-Protocol")
 
-            pipeline.intercept(ApplicationCallPipeline.Call) {
-                val path = call.request.path()
-                if (path == "/events/" || path == "/events") {
-                    val rawEvent =
-                        call.receiveChannel().toByteArray().toString(call.request.contentCharset() ?: Charsets.UTF_8)
-                    call.respondText(
-                        text = events.processEvent(rawEvent), contentType = ContentType.Application.Json
-                    )
-                    return@intercept finish()
+                override fun install(
+                    pipeline: ApplicationCallPipeline,
+                    configure: TraceConfiguration.() -> Unit,
+                ): Events {
+                    val events = Events(TraceConfiguration(jsonAdapter, configure))
+
+                    pipeline.intercept(ApplicationCallPipeline.Call) {
+                        val path = call.request.path()
+                        if (path == "/events/" || path == "/events") {
+                            val rawEvent =
+                                call.receiveChannel().toByteArray()
+                                    .toString(call.request.contentCharset() ?: Charsets.UTF_8)
+                            call.respondText(
+                                text = events.processEvent(rawEvent), contentType = ContentType.Application.Json
+                            )
+                            return@intercept finish()
+                        }
+                    }
+                    return events
                 }
             }
-            return events
-        }
     }
 }
 
 @KtorDsl
-fun Application.events(tracer: Tracer = DefaultTracer, configuration: Events.Configuration.() -> Unit) {
-    val feature = pluginOrNull(Events)
+fun Application.events(
+    jsonAdapter: JsonAdapter,
+    tracer: Tracer = DefaultTracer,
+    configuration: Events.Configuration.() -> Unit,
+) {
+    val eventPlugin = Events.with(jsonAdapter)
+    val feature = pluginOrNull(eventPlugin)
     if (feature != null) throw IllegalStateException("Cannot initialize Events more than once!")
 
     val t: Events.TraceConfiguration.() -> Unit = {
         withTracer(tracer)
         configuration()
     }
-    install(Events, t)
+    install(eventPlugin, t)
 }

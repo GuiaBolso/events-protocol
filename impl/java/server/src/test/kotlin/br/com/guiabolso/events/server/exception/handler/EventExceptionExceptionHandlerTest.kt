@@ -1,10 +1,11 @@
 package br.com.guiabolso.events.server.exception.handler
 
 import br.com.guiabolso.events.exception.EventException
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.RequestEvent
-import br.com.guiabolso.events.server.exception.handler.EventExceptionExceptionHandler.handleException
+import br.com.guiabolso.events.server.context
 import br.com.guiabolso.tracing.Tracer
 import br.com.guiabolso.tracing.utils.ExceptionUtils
 import datadog.trace.api.DDTags
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class EventExceptionExceptionHandlerTest {
+    private val exceptionHandler = EventExceptionExceptionHandler
 
     @Test
     fun `should handle the exception and notify tracer properly`(): Unit = runBlocking {
@@ -34,10 +36,10 @@ class EventExceptionExceptionHandlerTest {
         every { tracer.addRootProperty(DDTags.ERROR_TYPE, "CODE") } just Runs
         every { tracer.addRootProperty(DDTags.ERROR_STACK, ExceptionUtils.getStackTrace(exception)) } just Runs
 
-        val responseEvent = handleException(exception, requestEvent, tracer)
+        val responseEvent = exceptionHandler.handleException(exception, requestEvent.context(), tracer)
         assertEquals(EventErrorType.Generic, responseEvent.getErrorType())
 
-        val message = responseEvent.payloadAs<EventMessage>()
+        val message = responseEvent.payloadAs<EventMessage>(mapper)
         assertEquals("CODE", message.code)
         assertEquals(mapOf("some" to "parameter"), message.parameters)
 
