@@ -14,6 +14,7 @@ import io.opentelemetry.context.Context
 import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 
+@Suppress("TooManyFunctions")
 class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
 
     override val type = Span::class.java
