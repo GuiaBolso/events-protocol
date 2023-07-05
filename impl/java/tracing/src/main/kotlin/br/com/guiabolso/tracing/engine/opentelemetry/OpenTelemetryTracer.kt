@@ -136,9 +136,10 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
             when {
                 String::class.java.isAssignableFrom(tClass) -> AttributeKey.stringKey(k)
                 Double::class.java.isAssignableFrom(tClass) -> AttributeKey.doubleKey(k)
-                Number::class.java.isAssignableFrom(tClass) -> AttributeKey.doubleKey(k)
+                Float::class.java.isAssignableFrom(tClass) -> AttributeKey.doubleKey(k)
                 Int::class.java.isAssignableFrom(tClass) -> AttributeKey.longKey(k)
                 Long::class.java.isAssignableFrom(tClass) -> AttributeKey.longKey(k)
+                Number::class.java.isAssignableFrom(tClass) -> AttributeKey.doubleKey(k)
                 Boolean::class.java.isAssignableFrom(tClass) -> AttributeKey.booleanKey(k)
                 else -> error("Unsupported attribute type ${tClass.canonicalName}")
             }

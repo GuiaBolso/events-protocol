@@ -22,7 +22,7 @@ object OpenTelemetryUtils {
         kind: SpanKind = SpanKind.SERVER,
         func: () -> Unit
     ) = runBlocking {
-        coTraceAsNewOperation(name, kind) { func() }
+        coTraceAsNewOperation(name, kind, func)
     }
 
     suspend fun coTraceAsNewOperation(
