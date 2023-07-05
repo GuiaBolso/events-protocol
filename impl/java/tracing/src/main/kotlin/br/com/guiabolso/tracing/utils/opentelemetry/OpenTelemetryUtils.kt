@@ -86,4 +86,3 @@ object OpenTelemetryUtils {
         span.recordException(DefaultUnspecifiedException(message), builder.build())
     }
 }
-
