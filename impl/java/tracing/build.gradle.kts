@@ -7,6 +7,9 @@ dependencies {
     // Open Tracing
     api("io.opentracing:opentracing-api:0.33.0")
     api("io.opentracing:opentracing-util:0.33.0")
+
+    // Open Telemetry
+    api("io.opentelemetry:opentelemetry-api:1.27.0")
     
     // AspectJ
     implementation("org.aspectj:aspectjweaver:1.9.19")

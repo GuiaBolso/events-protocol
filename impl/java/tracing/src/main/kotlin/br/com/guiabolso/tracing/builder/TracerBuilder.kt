@@ -6,6 +6,7 @@ import br.com.guiabolso.tracing.context.ThreadContextManager
 import br.com.guiabolso.tracing.engine.TracerEngine
 import br.com.guiabolso.tracing.engine.datadog.DatadogStatsDTracer
 import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
+import br.com.guiabolso.tracing.engine.opentelemetry.OpenTelemetryTracer
 import br.com.guiabolso.tracing.engine.slf4j.Slf4JTracer
 
 class TracerBuilder {
@@ -25,6 +26,11 @@ class TracerBuilder {
 
     fun withDatadogAPMAndStatsD(prefix: String, host: String, port: Int): TracerBuilder {
         withEngine(DatadogStatsDTracer(prefix, host, port))
+        return this
+    }
+
+    fun withOpenTelemetryAPM(): TracerBuilder {
+        withEngine(OpenTelemetryTracer())
         return this
     }
 
