@@ -1,11 +1,10 @@
 package br.com.guiabolso.events
 
 import br.com.guiabolso.events.json.JsonAdapterProducer
-import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
-import br.com.guiabolso.events.json.MapperHolder
 import br.com.guiabolso.events.model.EventErrorType.BadRequest
 import br.com.guiabolso.events.model.EventMessage
 import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.test.JsonAdapterHolder.mapper
 import br.com.guiabolso.events.test.beError
 import br.com.guiabolso.events.test.beSuccess
 import br.com.guiabolso.events.test.shouldHaveErrorType
@@ -27,10 +26,7 @@ import io.ktor.server.testing.testApplication
 import java.util.UUID.randomUUID
 
 class EventsTest : ShouldSpec({
-
-    beforeSpec {
-        MapperHolder.mapper = JsonAdapterProducer.mapper
-    }
+    mapper = JsonAdapterProducer.mapper
 
     should("Have the same response for /events and /events/") {
         testApplication {
