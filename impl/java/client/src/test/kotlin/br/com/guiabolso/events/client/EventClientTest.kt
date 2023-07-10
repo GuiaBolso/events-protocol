@@ -8,6 +8,7 @@ import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.RedirectPayload
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -46,7 +47,9 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
         assertTrue(response is Response.Success)
-        assertEquals(responseEvent, (response as Response.Success).event)
+        val success = response as Response.Success
+        assertEquals(responseEvent, success.event)
+        assertEquals(42, success.payloadAs<Int>())
     }
 
     @Test
@@ -98,7 +101,10 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
         assertTrue(response is Response.Redirect)
-        assertEquals(responseEvent, (response as Response.Redirect).event)
+
+        val redirect = response as Response.Redirect
+        assertEquals(responseEvent, redirect.event)
+        assertEquals("https://www.google.com", redirect.payloadAs<RedirectPayload>().url)
     }
 
     @Test
@@ -119,8 +125,11 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
         assertTrue(response is Response.Error)
-        assertEquals(EventErrorType.Generic, (response as Response.Error).errorType)
+
+        val error = response as Response.Error
+        assertEquals(EventErrorType.Generic, error.errorType)
         assertEquals(responseEvent, response.event)
+        assertEquals(42, error.payloadAs<Int>())
     }
 
     @Test

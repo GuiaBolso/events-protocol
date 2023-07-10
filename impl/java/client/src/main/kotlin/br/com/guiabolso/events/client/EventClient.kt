@@ -48,17 +48,17 @@ constructor(
             when {
                 event.isSuccess() -> {
                     logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Success(event)
+                    Response.Success(event, jsonAdapter)
                 }
 
                 event.isRedirect() -> {
                     logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Redirect(event)
+                    Response.Redirect(event, jsonAdapter)
                 }
 
                 else -> {
                     logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Error(event, event.getErrorType())
+                    Response.Error(event, event.getErrorType(), jsonAdapter)
                 }
             }
         } catch (e: TimeoutException) {
