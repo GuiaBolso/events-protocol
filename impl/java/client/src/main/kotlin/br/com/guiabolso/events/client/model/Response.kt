@@ -1,40 +1,22 @@
 package br.com.guiabolso.events.client.model
 
 import br.com.guiabolso.events.json.JsonAdapter
+import br.com.guiabolso.events.model.AbstractEventContext
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.ResponseEvent
 
+data class ResponseEventContext(
+    override val event: ResponseEvent,
+    override val jsonAdapter: JsonAdapter,
+) : AbstractEventContext<ResponseEvent>()
+
 sealed class Response {
 
-    sealed class DeserializableResponse : Response() {
-        abstract val event: ResponseEvent
-        abstract val jsonAdapter: JsonAdapter
+    data class Success(val event: ResponseEventContext) : Response()
 
-        fun <T> payloadAs(clazz: Class<T>): T = event.payloadAs(clazz, jsonAdapter)
-        inline fun <reified T> payloadAs(): T = event.payloadAs(jsonAdapter)
+    data class Redirect(val event: ResponseEventContext) : Response()
 
-        fun <T> identityAs(clazz: Class<T>): T = event.identityAs(clazz, jsonAdapter)
-        inline fun <reified T> identityAs(jsonAdapter: JsonAdapter): T = event.identityAs(jsonAdapter)
-
-        fun <T> authAs(clazz: Class<T>): T = event.authAs(clazz, jsonAdapter)
-        inline fun <reified T> authAs(): T = event.authAs(jsonAdapter)
-    }
-
-    data class Success(
-        override val event: ResponseEvent,
-        override val jsonAdapter: JsonAdapter,
-    ) : DeserializableResponse()
-
-    data class Redirect(
-        override val event: ResponseEvent,
-        override val jsonAdapter: JsonAdapter,
-    ) : DeserializableResponse()
-
-    data class Error(
-        override val event: ResponseEvent,
-        val errorType: EventErrorType,
-        override val jsonAdapter: JsonAdapter,
-    ) : DeserializableResponse()
+    data class Error(val event: ResponseEventContext, val errorType: EventErrorType) : Response()
 
     data class FailedDependency(val exception: Exception, val response: String? = null) : Response()
 

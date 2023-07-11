@@ -5,6 +5,7 @@ import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.http.FuelHttpClient
 import br.com.guiabolso.events.client.model.Response
+import br.com.guiabolso.events.client.model.ResponseEventContext
 import br.com.guiabolso.events.json.JsonAdapter
 import br.com.guiabolso.events.json.fromJson
 import br.com.guiabolso.events.model.RawEvent
@@ -20,7 +21,7 @@ constructor(
     private val jsonAdapter: JsonAdapter,
     private val httpClient: HttpClientAdapter = FuelHttpClient(),
     private val eventValidator: EventValidator = StrictEventValidator(),
-    private val defaultTimeout: Int = 60000
+    private val defaultTimeout: Int = 60000,
 ) {
 
     companion object {
@@ -32,7 +33,7 @@ constructor(
         url: String,
         requestEvent: RequestEvent,
         headers: Map<String, String> = emptyMap(),
-        timeout: Int? = null
+        timeout: Int? = null,
     ): Response {
         val customHeaders = HashMap(headers).apply { this["Content-Type"] = "application/json" }
         return try {
@@ -48,17 +49,17 @@ constructor(
             when {
                 event.isSuccess() -> {
                     logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Success(event, jsonAdapter)
+                    Response.Success(ResponseEventContext(event, jsonAdapter))
                 }
 
                 event.isRedirect() -> {
                     logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Redirect(event, jsonAdapter)
+                    Response.Redirect(ResponseEventContext(event, jsonAdapter))
                 }
 
                 else -> {
                     logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Error(event, event.getErrorType(), jsonAdapter)
+                    Response.Error(ResponseEventContext(event, jsonAdapter), event.getErrorType())
                 }
             }
         } catch (e: TimeoutException) {

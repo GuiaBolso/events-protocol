@@ -92,22 +92,42 @@ data class ResponseEvent(
 }
 
 data class RequestEvent(
-
     override val name: String,
-
     override val version: Int,
-
     override val id: String,
-
     override val flowId: String,
-
     override val payload: JsonNode,
-
     override val identity: TreeNode,
-
     override val auth: TreeNode,
-
     override val metadata: TreeNode
 ) : Event()
 
 data class User(val id: Long?, val type: String?)
+
+abstract class AbstractEventContext<T : Event> {
+    abstract val event: T
+    abstract val jsonAdapter: JsonAdapter
+
+    val name: String get() = event.name
+    val version get() = event.version
+    val id get() = event.id
+    val flowId get() = event.flowId
+    val payload get() = event.payload
+    val identity get() = event.identity
+    val auth get() = event.auth
+    val metadata get() = event.metadata
+
+    val user: User? get() = event.user
+    val userId: Long? get() = event.userId
+    val userIdAsString: String? get() = event.userIdAsString
+    val origin: String? get() = event.origin
+
+    fun <T> payloadAs(clazz: Class<T>): T = event.payloadAs(clazz, jsonAdapter)
+    inline fun <reified T> payloadAs(): T = event.payloadAs(jsonAdapter)
+
+    fun <T> identityAs(clazz: Class<T>): T = this.event.identityAs(clazz, jsonAdapter)
+    inline fun <reified T> identityAs(): T = this.event.identityAs(jsonAdapter)
+
+    fun <T> authAs(clazz: Class<T>): T = this.event.authAs(clazz, jsonAdapter)
+    inline fun <reified T> authAs(): T = this.event.authAs(jsonAdapter)
+}

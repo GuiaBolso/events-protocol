@@ -47,7 +47,8 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
         assertTrue(response is Response.Success)
-        val success = response as Response.Success
+        val (success) = response as Response.Success
+
         assertEquals(responseEvent, success.event)
         assertEquals(42, success.payloadAs<Int>())
     }
@@ -70,7 +71,9 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, mapOf("Test" to "some value"), 1000)
 
         assertTrue(response is Response.Success)
-        assertEquals(responseEvent, (response as Response.Success).event)
+
+        val (success) = response as Response.Success
+        assertEquals(responseEvent, success.event)
 
         verify {
             httpClient.post(
@@ -102,7 +105,7 @@ class EventClientTest {
 
         assertTrue(response is Response.Redirect)
 
-        val redirect = response as Response.Redirect
+        val (redirect) = response as Response.Redirect
         assertEquals(responseEvent, redirect.event)
         assertEquals("https://www.google.com", redirect.payloadAs<RedirectPayload>().url)
     }
@@ -128,8 +131,8 @@ class EventClientTest {
 
         val error = response as Response.Error
         assertEquals(EventErrorType.Generic, error.errorType)
-        assertEquals(responseEvent, response.event)
-        assertEquals(42, error.payloadAs<Int>())
+        assertEquals(responseEvent, response.event.event)
+        assertEquals(42, error.event.payloadAs<Int>())
     }
 
     @Test
