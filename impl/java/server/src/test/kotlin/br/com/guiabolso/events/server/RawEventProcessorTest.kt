@@ -14,6 +14,7 @@ import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.RequestEventContext
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
+import br.com.guiabolso.events.server.handler.toContext
 import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.StrictEventValidator
 import io.mockk.coEvery
@@ -64,7 +65,7 @@ class RawEventProcessorTest {
         }
         val response = mockk<ResponseEvent>()
         val handler = mockk<EventHandler>()
-        val eventContext = RequestEventContext(request, jsonAdapter)
+        val eventContext = request.toContext(jsonAdapter)
 
         every { eventValidator.validateAsRequestEvent(rawEvent) } returns request
         every { eventHandlerRegistry.eventHandlerFor("eventName", 1) } returns handler

@@ -5,6 +5,7 @@ import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.handler.ConvertingEventHandler
 import br.com.guiabolso.events.server.handler.RequestEventContext
+import br.com.guiabolso.events.server.handler.toContext
 import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
 
@@ -28,7 +29,7 @@ private fun createEvent(str: String) =
         id = "id"
         flowId = "flowId"
         payload = str
-    }.run { RequestEventContext(this, mapper) }
+    }.toContext(mapper)
 
 object MyHandler : ConvertingEventHandler<String> {
     override val eventName = "a"

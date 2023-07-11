@@ -5,12 +5,12 @@ import br.com.guiabolso.events.json.JsonAdapter
 import br.com.guiabolso.events.json.JsonAdapterProducer
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.model.RequestEvent
-import br.com.guiabolso.events.server.handler.RequestEventContext
+import br.com.guiabolso.events.server.handler.toContext
 
 fun requestEventContext(
     jsonAdapter: JsonAdapter = JsonAdapterProducer.mapper,
     requestEvent: RequestEvent = requestEvent(jsonAdapter = jsonAdapter),
-) = RequestEventContext(event = requestEvent, jsonAdapter = jsonAdapter)
+) = requestEvent.toContext(jsonAdapter)
 
 fun requestEvent(
     payload: Any? = PrimitiveNode(42),
@@ -19,6 +19,4 @@ fun requestEvent(
     payload = jsonAdapter.toJsonTree(payload)
 )
 
-fun RequestEvent.context(
-    jsonAdapter: JsonAdapter = JsonAdapterProducer.mapper,
-) = RequestEventContext(this, jsonAdapter = jsonAdapter)
+fun RequestEvent.context(jsonAdapter: JsonAdapter = JsonAdapterProducer.mapper) = this.toContext(jsonAdapter)

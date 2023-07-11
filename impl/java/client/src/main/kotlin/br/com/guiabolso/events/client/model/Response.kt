@@ -5,11 +5,6 @@ import br.com.guiabolso.events.model.AbstractEventContext
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.ResponseEvent
 
-data class ResponseEventContext(
-    override val event: ResponseEvent,
-    override val jsonAdapter: JsonAdapter,
-) : AbstractEventContext<ResponseEvent>()
-
 sealed class Response {
 
     data class Success(val event: ResponseEventContext) : Response()
@@ -39,3 +34,10 @@ sealed class Response {
         )
     }
 }
+
+data class ResponseEventContext(
+    override val event: ResponseEvent,
+    override val jsonAdapter: JsonAdapter,
+) : AbstractEventContext<ResponseEvent>()
+
+fun ResponseEvent.toContext(jsonAdapter: JsonAdapter) = ResponseEventContext(this, jsonAdapter)

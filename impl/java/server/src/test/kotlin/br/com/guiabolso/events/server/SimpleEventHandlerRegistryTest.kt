@@ -6,6 +6,7 @@ import br.com.guiabolso.events.model.ResponseEvent
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.RequestEventContext
 import br.com.guiabolso.events.server.handler.SimpleEventHandlerRegistry
+import br.com.guiabolso.events.server.handler.toContext
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -51,10 +52,7 @@ class SimpleEventHandlerRegistryTest {
         }
 
         val handler = eventHandlerDiscovery.eventHandlerFor("event:name", 1)!!
-        val eventContext = RequestEventContext(
-            event = EventBuilderForTest.buildRequestEvent(),
-            jsonAdapter = JsonAdapterProducer.mapper
-        )
+        val eventContext = EventBuilderForTest.buildRequestEvent().toContext(JsonAdapterProducer.mapper)
         val response = handler.handle(eventContext)
         assertEquals(EventBuilderForTest.buildResponseEvent(), response)
     }

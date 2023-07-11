@@ -33,3 +33,5 @@ data class RequestEventContext(
         return eventBuilder.errorFor(event, type, message)
     }
 }
+
+fun RequestEvent.toContext(jsonAdapter: JsonAdapter) = RequestEventContext(this, jsonAdapter)
