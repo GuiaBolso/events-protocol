@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService
 
 @Suppress("TooManyFunctions")
 class TracerImpl(
-    var engines: List<TracerEngine>,
+    val engines: List<TracerEngine>,
     val contextManagers: List<ThreadContextManager<*>>
 ) : Tracer {
 
