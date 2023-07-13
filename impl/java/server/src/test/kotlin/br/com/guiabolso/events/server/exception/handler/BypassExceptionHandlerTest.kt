@@ -1,7 +1,7 @@
 package br.com.guiabolso.events.server.exception.handler
 
-import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.server.exception.BypassedException
+import br.com.guiabolso.events.server.requestEventContext
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,14 +24,14 @@ class BypassExceptionHandlerTest {
     fun `should throws the exception wrapped`(): Unit = runBlocking {
         val handler = BypassExceptionHandler(true)
         val exception = TestException()
-        val event: RequestEvent = mockk()
+        val eventContext = requestEventContext()
 
         val ex = assertThrows<BypassedException> {
-            runBlocking { handler.handleException(exception, event, mockk()) }
+            handler.handleException(exception, eventContext, mockk())
         }
 
         assertEquals(exception, ex.exception)
-        assertEquals(event, ex.request)
+        assertEquals(eventContext.event, ex.request)
     }
 
     class TestException : RuntimeException()

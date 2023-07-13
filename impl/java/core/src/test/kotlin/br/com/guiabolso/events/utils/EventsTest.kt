@@ -3,6 +3,7 @@ package br.com.guiabolso.events.utils
 import br.com.guiabolso.events.EventBuilderForTest.buildRequestEvent
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
 import br.com.guiabolso.events.json.ArrayNode
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.json.PrimitiveNode
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType
@@ -150,8 +151,8 @@ class EventsTest {
             payload = TreeNode("a" to PrimitiveNode("someString"), "b" to PrimitiveNode(60))
         )
 
-        val vo = request.payloadAs(VO::class.java)
-        val vo2: VO = request.payloadAs()
+        val vo = request.payloadAs(VO::class.java, mapper)
+        val vo2: VO = request.payloadAs(jsonAdapter = mapper)
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)
@@ -169,8 +170,8 @@ class EventsTest {
             )
         )
 
-        val vo = request.identityAs(VO::class.java)
-        val vo2: VO = request.identityAs()
+        val vo = request.identityAs(VO::class.java, mapper)
+        val vo2: VO = request.identityAs(mapper)
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)
@@ -188,8 +189,8 @@ class EventsTest {
             )
         )
 
-        val vo = request.authAs(VO::class.java)
-        val vo2: VO = request.authAs()
+        val vo = request.authAs(VO::class.java, mapper)
+        val vo2: VO = request.authAs(mapper)
 
         assertEquals("someString", vo.a)
         assertEquals(60L, vo.b)
@@ -217,7 +218,7 @@ class EventsTest {
             }
         )
 
-        val voList: List<VO> = request.payloadAs()
+        val voList: List<VO> = request.payloadAs(mapper)
 
         assertEquals("someString", voList[0].a)
         assertEquals(60L, voList[0].b)

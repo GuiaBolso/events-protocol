@@ -3,6 +3,7 @@ package br.com.guiabolso.events.server
 import br.com.guiabolso.events.context.EventContext
 import br.com.guiabolso.events.context.EventCoroutineContextForwarder.withCoroutineContext
 import br.com.guiabolso.events.context.EventThreadContextManager.withContext
+import br.com.guiabolso.events.json.JsonAdapter
 import br.com.guiabolso.events.json.TreeNode
 import br.com.guiabolso.events.model.EventErrorType.BadProtocol
 import br.com.guiabolso.events.model.RawEvent
@@ -12,6 +13,7 @@ import br.com.guiabolso.events.server.exception.EventNotFoundException
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistry
 import br.com.guiabolso.events.server.handler.EventHandler
 import br.com.guiabolso.events.server.handler.EventHandlerDiscovery
+import br.com.guiabolso.events.server.handler.RequestEventContext
 import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
@@ -25,7 +27,8 @@ constructor(
     val exceptionHandlerRegistry: ExceptionHandlerRegistry,
     val tracer: Tracer = DefaultTracer,
     val eventValidator: EventValidator = StrictEventValidator(),
-    val traceOperationPrefix: String = ""
+    val traceOperationPrefix: String = "",
+    private val jsonAdapter: JsonAdapter,
 ) {
 
     suspend fun processEvent(rawEvent: RawEvent): ResponseEvent {
@@ -36,11 +39,20 @@ constructor(
             withContext(EventContext(event.id, event.flowId)).use {
                 withCoroutineContext {
                     startProcessingEvent(event)
-                    handler.handle(event)
+                    handler.handle(
+                        RequestEventContext(
+                            event = event,
+                            jsonAdapter = jsonAdapter
+                        )
+                    )
                 }
             }
         } catch (e: Exception) {
-            exceptionHandlerRegistry.handleException(e, rawEvent.asRequestEvent(), tracer)
+            exceptionHandlerRegistry.handleException(
+                e,
+                RequestEventContext(rawEvent.asRequestEvent(), jsonAdapter),
+                tracer
+            )
         } finally {
             eventProcessFinished()
         }

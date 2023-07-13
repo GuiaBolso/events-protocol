@@ -2,7 +2,11 @@ dependencies {
     // Projects
     api(project(":core"))
     api(project(":server"))
+
+    testImplementation(project(":core").dependencyProject.sourceSets.test.get().output)
     testImplementation(project(":json-moshi"))
+    testImplementation(project(":json-gson"))
+    testImplementation(project(":json-jackson"))
 
     // Kotest
     api("io.kotest:kotest-assertions-api:5.5.5")

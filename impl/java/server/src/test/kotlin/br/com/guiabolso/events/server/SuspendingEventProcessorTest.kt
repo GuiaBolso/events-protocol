@@ -1,9 +1,10 @@
 package br.com.guiabolso.events.server
 
 import br.com.guiabolso.events.EventBuilderForTest.buildResponseEvent
-import br.com.guiabolso.events.model.RequestEvent
+import br.com.guiabolso.events.json.JsonAdapterProducer
 import br.com.guiabolso.events.server.exception.EventParsingException
 import br.com.guiabolso.events.server.exception.handler.ExceptionHandlerRegistry
+import br.com.guiabolso.events.server.handler.RequestEventContext
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -29,7 +30,7 @@ class SuspendingEventProcessorTest {
             every { tracer } returns mockk()
         }
 
-        processor = SuspendingEventProcessor(rawEventProcessor)
+        processor = SuspendingEventProcessor(rawEventProcessor, JsonAdapterProducer.mapper)
     }
 
     @Test
@@ -46,7 +47,7 @@ class SuspendingEventProcessorTest {
     @Test
     fun `should route parser exceptions to the ExceptionHandler`(): Unit = runBlocking {
         val exception = slot<RuntimeException>()
-        val response = slot<RequestEvent>()
+        val response = slot<RequestEventContext>()
 
         coEvery {
             exceptionHandler.handleException(
@@ -73,7 +74,7 @@ class SuspendingEventProcessorTest {
     fun `should route create consider null event as a parser exception then route it to the ExceptionHandler`(): Unit =
         runBlocking {
             val exception = slot<RuntimeException>()
-            val response = slot<RequestEvent>()
+            val response = slot<RequestEventContext>()
 
             coEvery {
                 exceptionHandler.handleException(

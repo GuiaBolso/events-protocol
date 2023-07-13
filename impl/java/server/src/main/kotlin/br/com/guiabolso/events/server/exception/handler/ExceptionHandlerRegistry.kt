@@ -1,10 +1,9 @@
 package br.com.guiabolso.events.server.exception.handler
 
-import br.com.guiabolso.events.builder.EventBuilder
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.EventMessage
-import br.com.guiabolso.events.model.RequestEvent
 import br.com.guiabolso.events.model.ResponseEvent
+import br.com.guiabolso.events.server.handler.RequestEventContext
 import br.com.guiabolso.tracing.Tracer
 import org.slf4j.LoggerFactory
 
@@ -21,15 +20,14 @@ class ExceptionHandlerRegistry internal constructor() {
         handlers[clazz] = handler as EventExceptionHandler<Throwable>
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Throwable> register(clazz: Class<T>, handler: suspend (T, RequestEvent, Tracer) -> ResponseEvent) {
+    fun <T : Throwable> register(clazz: Class<T>, handler: suspend (T, RequestEventContext, Tracer) -> ResponseEvent) {
         register(
             clazz,
-            LambdaEventExceptionHandler(handler as suspend (Throwable, RequestEvent, Tracer) -> ResponseEvent)
+            LambdaEventExceptionHandler(handler)
         )
     }
 
-    suspend fun <T : Throwable> handleException(e: T, event: RequestEvent, tracer: Tracer): ResponseEvent {
+    suspend fun <T : Throwable> handleException(e: T, event: RequestEventContext, tracer: Tracer): ResponseEvent {
         val handler = handlerFor(e)
 
         return if (handler != null) {
@@ -37,8 +35,7 @@ class ExceptionHandlerRegistry internal constructor() {
         } else {
             logger.error("Error processing event.", e)
             tracer.notifyError(e, false)
-            EventBuilder.errorFor(
-                event,
+            event.error(
                 EventErrorType.Generic,
                 EventMessage("UNHANDLED_ERROR", mapOf())
             )

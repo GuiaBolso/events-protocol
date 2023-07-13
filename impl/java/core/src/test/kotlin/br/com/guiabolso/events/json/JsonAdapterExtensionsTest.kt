@@ -1,6 +1,6 @@
 package br.com.guiabolso.events.json
 
-import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldBeNull

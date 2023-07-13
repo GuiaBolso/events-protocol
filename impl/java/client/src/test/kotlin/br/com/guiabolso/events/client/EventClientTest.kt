@@ -6,22 +6,30 @@ import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.client.exception.FailedDependencyException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.model.Response
-import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.model.EventErrorType
+import br.com.guiabolso.events.model.RedirectPayload
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class EventClientTest {
+    private val httpClient = mockk<HttpClientAdapter>()
+    private val eventClient = EventClient(mapper, httpClient)
+
+    @AfterEach
+    fun after() {
+        clearMocks(httpClient)
+    }
 
     @Test
     fun testSuccessResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
 
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent()
@@ -39,14 +47,14 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
         assertTrue(response is Response.Success)
-        assertEquals(responseEvent, (response as Response.Success).event)
+        val (success) = response as Response.Success
+
+        assertEquals(responseEvent, success.event)
+        assertEquals(42, success.payloadAs<Int>())
     }
 
     @Test
     fun testSuccessResponseWithCustomHeader() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent()
 
@@ -63,7 +71,9 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, mapOf("Test" to "some value"), 1000)
 
         assertTrue(response is Response.Success)
-        assertEquals(responseEvent, (response as Response.Success).event)
+
+        val (success) = response as Response.Success
+        assertEquals(responseEvent, success.event)
 
         verify {
             httpClient.post(
@@ -78,9 +88,6 @@ class EventClientTest {
 
     @Test
     fun testRedirectResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildRedirectEvent()
 
@@ -97,14 +104,14 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
         assertTrue(response is Response.Redirect)
-        assertEquals(responseEvent, (response as Response.Redirect).event)
+
+        val (redirect) = response as Response.Redirect
+        assertEquals(responseEvent, redirect.event)
+        assertEquals("https://www.google.com", redirect.payloadAs<RedirectPayload>().url)
     }
 
     @Test
     fun testErrorResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
         val responseEvent = EventBuilderForTest.buildResponseEvent().copy(name = "${event.name}:error")
 
@@ -121,15 +128,15 @@ class EventClientTest {
         val response = eventClient.sendEvent("url", event, timeout = 1000)
 
         assertTrue(response is Response.Error)
-        assertEquals(EventErrorType.Generic, (response as Response.Error).errorType)
-        assertEquals(responseEvent, response.event)
+
+        val error = response as Response.Error
+        assertEquals(EventErrorType.Generic, error.errorType)
+        assertEquals(responseEvent, response.event.event)
+        assertEquals(42, error.event.payloadAs<Int>())
     }
 
     @Test
     fun testTimeout() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
 
         every {
@@ -150,9 +157,6 @@ class EventClientTest {
 
     @Test
     fun testInvalidResponse() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
 
         every {
@@ -174,9 +178,6 @@ class EventClientTest {
 
     @Test
     fun testCannotConnect() {
-        val httpClient = mockk<HttpClientAdapter>()
-        val eventClient = EventClient(httpClient)
-
         val event = EventBuilderForTest.buildRequestEvent()
 
         every {

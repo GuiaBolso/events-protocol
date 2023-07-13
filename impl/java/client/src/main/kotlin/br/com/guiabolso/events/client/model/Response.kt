@@ -1,15 +1,17 @@
 package br.com.guiabolso.events.client.model
 
+import br.com.guiabolso.events.json.JsonAdapter
+import br.com.guiabolso.events.model.AbstractEventContext
 import br.com.guiabolso.events.model.EventErrorType
 import br.com.guiabolso.events.model.ResponseEvent
 
 sealed class Response {
 
-    data class Success(val event: ResponseEvent) : Response()
+    data class Success(val event: ResponseEventContext) : Response()
 
-    data class Redirect(val event: ResponseEvent) : Response()
+    data class Redirect(val event: ResponseEventContext) : Response()
 
-    data class Error(val event: ResponseEvent, val errorType: EventErrorType) : Response()
+    data class Error(val event: ResponseEventContext, val errorType: EventErrorType) : Response()
 
     data class FailedDependency(val exception: Exception, val response: String? = null) : Response()
 
@@ -32,3 +34,10 @@ sealed class Response {
         )
     }
 }
+
+data class ResponseEventContext(
+    override val event: ResponseEvent,
+    override val jsonAdapter: JsonAdapter,
+) : AbstractEventContext<ResponseEvent>()
+
+fun ResponseEvent.toContext(jsonAdapter: JsonAdapter) = ResponseEventContext(this, jsonAdapter)

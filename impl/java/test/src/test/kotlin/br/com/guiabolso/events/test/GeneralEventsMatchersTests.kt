@@ -1,14 +1,15 @@
 package br.com.guiabolso.events.test
 
 import br.com.guiabolso.events.builder.EventBuilder
-import br.com.guiabolso.events.json.MapperHolder.mapper
+import br.com.guiabolso.events.json.JsonAdapterProducer.mapper
 import br.com.guiabolso.events.json.treeNode
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 
 class GeneralEventsMatchersTests : FunSpec({
+    JsonAdapterHolder.mapper = mapper
 
-    val event = EventBuilder.event {
+    val event = EventBuilder(mapper).event {
         name = "a:b"
         version = 3
         id = "id"

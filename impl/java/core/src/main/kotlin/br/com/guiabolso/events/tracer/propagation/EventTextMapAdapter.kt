@@ -1,23 +1,22 @@
 package br.com.guiabolso.events.tracer.propagation
 
-import br.com.guiabolso.events.json.MapperHolder.mapper
 import br.com.guiabolso.events.json.TreeNode
+import br.com.guiabolso.events.json.stringOrNull
 import br.com.guiabolso.events.json.toPrimitiveNode
+import br.com.guiabolso.events.json.treeNode
 import br.com.guiabolso.events.model.Event
 import io.opentracing.propagation.TextMap
 import kotlin.collections.MutableMap.MutableEntry
-import kotlin.reflect.jvm.javaType
-import kotlin.reflect.typeOf
 
 class EventTextMapAdapter(private val event: Event) : TextMap {
 
     override fun iterator(): MutableIterator<MutableEntry<String, String>> {
         val traceElement = event.metadata["trace"]?.run {
-            mapper.fromJson<MutableMap<String, String>>(
-                jsonNode = this,
-                type = typeOf<MutableMap<String, String>>().javaType
-            )
+            this.treeNode
+                .entries
+                .associateTo(mutableMapOf()) { (k, v) -> k to v.stringOrNull.toString() }
         }
+
         return (traceElement ?: mutableMapOf()).iterator()
     }
 
