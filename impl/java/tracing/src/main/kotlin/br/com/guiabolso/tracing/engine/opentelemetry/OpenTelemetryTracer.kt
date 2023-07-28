@@ -28,7 +28,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun setOperationName(name: String) {
-        val span = getRootSpan()
+        val span = currentSpan()
         span?.updateName(name)
     }
 
@@ -37,7 +37,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun addRootProperty(key: String, value: String?) {
-        getRootSpan()?.addProperty(key, value)
+        currentSpan()?.addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: Number?) {
@@ -45,7 +45,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun addRootProperty(key: String, value: Number?) {
-        getRootSpan()?.addProperty(key, value)
+        currentSpan()?.addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: Boolean?) {
@@ -53,7 +53,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun addRootProperty(key: String, value: Boolean?) {
-        getRootSpan()?.addProperty(key, value)
+        currentSpan()?.addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: List<*>) {
@@ -90,7 +90,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun notifyRootError(exception: Throwable, expected: Boolean) {
-        getRootSpan()?.let { span ->
+        currentSpan()?.let { span ->
             OpenTelemetryUtils.notifyError(span, exception, expected)
         }
     }
@@ -102,7 +102,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
-        getRootSpan()?.let { span ->
+        currentSpan()?.let { span ->
             OpenTelemetryUtils.notifyError(span, message, params, expected)
         }
     }
@@ -146,7 +146,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
         } as AttributeKey<T>
     }
 
-    private fun getRootSpan(): Span? = Context.root().get(SpanContextKey.KEY)
+    private fun currentSpan(): Span? = Span.current()
 
     companion object {
         const val TRACER_NAME = "events-tracing"
