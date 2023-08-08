@@ -26,6 +26,10 @@ object DatadogUtils {
     suspend fun coTraceAsNewOperation(
         name: String,
         type: String = HTTP_SERVER,
+        onError: suspend (Span, Exception) -> Unit = { span, e ->
+            notifyError(span, e, false)
+            throw e
+        },
         func: suspend () -> Unit
     ) {
         val tracer = GlobalTracer.get()!!
@@ -35,8 +39,7 @@ object DatadogUtils {
                 span.setTag(SPAN_TYPE, type)
                 func()
             } catch (e: Exception) {
-                notifyError(span, e, false)
-                throw e
+                onError(span, e)
             } finally {
                 span.finish()
             }
