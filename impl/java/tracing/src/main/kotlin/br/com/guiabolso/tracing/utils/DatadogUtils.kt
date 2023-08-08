@@ -18,9 +18,13 @@ object DatadogUtils {
     fun traceAsNewOperation(
         name: String,
         type: String = HTTP_SERVER,
+        onError: suspend (Span, Exception) -> Unit = { span, e ->
+            notifyError(span, e, false)
+            throw e
+        },
         func: () -> Unit
     ) = runBlocking {
-        coTraceAsNewOperation(name, type) { func() }
+        coTraceAsNewOperation(name, type, onError) { func() }
     }
 
     suspend fun coTraceAsNewOperation(
