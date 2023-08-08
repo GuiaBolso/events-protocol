@@ -18,10 +18,7 @@ object DatadogUtils {
     fun traceAsNewOperation(
         name: String,
         type: String = HTTP_SERVER,
-        onError: suspend (Span, Exception) -> Unit = { span, e ->
-            notifyError(span, e, false)
-            throw e
-        },
+        onError: (Span, Exception) -> Unit = ::defaultErrorHandler,
         func: () -> Unit
     ) = runBlocking {
         coTraceAsNewOperation(name, type, onError) { func() }
@@ -30,10 +27,7 @@ object DatadogUtils {
     suspend fun coTraceAsNewOperation(
         name: String,
         type: String = HTTP_SERVER,
-        onError: suspend (Span, Exception) -> Unit = { span, e ->
-            notifyError(span, e, false)
-            throw e
-        },
+        onError: suspend (Span, Exception) -> Unit = { span, e -> defaultErrorHandler(span, e) },
         func: suspend () -> Unit
     ) {
         val tracer = GlobalTracer.get()!!
@@ -48,6 +42,11 @@ object DatadogUtils {
                 span.finish()
             }
         }
+    }
+
+    private fun defaultErrorHandler(span: Span, e: Exception) {
+        notifyError(span, e, false)
+        throw e
     }
 
     @JvmStatic
