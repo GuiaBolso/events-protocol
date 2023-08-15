@@ -4,6 +4,7 @@ import br.com.guiabolso.tracing.TracerImpl
 import br.com.guiabolso.tracing.context.SimpleThreadContextManager
 import br.com.guiabolso.tracing.engine.datadog.DatadogStatsDTracer
 import br.com.guiabolso.tracing.engine.datadog.DatadogTracer
+import br.com.guiabolso.tracing.engine.opentelemetry.OpenTelemetryTracer
 import br.com.guiabolso.tracing.engine.slf4j.Slf4JTracer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -35,6 +36,19 @@ class TracerBuilderTest {
 
         assertEquals(1, tracer.contextManagers.size)
         assertTrue(tracer.contextManagers.first() is DatadogTracer)
+    }
+
+    @Test
+    fun `should create a tracer with opentelemtry APM`() {
+        val tracer = TracerBuilder().withOpenTelemetryAPM().build()
+
+        tracer as TracerImpl
+
+        assertEquals(1, tracer.engines.size)
+        assertTrue(tracer.engines.first() is OpenTelemetryTracer)
+
+        assertEquals(1, tracer.contextManagers.size)
+        assertTrue(tracer.contextManagers.first() is OpenTelemetryTracer)
     }
 
     @Test
