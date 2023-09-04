@@ -20,14 +20,16 @@ object OpenTelemetryUtils {
     fun traceAsNewOperation(
         name: String,
         kind: SpanKind = SpanKind.SERVER,
+        onError: (Span, Exception) -> Unit = ::defaultErrorHandler,
         func: () -> Unit
     ) = runBlocking {
-        coTraceAsNewOperation(name, kind, func)
+        coTraceAsNewOperation(name, kind, onError, func)
     }
 
     suspend fun coTraceAsNewOperation(
         name: String,
         kind: SpanKind = SpanKind.SERVER,
+        onError: suspend (Span, Exception) -> Unit = { span, e -> defaultErrorHandler(span, e) },
         func: suspend () -> Unit
     ) {
         val span = tracer.spanBuilder(name)
@@ -38,12 +40,16 @@ object OpenTelemetryUtils {
             try {
                 func()
             } catch (e: Exception) {
-                notifyError(span, e, false)
-                throw e
+                onError(span, e)
             } finally {
                 span.end()
             }
         }
+    }
+
+    private fun defaultErrorHandler(span: Span, e: Exception) {
+        notifyError(span, e, false)
+        throw e
     }
 
     @JvmStatic
