@@ -123,34 +123,52 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     private inline fun <reified T> Span.addProperty(key: String, value: T?) {
-        val attrKey = getAttributeKey<T>(key)
+        val attributeSetter = getAttributeSetterOf<T, Any>(key)
         if (value != null) {
-            this.setAttribute(attrKey, value)
+            attributeSetter.setAttributeIn(this, value)
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    private inline fun <reified T> getAttributeKey(key: String): AttributeKey<T> {
+    private inline fun <reified T, R> getAttributeSetterOf(key: String): Setter<T, R> {
         return keysMap.computeIfAbsent(key) { k: String ->
             val tClass = T::class.java
-            when {
-                String::class.java.isAssignableFrom(tClass) -> AttributeKey.stringKey(k)
-                Double::class.java.isAssignableFrom(tClass) -> AttributeKey.doubleKey(k)
-                Float::class.java.isAssignableFrom(tClass) -> AttributeKey.doubleKey(k)
-                Int::class.java.isAssignableFrom(tClass) -> AttributeKey.longKey(k)
-                Long::class.java.isAssignableFrom(tClass) -> AttributeKey.longKey(k)
-                Number::class.java.isAssignableFrom(tClass) -> AttributeKey.doubleKey(k)
-                Boolean::class.java.isAssignableFrom(tClass) -> AttributeKey.booleanKey(k)
-                else -> error("Unsupported attribute type ${tClass.canonicalName}")
+            resolveAttributeSetterFor<T>(tClass, k)
+        } as Setter<T, R>
+    }
+
+    private inline fun <reified T> resolveAttributeSetterFor(tClass: Class<T>, k: String) = when {
+        String::class.java.isAssignableFrom(tClass) -> Setter<String, String>(AttributeKey.stringKey(k)) { it }
+        Double::class.java.isAssignableFrom(tClass) -> Setter<Double, Double>(AttributeKey.doubleKey(k)) { it }
+        Float::class.java.isAssignableFrom(tClass) -> Setter<Float, Double>(AttributeKey.doubleKey(k)) { it.toDouble() }
+        Int::class.java.isAssignableFrom(tClass) -> Setter<Int, Long>(AttributeKey.longKey(k)) { it.toLong() }
+        Long::class.java.isAssignableFrom(tClass) -> Setter<Long, Long>(AttributeKey.longKey(k)) { it }
+        Number::class.java.isAssignableFrom(tClass) -> handleJavaTypes(k, tClass)
+        Boolean::class.java.isAssignableFrom(tClass) -> Setter<Boolean, Boolean>(AttributeKey.booleanKey(k)) { it }
+        else -> error("Unsupported attribute type ${tClass.canonicalName}")
+    }
+
+    private fun <T> handleJavaTypes(k: String, tClass: Class<T>): Setter<Number, out Number> {
+        return when {
+            java.lang.Long::class.java.isAssignableFrom(tClass) || Integer::class.java.isAssignableFrom(tClass) -> {
+                Setter<Number, Long>(AttributeKey.longKey(k)) { it.toLong() }
             }
-        } as AttributeKey<T>
+
+            else -> Setter<Number, Double>(AttributeKey.doubleKey(k)) { it.toDouble() }
+        }
     }
 
     private fun currentSpan(): Span? = Span.current()
 
+    private class Setter<T, R>(private val key: AttributeKey<R>, private val transformer: (T) -> R) {
+        fun setAttributeIn(span: Span, value: T) {
+            span.setAttribute(key, transformer(value))
+        }
+    }
+
     companion object {
         const val TRACER_NAME = "events-tracing"
-        private val keysMap = ConcurrentHashMap<String, AttributeKey<*>>()
+        private val keysMap = ConcurrentHashMap<String, Setter<*, *>>()
         private val histogramCache = ConcurrentHashMap<String, LongHistogram>()
     }
 }
