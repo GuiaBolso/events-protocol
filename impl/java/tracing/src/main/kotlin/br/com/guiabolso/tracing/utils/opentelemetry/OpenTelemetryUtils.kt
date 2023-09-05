@@ -7,7 +7,9 @@ import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
+import io.opentelemetry.extension.kotlin.asContextElement
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 object OpenTelemetryUtils {
 
@@ -36,7 +38,7 @@ object OpenTelemetryUtils {
             .setSpanKind(kind)
             .setNoParent()
             .startSpan()!!
-        span.makeCurrent().use {
+        withContext(span.asContextElement()) {
             try {
                 func()
             } catch (e: Exception) {
@@ -59,8 +61,7 @@ object OpenTelemetryUtils {
 
     suspend fun <T> suspendingTraceBlock(name: String, func: suspend () -> T): T {
         val span = tracer.spanBuilder(name).startSpan()!!
-        val scope = span.makeCurrent()!!
-        return scope.use {
+        return withContext(span.asContextElement()) {
             try {
                 func()
             } catch (e: Exception) {
