@@ -1,13 +1,13 @@
 package br.com.guiabolso.tracing.utils.opentelemetry
 
 import br.com.guiabolso.tracing.engine.opentelemetry.OpenTelemetryTracer.Companion.TRACER_NAME
+import br.com.guiabolso.tracing.utils.opentelemetry.coroutine.asContextElement
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.api.trace.Tracer
-import io.opentelemetry.extension.kotlin.asContextElement
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 

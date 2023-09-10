@@ -10,7 +10,6 @@ dependencies {
 
     // Open Telemetry
     api("io.opentelemetry:opentelemetry-api:1.28.0")
-    api("io.opentelemetry:opentelemetry-extension-kotlin:1.28.0")
 
     // AspectJ
     implementation("org.aspectj:aspectjweaver:1.9.7")
