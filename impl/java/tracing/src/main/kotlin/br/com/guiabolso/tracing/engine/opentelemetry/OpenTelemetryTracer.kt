@@ -122,40 +122,20 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
         }
     }
 
-    private inline fun <reified T> Span.addProperty(key: String, value: T?) {
-        val attributeSetter = getAttributeSetterOf<T, Any>(key)
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> Span.addProperty(key: String, value: T?) {
         if (value != null) {
+            val attributeSetter = keySetterCache.computeIfAbsent(key) { k: String ->
+                resolveAttributeSetterFor(value.javaClass, k)
+            } as Setter<T, Any>
+
             attributeSetter.setAttributeIn(this, value)
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private inline fun <reified T, R> getAttributeSetterOf(key: String): Setter<T, R> {
-        return keysMap.computeIfAbsent(key) { k: String ->
-            val tClass = T::class.java
-            resolveAttributeSetterFor<T>(tClass, k)
-        } as Setter<T, R>
-    }
-
-    private inline fun <reified T> resolveAttributeSetterFor(tClass: Class<T>, k: String) = when {
+    private fun <T : Any> resolveAttributeSetterFor(tClass: Class<T>, k: String) = when {
         String::class.java.isAssignableFrom(tClass) -> Setter<String, String>(AttributeKey.stringKey(k)) { it }
-        Double::class.java.isAssignableFrom(tClass) -> Setter<Double, Double>(AttributeKey.doubleKey(k)) { it }
-        Float::class.java.isAssignableFrom(tClass) -> Setter<Float, Double>(AttributeKey.doubleKey(k)) { it.toDouble() }
-        Int::class.java.isAssignableFrom(tClass) -> Setter<Int, Long>(AttributeKey.longKey(k)) { it.toLong() }
-        Long::class.java.isAssignableFrom(tClass) -> Setter<Long, Long>(AttributeKey.longKey(k)) { it }
-        Number::class.java.isAssignableFrom(tClass) -> handleJavaTypes(k, tClass)
-        Boolean::class.java.isAssignableFrom(tClass) -> Setter<Boolean, Boolean>(AttributeKey.booleanKey(k)) { it }
-        else -> error("Unsupported attribute type ${tClass.canonicalName}")
-    }
-
-    private fun <T> handleJavaTypes(k: String, tClass: Class<T>): Setter<Number, out Number> {
-        return when {
-            java.lang.Long::class.java.isAssignableFrom(tClass) || Integer::class.java.isAssignableFrom(tClass) -> {
-                Setter<Number, Long>(AttributeKey.longKey(k)) { it.toLong() }
-            }
-
-            else -> Setter<Number, Double>(AttributeKey.doubleKey(k)) { it.toDouble() }
-        }
+        else -> resolveByPrimitiveTypeRepresentationOnJvm(tClass, k)
     }
 
     private fun currentSpan(): Span? = Span.current()
@@ -166,9 +146,23 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
         }
     }
 
+    private fun <T> resolveByPrimitiveTypeRepresentationOnJvm(tClass: Class<T>, key: String) = when {
+        tClass.isJvmIntegerDataTypeFamily() -> Setter<Number, Long>(AttributeKey.longKey(key)) { it.toLong() }
+        java.lang.Boolean::class.java.isAssignableFrom(tClass) -> Setter<Boolean, Boolean>(AttributeKey.booleanKey(key)) { it }
+        java.lang.Number::class.java.isAssignableFrom(tClass) -> Setter<Number, Double>(AttributeKey.doubleKey(key)) { it.toDouble() }
+        else -> error("Unsupported attribute type ${tClass.canonicalName}")
+    }
+
+    private fun <T> Class<T>.isJvmIntegerDataTypeFamily(): Boolean {
+        return java.lang.Byte::class.java.isAssignableFrom(this) ||
+                java.lang.Short::class.java.isAssignableFrom(this) ||
+                java.lang.Long::class.java.isAssignableFrom(this) ||
+                java.lang.Integer::class.java.isAssignableFrom(this)
+    }
+
     companion object {
         const val TRACER_NAME = "events-tracing"
-        private val keysMap = ConcurrentHashMap<String, Setter<*, *>>()
+        private val keySetterCache = ConcurrentHashMap<String, Setter<*, *>>()
         private val histogramCache = ConcurrentHashMap<String, LongHistogram>()
     }
 }
