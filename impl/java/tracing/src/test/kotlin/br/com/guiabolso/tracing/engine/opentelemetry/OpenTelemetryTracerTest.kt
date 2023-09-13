@@ -9,6 +9,7 @@ import io.opentelemetry.api.trace.Span
 import org.junit.jupiter.api.Test
 
 private val otel = OpenTelemetry.noop().apply(GlobalOpenTelemetry::set)
+
 class OpenTelemetryTracerTest {
     private val openTelemetryTracer = OpenTelemetryTracer()
 
@@ -36,6 +37,34 @@ class OpenTelemetryTracerTest {
             span.setAttribute(AttributeKey.doubleKey("float"), Float.MAX_VALUE.toDouble())
             span.setAttribute(AttributeKey.doubleKey("double"), Double.MAX_VALUE)
             span.setAttribute(AttributeKey.stringKey("list"), "a,1,b")
+        }
+    }
+
+    @Test
+    fun `allow the same key to be reported by multiple datatype`() {
+        val span = currentSpyiedSpan()
+        val key = "my.attribute.name"
+        openTelemetryTracer.run {
+            addProperty(key, true)
+            addProperty(key, "Hello World")
+            addProperty(key, Byte.MAX_VALUE)
+            addProperty(key, Short.MAX_VALUE)
+            addProperty(key, Int.MAX_VALUE)
+            addProperty(key, Float.MAX_VALUE)
+            addProperty(key, Long.MAX_VALUE)
+            addProperty(key, Double.MAX_VALUE)
+            addProperty(key, listOf("a", 1, "b"))
+        }
+        verify {
+            span.setAttribute(AttributeKey.booleanKey(key), true)
+            span.setAttribute(AttributeKey.stringKey(key), "Hello World")
+            span.setAttribute(AttributeKey.longKey(key), Byte.MAX_VALUE.toLong())
+            span.setAttribute(AttributeKey.longKey(key), Short.MAX_VALUE.toLong())
+            span.setAttribute(AttributeKey.longKey(key), Int.MAX_VALUE.toLong())
+            span.setAttribute(AttributeKey.longKey(key), Long.MAX_VALUE)
+            span.setAttribute(AttributeKey.doubleKey(key), Float.MAX_VALUE.toDouble())
+            span.setAttribute(AttributeKey.doubleKey(key), Double.MAX_VALUE)
+            span.setAttribute(AttributeKey.stringKey(key), "a,1,b")
         }
     }
 
