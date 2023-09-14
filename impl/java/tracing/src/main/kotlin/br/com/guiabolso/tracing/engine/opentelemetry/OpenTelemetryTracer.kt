@@ -125,8 +125,10 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> Span.addProperty(key: String, value: T?) {
         if (value != null) {
-            val attributeSetter = keySetterCache.computeIfAbsent(key) { k: String ->
-                resolveAttributeSetterFor(value.javaClass, k)
+            val clazz = value.javaClass
+            val cacheKey = "${key}_${clazz.canonicalName}"
+            val attributeSetter = keySetterCache.computeIfAbsent(cacheKey) {
+                resolveAttributeSetterFor(value.javaClass, key)
             } as Setter<T, Any>
 
             attributeSetter.setAttributeIn(this, value)
@@ -140,7 +142,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
 
     private fun currentSpan(): Span? = Span.current()
 
-    private class Setter<T, R>(private val key: AttributeKey<R>, private val transformer: (T) -> R) {
+    private class Setter<T, R : Any>(private val key: AttributeKey<R>, private val transformer: (T) -> R) {
         fun setAttributeIn(span: Span, value: T) {
             span.setAttribute(key, transformer(value))
         }
