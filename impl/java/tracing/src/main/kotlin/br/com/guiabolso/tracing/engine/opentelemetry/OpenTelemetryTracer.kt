@@ -11,6 +11,8 @@ import io.opentelemetry.api.metrics.Meter
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
+import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerRoute
+import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerRouteSource
 import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 
@@ -28,8 +30,12 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun setOperationName(name: String) {
-        val span = currentSpan()
-        span?.updateName(name)
+        HttpServerRoute.update(
+            Context.current(),
+            HttpServerRouteSource.CONTROLLER,
+            { _, _ -> name },
+            Unit
+        )
     }
 
     override fun addProperty(key: String, value: String?) {
