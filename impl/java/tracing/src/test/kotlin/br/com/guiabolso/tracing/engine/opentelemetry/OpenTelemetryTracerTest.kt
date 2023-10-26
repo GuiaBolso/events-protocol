@@ -1,11 +1,21 @@
 package br.com.guiabolso.tracing.engine.opentelemetry
 
+import br.com.guiabolso.tracing.engine.opentelemetry.OpenTelemetryTracer.Companion.TRACER_NAME
+import br.com.guiabolso.tracing.utils.opentelemetry.DefaultUnspecifiedException
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.AttributeKey
+import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
+import io.opentelemetry.api.trace.StatusCode
+import io.opentelemetry.instrumentation.api.instrumenter.LocalRootSpan
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Test
 
 private val otel = OpenTelemetry.noop().apply(GlobalOpenTelemetry::set)
@@ -69,12 +79,63 @@ class OpenTelemetryTracerTest {
     }
 
     @Test
-    fun `should set operation name successfully`() {
+    fun `should update the span name when set operation`() {
+        mockkStatic(LocalRootSpan::current)
+        val span = mockk<Span>(relaxed = true)
+        every { LocalRootSpan.current() } returns span
+
         openTelemetryTracer.setOperationName("my-operation")
+
+        verify {
+            span.updateName("my-operation")
+        }
+    }
+
+    @Test
+    fun `should add property to root span`() {
+        mockkStatic(LocalRootSpan::current)
+        val span = mockk<Span>(relaxed = true)
+        every { LocalRootSpan.current() } returns span
+
+        openTelemetryTracer.addRootProperty("number", 1)
+        openTelemetryTracer.addRootProperty("bool", true)
+        openTelemetryTracer.addRootProperty("string", "my-string")
+
+        verify(exactly = 1) {
+            span.setAttribute(AttributeKey.longKey("number"), 1L)
+            span.setAttribute(AttributeKey.booleanKey("bool"), true)
+            span.setAttribute(AttributeKey.stringKey("string"), "my-string")
+        }
+    }
+
+    @Test
+    fun `should report error on root span`() {
+        mockkStatic(LocalRootSpan::current)
+        val span = mockk<Span>(relaxed = true)
+        every { LocalRootSpan.current() } returns span
+
+        val ex = NotImplementedError()
+        openTelemetryTracer.notifyRootError(ex, expected = false)
+        openTelemetryTracer.notifyRootError("my error", mapOf("tag" to "1"), expected = false)
+
+        verify(exactly = 2) {
+            span.setStatus(StatusCode.ERROR)
+        }
+
+        verify {
+            span.recordException(ex)
+            span.recordException(
+                withArg {
+                    assertInstanceOf(DefaultUnspecifiedException::class.java, it)
+                    assertEquals("my error", it.message)
+                },
+                Attributes.builder().put("tag", "1").build()
+            )
+        }
     }
 
     private fun currentSpyiedSpan(): Span {
-        return otel.getTracer(OpenTelemetryTracer.TRACER_NAME)
+        return otel.getTracer(TRACER_NAME)
             .spanBuilder("name")
             .setNoParent()
             .startSpan()
