@@ -2,6 +2,7 @@ package br.com.guiabolso.tracing.engine.opentelemetry
 
 import br.com.guiabolso.tracing.engine.opentelemetry.OpenTelemetryTracer.Companion.TRACER_NAME
 import br.com.guiabolso.tracing.utils.opentelemetry.DefaultUnspecifiedException
+import io.mockk.clearStaticMockk
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -16,12 +17,19 @@ import io.opentelemetry.api.trace.StatusCode
 import io.opentelemetry.instrumentation.api.instrumenter.LocalRootSpan
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 private val otel = OpenTelemetry.noop().apply(GlobalOpenTelemetry::set)
 
 class OpenTelemetryTracerTest {
     private val openTelemetryTracer = OpenTelemetryTracer()
+
+    @BeforeEach
+    fun before() {
+        clearStaticMockk(Span::class)
+        clearStaticMockk(LocalRootSpan::class)
+    }
 
     @Test
     fun `should add all supported properties successfully`() {
@@ -80,9 +88,11 @@ class OpenTelemetryTracerTest {
 
     @Test
     fun `should update the span name when set operation`() {
+        mockkStatic(Span::current)
         mockkStatic(LocalRootSpan::current)
         val span = mockk<Span>(relaxed = true)
         every { LocalRootSpan.current() } returns span
+        every { Span.current() } returns span
 
         openTelemetryTracer.setOperationName("my-operation")
 
@@ -111,6 +121,7 @@ class OpenTelemetryTracerTest {
     @Test
     fun `should report error on root span`() {
         mockkStatic(LocalRootSpan::current)
+
         val span = mockk<Span>(relaxed = true)
         every { LocalRootSpan.current() } returns span
 
