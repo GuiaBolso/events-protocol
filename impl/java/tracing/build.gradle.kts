@@ -10,7 +10,7 @@ dependencies {
 
     // Open Telemetry
     api("io.opentelemetry:opentelemetry-api:1.28.0")
-
+    api("io.opentelemetry.instrumentation:opentelemetry-instrumentation-api-semconv:1.30.0-alpha")
     // AspectJ
     implementation("org.aspectj:aspectjweaver:1.9.7")
 }
