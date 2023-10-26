@@ -11,6 +11,7 @@ import io.opentelemetry.api.metrics.Meter
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
+import io.opentelemetry.instrumentation.api.instrumenter.LocalRootSpan
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerRoute
 import io.opentelemetry.instrumentation.api.instrumenter.http.HttpServerRouteSource
 import java.io.Closeable
@@ -30,6 +31,7 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun setOperationName(name: String) {
+        currentSpan().updateName(name)
         HttpServerRoute.update(
             Context.current(),
             HttpServerRouteSource.CONTROLLER,
@@ -39,27 +41,27 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun addProperty(key: String, value: String?) {
-        Span.current()?.addProperty(key, value)
+        currentSpan().addProperty(key, value)
     }
 
     override fun addRootProperty(key: String, value: String?) {
-        currentSpan()?.addProperty(key, value)
+        rootSpan().addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: Number?) {
-        Span.current()?.addProperty(key, value)
+        currentSpan().addProperty(key, value)
     }
 
     override fun addRootProperty(key: String, value: Number?) {
-        currentSpan()?.addProperty(key, value)
+        rootSpan().addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: Boolean?) {
-        Span.current()?.addProperty(key, value)
+        currentSpan().addProperty(key, value)
     }
 
     override fun addRootProperty(key: String, value: Boolean?) {
-        currentSpan()?.addProperty(key, value)
+        rootSpan().addProperty(key, value)
     }
 
     override fun addProperty(key: String, value: List<*>) {
@@ -90,27 +92,19 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
     }
 
     override fun notifyError(exception: Throwable, expected: Boolean) {
-        Span.current()?.let { span ->
-            OpenTelemetryUtils.notifyError(span, exception, expected)
-        }
+        OpenTelemetryUtils.notifyError(currentSpan(), exception, expected)
     }
 
     override fun notifyRootError(exception: Throwable, expected: Boolean) {
-        currentSpan()?.let { span ->
-            OpenTelemetryUtils.notifyError(span, exception, expected)
-        }
+        OpenTelemetryUtils.notifyError(rootSpan(), exception, expected)
     }
 
     override fun notifyError(message: String, params: Map<String, String?>, expected: Boolean) {
-        Span.current()?.let { span ->
-            OpenTelemetryUtils.notifyError(span, message, params, expected)
-        }
+        OpenTelemetryUtils.notifyError(currentSpan(), message, params, expected)
     }
 
     override fun notifyRootError(message: String, params: Map<String, String?>, expected: Boolean) {
-        currentSpan()?.let { span ->
-            OpenTelemetryUtils.notifyError(span, message, params, expected)
-        }
+        OpenTelemetryUtils.notifyError(rootSpan(), message, params, expected)
     }
 
     override fun clear() {}
@@ -146,7 +140,12 @@ class OpenTelemetryTracer : TracerEngine, ThreadContextManager<Span> {
         else -> resolveByPrimitiveTypeRepresentationOnJvm(tClass, k)
     }
 
-    private fun currentSpan(): Span? = Span.current()
+    private fun currentSpan(): Span = Span.current()
+
+    private fun rootSpan(): Span {
+        val root = LocalRootSpan.current().takeIf { it != Span.getInvalid() }
+        return root ?: Span.current()
+    }
 
     private class Setter<T, R : Any>(private val key: AttributeKey<R>, private val transformer: (T) -> R) {
         fun setAttributeIn(span: Span, value: T) {
