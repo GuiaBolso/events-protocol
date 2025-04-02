@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import com.google.gson.stream.MalformedJsonException
+import java.io.InputStream
 import java.lang.reflect.Type
 
 class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = { serializeNulls() }) : JsonAdapter {
@@ -44,6 +45,12 @@ class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = { serializeNulls() }) 
         return gson.execute { this.fromJson<T>(json, type) }
     }
 
+    override fun <T> fromJson(json: InputStream, type: Type): T {
+        return gson.execute {
+            json.use { fromJson<T>(it.reader(), type) }
+        }
+    }
+
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {
         return gson.execute { this.fromJson<T>(toJsonTree(jsonNode), type) }
     }
@@ -59,6 +66,7 @@ class GsonJsonAdapter(configure: GsonBuilder.() -> Unit = { serializeNulls() }) 
             throw when (e) {
                 is JsonParseException,
                 is MalformedJsonException -> JsonDataException(e.message, e)
+
                 else -> e
             }
         }

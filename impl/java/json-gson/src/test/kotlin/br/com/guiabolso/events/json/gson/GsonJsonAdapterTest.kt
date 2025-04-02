@@ -19,7 +19,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 class GsonJsonAdapterTest : StringSpec({
     val jsonString =
         """{"list":[42.42,{"nested":[]},true,"string"],"string":"string","int":42,"boolean":false,""" +
-                """"map":{"bla":"bla"},"any":null}"""
+            """"map":{"bla":"bla"},"any":null}"""
 
     val sample = Sample(
         int = 42,
@@ -48,6 +48,10 @@ class GsonJsonAdapterTest : StringSpec({
 
     "should serialize object successfully" {
         adapter.toJson(sample) shouldBe jsonString
+    }
+
+    "should decode from input stream" {
+        adapter.fromJson<Sample>(jsonString.byteInputStream()) shouldBe sample
     }
 
     "should successfully serialize nulls" {

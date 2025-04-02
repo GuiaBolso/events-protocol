@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.exc.StreamReadException
 import com.fasterxml.jackson.databind.DatabindException
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
+import java.io.InputStream
 import java.lang.reflect.Type
 
 class Jackson2JsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAdapter {
@@ -57,6 +58,10 @@ class Jackson2JsonAdapter(configuration: JsonMapper.Builder.() -> Unit) : JsonAd
                 TypeFactory.defaultInstance().constructType(type),
             )
         }
+    }
+
+    override fun <T> fromJson(json: InputStream, type: Type): T {
+        return mapper.wrapException { readValue(json, TypeFactory.defaultInstance().constructType(type)) }
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {

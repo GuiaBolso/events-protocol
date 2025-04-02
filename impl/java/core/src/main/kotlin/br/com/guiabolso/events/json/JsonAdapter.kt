@@ -1,5 +1,6 @@
 package br.com.guiabolso.events.json
 
+import java.io.InputStream
 import java.lang.reflect.Type
 
 interface JsonAdapter {
@@ -13,6 +14,8 @@ interface JsonAdapter {
     fun <T> fromJson(json: String, clazz: Class<T>): T
 
     fun <T> fromJson(json: String, type: Type): T
+
+    fun <T> fromJson(json: InputStream, type: Type): T
 
     fun <T> fromJson(jsonNode: JsonNode, type: Type): T
 

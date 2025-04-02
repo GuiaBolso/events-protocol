@@ -18,7 +18,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 class MoshiJsonAdapterTest : StringSpec({
     val jsonString =
         """{"list":[42.42,{"nested":[]},true,"string"],"string":"string","int":42,"boolean":false,""" +
-                """"map":{"bla":"bla"},"any":null}"""
+            """"map":{"bla":"bla"},"any":null}"""
 
     val sample = Sample(
         int = 42,
@@ -47,13 +47,18 @@ class MoshiJsonAdapterTest : StringSpec({
         add(SerializeNullAdapterFactory)
     }
 
+    "should decode from input stream" {
+        val inputStream = jsonString.byteInputStream()
+        adapter.fromJson<Sample>(inputStream, Sample::class.java) shouldBe sample
+    }
+
     "should serialize object successfully" {
         adapter.toJson(sample) shouldBe jsonString
     }
 
     "should serialize JsonNode successfully" {
         adapter.toJson(jsonNode) shouldBe """{"int":42,"any":null,"boolean":false,"string":"string",""" +
-                """"map":{"bla":"bla"},"list":[42.42,{"nested":[]},true,"string"]}"""
+            """"map":{"bla":"bla"},"list":[42.42,{"nested":[]},true,"string"]}"""
     }
 
     "should successfully serialize nulls" {

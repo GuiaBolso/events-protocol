@@ -15,6 +15,7 @@ import br.com.guiabolso.events.tracer.DefaultTracer
 import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
+import java.io.InputStream
 import java.util.UUID
 
 class SuspendingEventProcessor(
@@ -42,11 +43,23 @@ class SuspendingEventProcessor(
         jsonAdapter
     )
 
+    suspend fun processEvent(input: InputStream): String {
+        return process {
+            try {
+                jsonAdapter.fromJson(input)
+            } catch (e: Throwable) {
+                throw EventParsingException(e)
+            }
+        }
+    }
+
     suspend fun processEvent(payload: String?): String {
+        return process { parseEvent(payload) }
+    }
+
+    private suspend fun process(event: () -> RawEvent): String {
         return try {
-            processor.processEvent(
-                rawEvent = parseEvent(payload)
-            ).json()
+            processor.processEvent(rawEvent = event()).json()
         } catch (e: EventParsingException) {
             processor.exceptionHandlerRegistry.handleException(
                 e,

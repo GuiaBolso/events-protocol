@@ -8,6 +8,7 @@ import br.com.guiabolso.events.validation.EventValidator
 import br.com.guiabolso.events.validation.StrictEventValidator
 import br.com.guiabolso.tracing.Tracer
 import kotlinx.coroutines.runBlocking
+import java.io.InputStream
 
 class BlockingEventProcessor(
     private val eventProcessor: SuspendingEventProcessor
@@ -30,6 +31,10 @@ class BlockingEventProcessor(
             jsonAdapter,
         )
     )
+
+    fun processEvent(json: InputStream): String = runBlocking {
+        eventProcessor.processEvent(json)
+    }
 
     fun processEvent(payload: String?): String = runBlocking {
         eventProcessor.processEvent(payload)

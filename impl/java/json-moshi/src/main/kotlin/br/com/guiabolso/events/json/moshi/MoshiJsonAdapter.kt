@@ -9,6 +9,9 @@ import br.com.guiabolso.events.json.moshi.factory.JsonNodeFactory
 import br.com.guiabolso.events.json.moshi.factory.SerializeNullAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okio.buffer
+import okio.source
+import java.io.InputStream
 import java.lang.reflect.Type
 import com.squareup.moshi.JsonAdapter as MoshiJsonAdapter
 
@@ -62,6 +65,11 @@ class MoshiJsonAdapter(builder: Moshi.Builder.() -> Unit = { add(SerializeNullAd
     override fun <T> fromJson(json: String, type: Type): T {
         val adapter = moshi.adapter<T>(type).nonNull()
         return adapter.execute { fromJson(json)!! }
+    }
+
+    override fun <T> fromJson(json: InputStream, type: Type): T {
+        val adapter = moshi.adapter<T>(type).nonNull()
+        return adapter.execute { fromJson(json.source().buffer())!! }
     }
 
     override fun <T> fromJson(jsonNode: JsonNode, type: Type): T {
