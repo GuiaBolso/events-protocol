@@ -3,7 +3,7 @@ package br.com.guiabolso.events.client
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.exception.BadProtocolException
 import br.com.guiabolso.events.client.exception.TimeoutException
-import br.com.guiabolso.events.client.http.FuelHttpClient
+import br.com.guiabolso.events.client.http.OkHttpClientAdapter
 import br.com.guiabolso.events.client.model.Response
 import br.com.guiabolso.events.client.model.toContext
 import br.com.guiabolso.events.json.JsonAdapter
@@ -19,7 +19,7 @@ class EventClient
 @JvmOverloads
 constructor(
     private val jsonAdapter: JsonAdapter,
-    private val httpClient: HttpClientAdapter = FuelHttpClient(),
+    private val httpClient: HttpClientAdapter = OkHttpClientAdapter(),
     private val eventValidator: EventValidator = StrictEventValidator(),
     private val defaultTimeout: Int = 60000
 ) {
