@@ -5,6 +5,7 @@ import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.http.OkHttpClientAdapter
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 import org.junit.jupiter.api.Test
@@ -18,6 +19,11 @@ class OkHttpClientAdapterTest {
     fun before() {
         server = MockWebServer()
         server.start()
+    }
+
+    @AfterEach
+    fun afterEach() {
+        server.close()
     }
 
     @Test
