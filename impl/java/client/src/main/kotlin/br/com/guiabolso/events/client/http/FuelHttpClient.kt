@@ -10,6 +10,13 @@ import com.github.kittinunf.result.getAs
 import java.net.SocketTimeoutException
 import java.nio.charset.Charset
 
+@Deprecated(
+    "Performance degradation when compared to other http clients in high load.",
+    replaceWith = ReplaceWith(
+        "OkHttpClientAdapter",
+        "br.com.guiabolso.events.client.http.OkHttpClientAdapter"
+    )
+)
 class FuelHttpClient : HttpClientAdapter {
 
     override fun post(
@@ -30,6 +37,7 @@ class FuelHttpClient : HttpClientAdapter {
             is Result.Success -> {
                 return result.getAs<String>()!!
             }
+
             is Result.Failure -> {
                 val error: FuelError? = result.getAs()
                 if (error?.exception is SocketTimeoutException) {

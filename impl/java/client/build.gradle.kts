@@ -7,5 +7,7 @@ dependencies {
     testImplementation(project(":json-jackson"))
 
     // Fuel
-    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
+    compileOnly("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
