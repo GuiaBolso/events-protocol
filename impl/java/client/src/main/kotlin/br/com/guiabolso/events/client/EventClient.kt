@@ -21,7 +21,7 @@ constructor(
     private val jsonAdapter: JsonAdapter,
     private val httpClient: HttpClientAdapter = OkHttpClientAdapter(),
     private val eventValidator: EventValidator = StrictEventValidator(),
-    private val defaultTimeout: Int = 60000
+    private val defaultTimeout: Int = 15000
 ) {
 
     companion object {
