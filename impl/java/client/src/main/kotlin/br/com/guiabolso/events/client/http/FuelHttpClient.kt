@@ -7,6 +7,8 @@ import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.getAs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 import java.nio.charset.Charset
 
@@ -18,6 +20,16 @@ import java.nio.charset.Charset
     )
 )
 class FuelHttpClient : HttpClientAdapter {
+
+    override suspend fun suspendPost(
+        url: String,
+        headers: Map<String, String>,
+        payload: String,
+        charset: Charset,
+        timeout: Int
+    ): String {
+        return withContext(Dispatchers.IO) { post(url, headers, payload, charset, timeout) }
+    }
 
     override fun post(
         url: String,
