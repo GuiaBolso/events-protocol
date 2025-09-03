@@ -214,7 +214,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.toJson(responseEvent).toByteArray()
 
         val response = eventClient.suspendSendEvent("url", event, timeout = 1000)
 
@@ -238,7 +238,7 @@ class EventClientTest {
                 eq(Charsets.UTF_8),
                 eq(1000)
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.toJson(responseEvent).toByteArray()
 
         val response = eventClient.suspendSendEvent("url", event, mapOf("Test" to "some value"), 1000)
 
@@ -271,7 +271,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.toJson(responseEvent).toByteArray()
 
         val response = eventClient.suspendSendEvent("url", event, timeout = 1000)
 
@@ -295,7 +295,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        } returns mapper.toJson(responseEvent)
+        } returns mapper.toJson(responseEvent).toByteArray()
 
         val response = eventClient.suspendSendEvent("url", event, timeout = 1000)
 
@@ -339,7 +339,7 @@ class EventClientTest {
                 Charsets.UTF_8,
                 1000
             )
-        } returns "something"
+        } returns "something".toByteArray()
 
         val response = eventClient.suspendSendEvent("url", event, timeout = 1000)
 

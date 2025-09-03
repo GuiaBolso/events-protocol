@@ -120,6 +120,6 @@ class OkHttpClientAdapterTest {
             timeout = 5000
         )
 
-        assert(response == "Deu bom!")
+        assert(String(response) == "Deu bom!")
     }
 }

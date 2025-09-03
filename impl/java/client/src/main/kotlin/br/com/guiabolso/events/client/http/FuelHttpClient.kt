@@ -27,8 +27,8 @@ class FuelHttpClient : HttpClientAdapter {
         payload: String,
         charset: Charset,
         timeout: Int
-    ): String {
-        return withContext(Dispatchers.IO) { post(url, headers, payload, charset, timeout) }
+    ): ByteArray {
+        return withContext(Dispatchers.IO) { doPost(url, headers, payload, charset, timeout) }
     }
 
     override fun post(
@@ -38,25 +38,35 @@ class FuelHttpClient : HttpClientAdapter {
         charset: Charset,
         timeout: Int
     ): String {
+        return String(doPost(url, headers, payload, charset, timeout))
+    }
+
+    private fun doPost(
+        url: String,
+        headers: Map<String, String>,
+        payload: String,
+        charset: Charset,
+        timeout: Int,
+    ): ByteArray {
         val (_, _, result) = url.httpPost()
             .header(headers)
             .body(payload, charset)
             .timeout(timeout)
             .timeoutRead(timeout)
-            .responseString()
+            .response()
 
         when (result) {
             is Result.Success -> {
-                return result.getAs<String>()!!
+                return result.getAs<ByteArray>()!!
             }
 
             is Result.Failure -> {
                 val error: FuelError? = result.getAs()
                 if (error?.exception is SocketTimeoutException) {
                     throw TimeoutException("Timeout calling $url. Error: $error", error.exception)
-                } else {
-                    throw FailedDependencyException("Failed dependency calling $url. Error: $error", error?.exception)
                 }
+
+                throw FailedDependencyException("Failed dependency calling $url. Error: $error", error?.exception)
             }
         }
     }

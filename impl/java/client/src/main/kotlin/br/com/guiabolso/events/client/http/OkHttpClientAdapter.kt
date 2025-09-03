@@ -47,14 +47,19 @@ class OkHttpClientAdapter(private val okHttpClient: OkHttpClient = OkHttpClient.
         payload: String,
         charset: Charset,
         timeout: Int
-    ): String {
+    ): ByteArray {
         val client = getClientFor(timeout)
         val request = createRequest(url, payload, headers)
 
         return try {
             client.newCall(request)
                 .executeAsync()
-                .use { handleResponse(it) }
+                .use { response ->
+                    if (!response.isSuccessful) {
+                        throw IOException("Unexpected response $response")
+                    }
+                    response.body!!.bytes()
+                }
         } catch (ex: Exception) {
             handleException(ex, url)
         }
@@ -75,17 +80,15 @@ class OkHttpClientAdapter(private val okHttpClient: OkHttpClient = OkHttpClient.
             client
                 .newCall(request)
                 .execute()
-                .use { response -> handleResponse(response) }
+                .use { response ->
+                    if (!response.isSuccessful) {
+                        throw IOException("Unexpected response $response")
+                    }
+                    response.body!!.string()
+                }
         } catch (ex: Exception) {
             handleException(ex, url)
         }
-    }
-
-    private fun handleResponse(response: Response): String {
-        if (!response.isSuccessful) {
-            throw IOException("Unexpected response $response")
-        }
-        return response.body!!.string()
     }
 
     private fun createRequest(url: String, payload: String, headers: Map<String, String>): Request =

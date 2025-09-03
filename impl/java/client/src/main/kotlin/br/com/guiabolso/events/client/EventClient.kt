@@ -38,15 +38,16 @@ constructor(
         val customHeaders = HashMap(headers).apply { this["Content-Type"] = "application/json" }
         logger.debug("Sending event {}:{} to {} with timeout {}", requestEvent.name, requestEvent.version, url, timeout)
 
-        val rawResponse = httpClient.runCatching {
-            suspendPost(
-                url = url,
-                headers = customHeaders,
-                payload = jsonAdapter.toJson(requestEvent),
-                charset = Charsets.UTF_8,
-                timeout = timeout ?: defaultTimeout
-            )
-        }
+        val rawResponse =
+            httpClient.runCatching {
+                suspendPost(
+                    url = url,
+                    headers = customHeaders,
+                    payload = jsonAdapter.toJson(requestEvent),
+                    charset = Charsets.UTF_8,
+                    timeout = timeout ?: defaultTimeout
+                )
+            }.mapCatching { responseBody -> parseEvent(responseBody) }
 
         return handleResponse(rawResponse, requestEvent)
     }
@@ -60,21 +61,22 @@ constructor(
     ): Response {
         val customHeaders = HashMap(headers).apply { this["Content-Type"] = "application/json" }
         logger.debug("Sending event {}:{} to {} with timeout {}", requestEvent.name, requestEvent.version, url, timeout)
-        val rawResponse = httpClient.runCatching {
-            post(
-                url = url,
-                headers = customHeaders,
-                payload = jsonAdapter.toJson(requestEvent),
-                charset = Charsets.UTF_8,
-                timeout = timeout ?: defaultTimeout
-            )
-        }
+        val rawResponse =
+            httpClient.runCatching {
+                post(
+                    url = url,
+                    headers = customHeaders,
+                    payload = jsonAdapter.toJson(requestEvent),
+                    charset = Charsets.UTF_8,
+                    timeout = timeout ?: defaultTimeout
+                )
+            }.mapCatching { responseBody -> parseEvent(responseBody) }
 
         return handleResponse(rawResponse, requestEvent)
     }
 
-    private fun handleResponse(result: Result<String>, requestEvent: RequestEvent): Response = try {
-        handleEventResponse(parseEvent(result.getOrThrow()))
+    private fun handleResponse(result: Result<ResponseEvent>, requestEvent: RequestEvent): Response = try {
+        handleEventResponse(result.getOrThrow())
     } catch (e: TimeoutException) {
         logger.warn("Event ${requestEvent.name}:${requestEvent.version} timeout.", e)
         Response.Timeout(e)
@@ -106,6 +108,15 @@ constructor(
             return eventValidator.validateAsResponseEvent(rawEvent)
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)
+        }
+    }
+
+    private fun parseEvent(rawResponse: ByteArray): ResponseEvent {
+        return try {
+            val rawEvent = rawResponse.inputStream().use { jsonAdapter.fromJson<RawEvent>(it) }
+            eventValidator.validateAsResponseEvent(rawEvent)
+        } catch (e: Exception) {
+            throw BadProtocolException(String(rawResponse), e)
         }
     }
 }

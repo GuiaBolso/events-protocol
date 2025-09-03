@@ -21,5 +21,5 @@ interface HttpClientAdapter {
         payload: String,
         charset: Charset,
         timeout: Int
-    ): String
+    ): ByteArray
 }
