@@ -7,6 +7,8 @@ import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.getAs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 import java.nio.charset.Charset
 
@@ -19,6 +21,16 @@ import java.nio.charset.Charset
 )
 class FuelHttpClient : HttpClientAdapter {
 
+    override suspend fun suspendPost(
+        url: String,
+        headers: Map<String, String>,
+        payload: String,
+        charset: Charset,
+        timeout: Int
+    ): ByteArray {
+        return withContext(Dispatchers.IO) { doPost(url, headers, payload, charset, timeout) }
+    }
+
     override fun post(
         url: String,
         headers: Map<String, String>,
@@ -26,25 +38,35 @@ class FuelHttpClient : HttpClientAdapter {
         charset: Charset,
         timeout: Int
     ): String {
+        return String(doPost(url, headers, payload, charset, timeout))
+    }
+
+    private fun doPost(
+        url: String,
+        headers: Map<String, String>,
+        payload: String,
+        charset: Charset,
+        timeout: Int,
+    ): ByteArray {
         val (_, _, result) = url.httpPost()
             .header(headers)
             .body(payload, charset)
             .timeout(timeout)
             .timeoutRead(timeout)
-            .responseString()
+            .response()
 
         when (result) {
             is Result.Success -> {
-                return result.getAs<String>()!!
+                return result.getAs<ByteArray>()!!
             }
 
             is Result.Failure -> {
                 val error: FuelError? = result.getAs()
                 if (error?.exception is SocketTimeoutException) {
                     throw TimeoutException("Timeout calling $url. Error: $error", error.exception)
-                } else {
-                    throw FailedDependencyException("Failed dependency calling $url. Error: $error", error?.exception)
                 }
+
+                throw FailedDependencyException("Failed dependency calling $url. Error: $error", error?.exception)
             }
         }
     }

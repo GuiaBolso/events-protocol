@@ -21,11 +21,35 @@ constructor(
     private val jsonAdapter: JsonAdapter,
     private val httpClient: HttpClientAdapter = OkHttpClientAdapter(),
     private val eventValidator: EventValidator = StrictEventValidator(),
-    private val defaultTimeout: Int = 60000
+    private val defaultTimeout: Int = 15000
 ) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(EventClient::class.java)!!
+    }
+
+    @JvmOverloads
+    suspend fun suspendSendEvent(
+        url: String,
+        requestEvent: RequestEvent,
+        headers: Map<String, String> = emptyMap(),
+        timeout: Int? = null
+    ): Response {
+        val customHeaders = HashMap(headers).apply { this["Content-Type"] = "application/json" }
+        logger.debug("Sending event {}:{} to {} with timeout {}", requestEvent.name, requestEvent.version, url, timeout)
+
+        val rawResponse =
+            httpClient.runCatching {
+                suspendPost(
+                    url = url,
+                    headers = customHeaders,
+                    payload = jsonAdapter.toJson(requestEvent),
+                    charset = Charsets.UTF_8,
+                    timeout = timeout ?: defaultTimeout
+                )
+            }.mapCatching { responseBody -> parseEvent(responseBody) }
+
+        return handleResponse(rawResponse, requestEvent)
     }
 
     @JvmOverloads
@@ -36,41 +60,45 @@ constructor(
         timeout: Int? = null
     ): Response {
         val customHeaders = HashMap(headers).apply { this["Content-Type"] = "application/json" }
-        return try {
-            logger.debug("Sending event ${requestEvent.name}:${requestEvent.version} to $url with timeout $timeout.")
-            val rawResponse = httpClient.post(
-                url,
-                customHeaders,
-                jsonAdapter.toJson(requestEvent),
-                Charsets.UTF_8,
-                timeout ?: defaultTimeout
-            )
-            val event = parseEvent(rawResponse)
-            when {
-                event.isSuccess() -> {
-                    logger.debug("Received success event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Success(event.toContext(jsonAdapter))
-                }
+        logger.debug("Sending event {}:{} to {} with timeout {}", requestEvent.name, requestEvent.version, url, timeout)
+        val rawResponse =
+            httpClient.runCatching {
+                post(
+                    url = url,
+                    headers = customHeaders,
+                    payload = jsonAdapter.toJson(requestEvent),
+                    charset = Charsets.UTF_8,
+                    timeout = timeout ?: defaultTimeout
+                )
+            }.mapCatching { responseBody -> parseEvent(responseBody) }
 
-                event.isRedirect() -> {
-                    logger.debug("Received redirect event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Redirect(event.toContext(jsonAdapter))
-                }
+        return handleResponse(rawResponse, requestEvent)
+    }
 
-                else -> {
-                    logger.debug("Received error event response for ${requestEvent.name}:${requestEvent.version}.")
-                    Response.Error(event.toContext(jsonAdapter), event.getErrorType())
-                }
-            }
-        } catch (e: TimeoutException) {
-            logger.warn("Event ${requestEvent.name}:${requestEvent.version} timeout.", e)
-            Response.Timeout(e)
-        } catch (e: BadProtocolException) {
-            logger.warn("Event ${requestEvent.name}:${requestEvent.version} bad protocol.", e)
-            Response.FailedDependency(e, e.payload)
-        } catch (e: Exception) {
-            logger.warn("Event ${requestEvent.name}:${requestEvent.version} error.", e)
-            Response.FailedDependency(e)
+    private fun handleResponse(result: Result<ResponseEvent>, requestEvent: RequestEvent): Response = try {
+        handleEventResponse(result.getOrThrow())
+    } catch (e: TimeoutException) {
+        logger.warn("Event ${requestEvent.name}:${requestEvent.version} timeout.", e)
+        Response.Timeout(e)
+    } catch (e: BadProtocolException) {
+        logger.warn("Event ${requestEvent.name}:${requestEvent.version} bad protocol.", e)
+        Response.FailedDependency(e, e.payload)
+    } catch (e: Exception) {
+        logger.warn("Event ${requestEvent.name}:${requestEvent.version} error.", e)
+        Response.FailedDependency(e)
+    }
+
+    private fun handleEventResponse(event: ResponseEvent): Response = when {
+        event.isSuccess() -> Response.Success(event.toContext(jsonAdapter)).also {
+            logger.debug("Received success event response for {}:{}", it.event.name, it.event.version)
+        }
+
+        event.isRedirect() -> Response.Redirect(event.toContext(jsonAdapter)).also {
+            logger.debug("Received redirect event response for {}:{}", it.event.name, it.event.version)
+        }
+
+        else -> Response.Error(event.toContext(jsonAdapter), event.getErrorType()).also {
+            logger.debug("Received error event response for {}:{}", it.event.name, it.event.version)
         }
     }
 
@@ -80,6 +108,15 @@ constructor(
             return eventValidator.validateAsResponseEvent(rawEvent)
         } catch (e: Exception) {
             throw BadProtocolException(rawResponse, e)
+        }
+    }
+
+    private fun parseEvent(rawResponse: ByteArray): ResponseEvent {
+        return try {
+            val rawEvent = rawResponse.inputStream().use { jsonAdapter.fromJson<RawEvent>(it) }
+            eventValidator.validateAsResponseEvent(rawEvent)
+        } catch (e: Exception) {
+            throw BadProtocolException(String(rawResponse), e)
         }
     }
 }

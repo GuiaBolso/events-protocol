@@ -7,5 +7,19 @@ import java.nio.charset.Charset
 interface HttpClientAdapter {
 
     @Throws(TimeoutException::class, FailedDependencyException::class)
-    fun post(url: String, headers: Map<String, String>, payload: String, charset: Charset, timeout: Int): String
+    fun post(
+        url: String,
+        headers: Map<String, String>,
+        payload: String,
+        charset: Charset,
+        timeout: Int
+    ): String
+
+    suspend fun suspendPost(
+        url: String,
+        headers: Map<String, String>,
+        payload: String,
+        charset: Charset,
+        timeout: Int
+    ): ByteArray
 }

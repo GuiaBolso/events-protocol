@@ -3,6 +3,7 @@ package br.com.guiabolso.events.client.client
 import br.com.guiabolso.events.client.exception.FailedDependencyException
 import br.com.guiabolso.events.client.exception.TimeoutException
 import br.com.guiabolso.events.client.http.OkHttpClientAdapter
+import kotlinx.coroutines.runBlocking
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -72,5 +73,53 @@ class OkHttpClientAdapterTest {
         )
 
         assert(response == "Deu bom!")
+    }
+
+    @Test
+    fun `suspend post and request timed out`(): Unit = runBlocking {
+        val client = OkHttpClientAdapter()
+
+        assertThrows<TimeoutException> {
+            client.suspendPost(
+                url = "http://localhost:${server.port}/events",
+                headers = emptyMap(),
+                payload = "",
+                charset = Charsets.UTF_8,
+                timeout = 1000
+            )
+        }
+    }
+
+    @Test
+    fun `suspend post and fail to connect`(): Unit = runBlocking {
+        server.close()
+        assertThrows<FailedDependencyException> {
+            client.suspendPost(
+                url = "http://localhost:${server.port}/events",
+                headers = emptyMap(),
+                payload = "",
+                charset = Charsets.UTF_8,
+                timeout = 1000
+            )
+        }
+    }
+
+    @Test
+    fun `suspend post and get a successfully response back`(): Unit = runBlocking {
+        server.enqueue(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody("Deu bom!")
+        )
+
+        val response = client.suspendPost(
+            url = "http://localhost:${server.port}/events",
+            headers = emptyMap(),
+            payload = "empty",
+            charset = Charsets.UTF_8,
+            timeout = 5000
+        )
+
+        assert(String(response) == "Deu bom!")
     }
 }
