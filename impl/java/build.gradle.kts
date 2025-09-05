@@ -7,12 +7,24 @@ plugins {
     signing
     id("org.jetbrains.dokka") version "1.8.10"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("com.gradleup.nmcp.aggregation") version "1.1.0"
+}
+
+nmcpAggregation {
+    centralPortal {
+        username.set(System.getenv("OSSRH_USERNAME"))
+        password.set(System.getenv("OSSRH_PASSWORD"))
+        publishingType = "USER_MANAGED"
+        publicationName = "Events Protocol ${System.getenv("RELEASE_VERSION")}"
+    }
+    publishAllProjectsProbablyBreakingProjectIsolation()
 }
 
 allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
+    apply(plugin = "com.gradleup.nmcp.aggregation")
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     version = System.getenv("RELEASE_VERSION") ?: "local"
@@ -60,14 +72,14 @@ allprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
             apiVersion = KotlinVersion.KOTLIN_1_8.version
             languageVersion = KotlinVersion.KOTLIN_1_8.version
         }
     }
 
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
 
     val sourcesJar by tasks.registering(Jar::class) {
@@ -84,16 +96,6 @@ allprojects {
     }
 
     publishing {
-
-        repositories {
-            maven {
-                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                credentials {
-                    username = System.getenv("OSSRH_USERNAME")
-                    password = System.getenv("OSSRH_PASSWORD")
-                }
-            }
-        }
 
         publications.register("mavenJava", MavenPublication::class) {
             from(components["java"])
@@ -126,7 +128,6 @@ allprojects {
                 }
             }
         }
-
     }
 
     signing {
