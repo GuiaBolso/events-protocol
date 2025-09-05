@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Publish to maven ceentral
-        run: cd impl/java; ./gradlew publish
+        run: cd impl/java; ./gradlew publishAggregationToCentralPortal
         env:
           RELEASE_VERSION: ${{ github.event.inputs.version }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
