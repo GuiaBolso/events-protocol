@@ -7,6 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -38,7 +39,9 @@ suspend fun Call.executeAsync(): Response =
         )
     }
 
-class OkHttpClientAdapter(private val okHttpClient: OkHttpClient = OkHttpClient.Builder().build()) : HttpClientAdapter {
+class OkHttpClientAdapter(
+    private val okHttpClient: OkHttpClient = okHttpClient()
+) : HttpClientAdapter {
     private val clients = ConcurrentHashMap<Long, OkHttpClient>()
 
     override suspend fun suspendPost(
@@ -119,3 +122,10 @@ class OkHttpClientAdapter(private val okHttpClient: OkHttpClient = OkHttpClient.
         }
     }
 }
+
+@Suppress("MagicNumber")
+private fun okHttpClient(): OkHttpClient = OkHttpClient.Builder().dispatcher(
+    Dispatcher().apply {
+      maxRequestsPerHost = 32
+    }
+).build()
