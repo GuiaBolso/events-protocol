@@ -3,44 +3,23 @@ package br.com.guiabolso.events.client.http
 import br.com.guiabolso.events.client.adapter.HttpClientAdapter
 import br.com.guiabolso.events.client.exception.FailedDependencyException
 import br.com.guiabolso.events.client.exception.TimeoutException
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import okhttp3.internal.closeQuietly
-import okio.IOException
 import java.io.InterruptedIOException
 import java.net.SocketTimeoutException
 import java.nio.charset.Charset
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.resumeWithException
-
-@OptIn(ExperimentalCoroutinesApi::class)
-suspend fun Call.executeAsync(): Response =
-    suspendCancellableCoroutine { continuation ->
-        continuation.invokeOnCancellation { this.cancel() }
-        this.enqueue(
-            object : Callback {
-
-                override fun onFailure(call: Call, e: IOException) {
-                    continuation.resumeWithException(e)
-                }
-
-                override fun onResponse(call: Call, response: Response) {
-                    continuation.resume(response) { _ -> response.closeQuietly() }
-                }
-            }
-        )
-    }
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.Dispatcher
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okio.IOException
 
 class OkHttpClientAdapter(
-    private val okHttpClient: OkHttpClient = okHttpClient()
+    private val okHttpClient: OkHttpClient = okHttpClient(),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : HttpClientAdapter {
     private val clients = ConcurrentHashMap<Long, OkHttpClient>()
 
@@ -54,17 +33,19 @@ class OkHttpClientAdapter(
         val client = getClientFor(timeout)
         val request = createRequest(url, payload, headers)
 
-        return try {
-            client.newCall(request)
-                .executeAsync()
-                .use { response ->
-                    if (!response.isSuccessful) {
-                        throw IOException("Unexpected response $response")
+        return withContext(ioDispatcher) {
+            try {
+                client.newCall(request)
+                    .execute()
+                    .use { response ->
+                        if (!response.isSuccessful) {
+                            throw IOException("Unexpected response $response")
+                        }
+                        response.body!!.bytes()
                     }
-                    response.body!!.bytes()
-                }
-        } catch (ex: Exception) {
-            handleException(ex, url)
+            } catch (ex: Exception) {
+                handleException(ex, url)
+            }
         }
     }
 
@@ -126,6 +107,6 @@ class OkHttpClientAdapter(
 @Suppress("MagicNumber")
 private fun okHttpClient(): OkHttpClient = OkHttpClient.Builder().dispatcher(
     Dispatcher().apply {
-      maxRequestsPerHost = 32
+        maxRequestsPerHost = 32
     }
 ).build()
